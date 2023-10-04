@@ -1,0 +1,9 @@
+{
+  "name": "alt-gosling",
+  "version": "1.0.0",
+  "description": "Creates automatic text descriptions for Gosling visualizations.",
+  "main": "index.js",
+  "repository": "https://github.com/thomcsmits/alt-gosling.git",
+  "author": "Thomas Smits <tsmits@hms.harvard.edu>",
+  "license": "MIT"
+}
