@@ -4,7 +4,7 @@
 
 This project consists of three components
 
-1: Set-up of alt-text tree data from Gosling spec
+### 1: Set-up of alt-text tree data from Gosling spec
 
 Input:
 - gosling ref
@@ -14,7 +14,7 @@ Output:
 - alt text api
 
 
-2: Data component
+### 2: Data component
 
 Input:
 - gosling ref
@@ -23,11 +23,11 @@ Input:
 
 
 Output:
--- alt text + data api
--- updated data api
+- alt text + data api
+- updated data api
 
 
-3: Render tree element
+### 3: Render tree element
 
 Input
 - alt text ref
@@ -36,5 +36,5 @@ Input
 - updated data api
 
 Output
--- React element with tree
--- React element with most-recently updated data
+- React element with tree
+- React element with most-recently updated data
