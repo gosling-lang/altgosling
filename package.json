@@ -3,7 +3,22 @@
   "version": "1.0.0",
   "description": "Creates automatic text descriptions for Gosling visualizations.",
   "main": "index.js",
-  "repository": "https://github.com/thomcsmits/alt-gosling.git",
-  "author": "Thomas Smits <tsmits@hms.harvard.edu>",
-  "license": "MIT"
+  "author": "Thomas C. Smits <tsmits@hms.harvard.edu>",
+  "license": "MIT",
+  "dependencies": {
+    "@mui/icons-material": "^5.14.11",
+    "@mui/x-tree-view": "6.0.0-beta.0",
+    "gosling.js": "^0.11.0",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "eslint": "^8.50.0",
+    "eslint-config-standard-with-typescript": "^39.1.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "typescript": "*"
+  }
 }

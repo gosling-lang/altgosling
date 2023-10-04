@@ -1,25 +1,21 @@
-import type { GoslingSpec, Mark, Track, SingleTrack, ChannelTypes, View, PartialTrack, RootSpecWithSingleView, ResponsiveSpecOfSingleView, RootSpecWithMultipleViews, ResponsiveSpecOfMultipleViews, ChannelValue, Encoding, DataDeep, MultivecData, X, Y, Color, Size, Text, Stroke, StrokeWidth, Opacity, Row, OverlaidTrack, OverlaidTracks } from '@gosling-lang/gosling-schema';
-import type { AltTrackDataFields, AltTrack, AltTrackOverlaidByDataInd,  AltTrackOverlaidByMark, AltTrackOverlaidByData, AltTrackAppearanceDetailsOverlaid, AltTrackAppearanceOverlaid, AltSpecComposition, AltTrackPosition, AltTrackAppearance, AltTrackData, AltTrackDataDetails, AltTrackAppearanceDetails, AltTrackPositionDetails, AltTrackSingle, AltTrackOverlaid, AltEncodingSeparated, AltCounter, AltParentValues, AltGoslingSpec, EncodingValueSingle, EncodingDeepSingle } from './alt-gosling-schema';
-import { attributeExists, attributeExistsDefaultString, attributeHasChildValue, attributeExistsAndChildHasValue} from './util';
-import { SUPPORTED_CHANNELS } from './../core/mark/index';
+import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, OverlaidTrack, OverlaidTracks } from 'gosling.js/dist/src/gosling-schema';
+import { IsOverlaidTracks, IsChannelDeep, IsChannelValue } from 'gosling.js/dist/src/gosling-schema';
+import type { 
+    AltGoslingSpec, AltTrack, AltTrackSingle, 
+    AltTrackOverlaid, AltTrackOverlaidByMark, AltTrackOverlaidByData, 
+    AltSpecComposition, AltCounter, AltParentValues, AltTrackPosition, AltTrackPositionDetails,
+    AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid,  AltTrackAppearanceDetailsOverlaid, 
+    AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields, 
+    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '../schema/alt-gosling-schema';
+import { attributeExists } from '../util';
 import { determineSpecialCases } from './chart-types';
-import { getGenomicChannelFromTrack } from './../gosling-schema/validate';
-import { convertToFlatTracks } from './../compiler/spec-preprocess';
-import { spreadTracksByData } from './../core/utils/overlay';
 
-import {
-    // single tracks
-    IsSingleTrack,
-    IsOverlaidTrack,
-    IsTemplateTrack,
-    // multiple tracks
-    IsFlatTracks,
-    IsOverlaidTracks,
-    IsStackedTracks,
-    // other
-    IsChannelDeep,
-    IsChannelValue
-} from '@gosling-lang/gosling-schema';
+import { SUPPORTED_CHANNELS } from 'gosling.js/dist/src/core/mark';
+import { getGenomicChannelFromTrack } from 'gosling.js/dist/src/gosling-schema';
+import { convertToFlatTracks } from 'gosling.js/dist/src/compiler/spec-preprocess';
+import { spreadTracksByData } from 'gosling.js/dist/src/core/utils/overlay';
+
+
 
 
 
