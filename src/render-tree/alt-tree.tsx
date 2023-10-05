@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { AltGoslingSpec, AltTrack } from 'src/alt-text/alt-gosling-schema';
+import type { AltGoslingSpec, AltTrack } from '../schema/alt-gosling-schema';
 
 
 // Will be replaced with @mui tree once merged with thomcsmits/alt-text-tree-mui

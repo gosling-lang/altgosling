@@ -1,5 +1,4 @@
-import type { GoslingSpec, Track, PartialTrack,ChannelDeep, ChannelValue, ChannelTypes, DataDeep, DataTransform, Mark, Encoding, Assembly, Layout, Orientation, DomainInterval, DomainChrInterval, DomainChr, ZoomLimits, AxisPosition, Style, Datum, X, Y, Row, Color, Size, Stroke, StrokeWidth, Opacity } from '@gosling-lang/gosling-schema';
-
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, Datum } from 'gosling.js/dist/src/gosling-schema';
 
 export type AltCounter = {
     nTracks: number;
