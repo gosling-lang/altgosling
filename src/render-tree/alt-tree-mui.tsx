@@ -1,12 +1,12 @@
 import * as React from 'react';
-import TreeView from '@mui/lab/TreeView';
+import TreeView from '@mui/x-tree-view/TreeView';
+import TreeItem from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import TreeItem from '@mui/lab/TreeItem';
 
-import type { AltGoslingSpec, AltTrack, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from 'src/alt-text/alt-gosling-schema';
-import type { Datum } from '@gosling-lang/gosling-schema';
-import { arrayToString } from './util';
+import type { Datum } from 'gosling.js/dist/src/gosling-schema';
+import type { AltGoslingSpec, AltTrack } from '../schema/alt-gosling-schema';
+import { arrayToString } from '../util';
 
 
 export function createAltTree(data: AltGoslingSpec) {
