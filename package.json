@@ -18,6 +18,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@mui/material": "^5.14.12",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
