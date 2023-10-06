@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "gosling": "^3.0.0",
+    "@mui/icons-material": "^5.14.12",
+    "@mui/x-tree-view": "6.0.0-beta.0",
+    "gosling.js": "^0.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
