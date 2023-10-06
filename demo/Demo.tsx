@@ -15,8 +15,9 @@ function Demo() {
   return (
     <>
       <div className='demo'>
-        bar
-        <GoslingComponent spec={goslingSpec} />
+        {goslingSpec ? 
+          <GoslingComponent spec={goslingSpec} /> 
+          : null}
       </div>
     </>
   )
