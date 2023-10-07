@@ -182,3 +182,8 @@ export type AltGoslingSpec = {
 //     arrangement: 'parallel' | 'serial' | 'horizontal' | 'vertical';
 //     alignment: 'stack' | 'overlay';
 // }
+
+export interface PreviewAlt {
+    id: string;
+    data: AltGoslingSpec;
+}
