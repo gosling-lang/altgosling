@@ -14,14 +14,8 @@ export function getAlt(
     // get altSpec
     const altSpec = getAltSpec(specTraversed) as AltGoslingSpec;
 
-    console.log('bef desc', altSpec)
-
     // add descriptions
     addDescriptions(altSpec)
-
-    console.log('aft desc', altSpec)
-
-    console.log('altspec', altSpec);
 
     return altSpec;
 }
