@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import gosling, { GoslingComponent } from 'gosling.js'
+import React, { useEffect, useRef, useState } from 'react';
+import gosling, { GoslingComponent } from 'gosling.js';
+import { AltGoslingComponent } from '../src/AltGoslingComponent';
 import type { Datum } from 'gosling.js/dist/src/gosling-schema';
-import './Demo.css'
+import './Demo.css';
 import { bar } from './examples/bar';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
