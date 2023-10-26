@@ -1,2 +1,7 @@
+/tmp
+
+# Dependency directory
 /node_modules
-dev
+
+# System files
+.DS_Store

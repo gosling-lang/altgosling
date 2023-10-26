@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gosling, { GoslingComponent } from 'gosling.js';
-// import { AltGoslingComponent } from '../src/AltGoslingComponent';
+import { AltGoslingComponent } from '../src/AltGoslingComponent';
 import type { Datum, GoslingSpec } from 'gosling.js/dist/src/gosling-schema';
 import type { PreviewAlt } from '../src/schema/alt-gosling-schema';
 import './Demo.css';
@@ -129,7 +129,9 @@ const altComponent = <div className="editor-alt-text-panel">
           </Grid>
           
           <Grid item xs={6}>
-            Data
+            {/* {gosRef.current? 
+                <AltGoslingComponent gosApi={gosRef.current.api} />
+                : null} */}
           </Grid>
         
         </Grid>
