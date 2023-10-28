@@ -6,7 +6,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import type { Datum } from 'gosling.js/dist/src/gosling-schema';
 import type { AltGoslingSpec, AltTrack } from '../schema/alt-gosling-schema';
-import { arrayToString } from '../util';
+import { arrayToString } from './util';
 
 
 export function createAltTree(data: AltGoslingSpec) {

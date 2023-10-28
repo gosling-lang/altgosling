@@ -6,7 +6,7 @@ import type {
     AltSpecComposition, AltCounter, AltParentValues, AltTrackPosition, AltTrackPositionDetails,
     AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid,  AltTrackAppearanceDetailsOverlaid, 
     AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields, 
-    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '../schema/alt-gosling-schema';
+    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '../../schema/alt-gosling-schema';
 import { attributeExists } from '../util';
 import { determineSpecialCases } from './chart-types';
 

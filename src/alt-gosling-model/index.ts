@@ -1,18 +1,17 @@
 import type { GoslingSpec, Datum } from 'gosling.js/dist/src/gosling-schema';
-import type {  AltGoslingSpec, AltTrack } from './schema/alt-gosling-schema';
+import type {  AltGoslingSpec } from '../schema/alt-gosling-schema';
 import { getAltSpec } from './alt-structure/alt-from-spec';
-import { addDescriptions } from './alt-structure/alt-to-text';
+import { addDescriptions } from './alt-text/text-tree';
 import { altUpdateSpecWithData } from './alt-data/alt-from-data';
 
 // this function is only called once every time a spec is compiled
 export function getAlt(
-    specTraversed: GoslingSpec,
-    specOriginal: GoslingSpec
+    specProcessed: GoslingSpec,
 ): AltGoslingSpec {
-    console.log(specTraversed)
+    console.log(specProcessed)
 
     // get altSpec
-    const altSpec = getAltSpec(specTraversed) as AltGoslingSpec;
+    const altSpec = getAltSpec(specProcessed) as AltGoslingSpec;
 
     // add descriptions
     addDescriptions(altSpec)

@@ -1,17 +1,12 @@
-import type { AltGoslingSpec, AltTrackSingle,AltTrack } from '../schema/alt-gosling-schema';
+import type { AltGoslingSpec, AltTrackSingle,AltTrack } from '../../schema/alt-gosling-schema';
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
 // import { SUPPORTED_CHANNELS } from './../core/mark/index';
 
 
-export function addDescriptions(altGoslingSpec: AltGoslingSpec) {
+export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec) {
     addTrackPositionDescriptions(altGoslingSpec);
     addTrackAppearanceDescriptions(altGoslingSpec);
-    addTrackDataDescriptions(altGoslingSpec);
-    addGlobalDescription(altGoslingSpec);
 }
-
-
-
 
 function addTrackPositionDescriptions(altGoslingSpec: AltGoslingSpec) {
     if (altGoslingSpec.composition.nTracks == 1) {
@@ -333,109 +328,4 @@ function addEncodingDescriptions(track: AltTrackSingle) {
     const desc = ''.concat(descGenomic + ' ' + descQuantitative + ' ' + descNominal + ' ' + descValue);
 
     return {desc: desc, descList: descList};
-}
-
-
-// used in addTrackDataDescriptions
-function addMinMaxDescription(values: number[], key: 'minimum' | 'maximum') {
-    var descMinMax = ''
-    if (values.length === 1 ) {
-        descMinMax = descMinMax.concat(' The ' + key + ' expression is shown at genomic position ' + values[0] + ' bp.');
-    } else if (values.length < 6 ) {
-        descMinMax = descMinMax.concat( ' The ' + key + ' expression is shown at genomic positions ' + arrayToString(values) + ' bp.')
-    } else {
-        descMinMax = descMinMax.concat( ' The ' + key + ' expression is shown at ' + values.length + ' genomic positions.')
-    }
-    return descMinMax;
-}
-
-function addTrackDataDescriptions(altGoslingSpec: AltGoslingSpec) {
-    for (const i in altGoslingSpec.tracks) {
-        const track = altGoslingSpec.tracks[i];
-        addTrackDataDescriptionsTrack(track);
-    }
-}
-
-export function addTrackDataDescriptionsTrack(track: AltTrack) {
-    if (track.alttype === 'single' || track.alttype === 'ov-mark') {
-        if (track.data.details.dataStatistics) {
-            var desc = '';
-
-            // genomic and expression ranges
-            if (track.data.details.dataStatistics?.genomicMin && track.data.details.dataStatistics?.genomicMax) {
-                desc = desc.concat('The genomic range shown is from ' + track.data.details.dataStatistics?.genomicMin + ' to ' + track.data.details.dataStatistics?.genomicMax + ' basepairs.');
-            }
-            if (track.data.details.dataStatistics?.valueMin && track.data.details.dataStatistics?.valueMax) {
-                desc = desc.concat(' The expression values range from ' + track.data.details.dataStatistics?.valueMin + ' to ' + track.data.details.dataStatistics?.valueMax + '.');
-            }
-            
-            // where on the genome are the minimum and maximum expression
-            if (track.data.details.dataStatistics?.valueMaxGenomic && track.data.details.dataStatistics?.valueMinGenomic) {
-                desc = desc.concat(addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum'));
-                desc = desc.concat(addMinMaxDescription(track.data.details.dataStatistics?.valueMinGenomic, 'minimum'));
-            }
-           
-            // add category data information
-            if (track.data.details.dataStatistics?.categories) {
-
-                // number of categories
-                desc = desc.concat(' There are ' + track.data.details.dataStatistics?.categories.length + ' categories.');
-
-                // which category has the highest expression peak
-                if (track.data.details.dataStatistics?.highestCategory) {
-                    if (track.data.details.dataStatistics?.highestCategory.length === 1) {
-                        desc = desc.concat(' The highest value is observed in sample ' + track.data.details.dataStatistics?.highestCategory[0] + '.');
-                    } else {
-                        desc = desc.concat(' The highest value is observed in samples ' + arrayToString(track.data.details.dataStatistics?.highestCategory) + '.');
-                    }
-                }    
-                // See if genomic positions are the same for the min and max values of each category
-            }
-            track.data.description = desc;
-        }
-    }
-}
-
-
-function addGlobalDescription(altGoslingSpec: AltGoslingSpec) {
-
-    if (altGoslingSpec.tracks.length === 1) {
-        addTrackDescription(altGoslingSpec.tracks[0], false)
-    } else if (altGoslingSpec.tracks.length > 1) {
-        for (let t of altGoslingSpec.tracks) {
-            addTrackDescription(t, true)
-        }
-    }
-
-    altGoslingSpec.alt = 'Gosling visualization.';
-
-    if (altGoslingSpec.composition.nTracks === 1) {
-        altGoslingSpec.longDescription = altGoslingSpec.tracks[0].description;
-    } else if (altGoslingSpec.composition.nTracks === 2) {
-        var desc = '';
-        desc = desc.concat('Figure with two charts.');
-        altGoslingSpec.longDescription = desc;
-    } else {
-        var desc = '';
-        desc = desc.concat('Figure with ' + altGoslingSpec.composition.nTracks + ' individual charts.');
-        altGoslingSpec.longDescription = desc;
-    }    
-}
-
-
-export function addTrackDescription(t: AltTrack, includePosition: boolean) {
-    var desc = '';
-    var descPos = '';
-    if (t.alttype === 'single' || t.alttype === 'ov-mark') {  
-        if (includePosition) {
-            descPos.concat(t.position.description);
-        }
-        desc = descPos.concat(' ' + t.appearance.description + ' ' + t.data.description);
-    } else {
-        if (includePosition) {
-            descPos.concat(t.position.description);
-        }
-        desc = descPos.concat(' Overlaid track with different data sources. See individual tracks for details.');
-    }
-    t.description = desc;
 }
