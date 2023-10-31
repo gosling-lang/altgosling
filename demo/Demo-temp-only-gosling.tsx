@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gosling, { GoslingComponent, GoslingSpec } from 'gosling.js';
 import { getAlt } from '../src/alt-gosling-model' 
-import { barProcessed } from './examples/visualEncodingProcessed';
+import { barProcessed } from './examples/bar-processed';
 
 function Demo() {
 
