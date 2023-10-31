@@ -1,1 +1,0 @@
-export { createAltTree } from './alt-tree-mui.tsx';
