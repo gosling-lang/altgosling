@@ -1,6 +1,6 @@
 import * as React from 'react';
-import TreeView from '@mui/x-tree-view/TreeView';
-import TreeItem from '@mui/x-tree-view/TreeItem';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
@@ -9,7 +9,7 @@ import type { AltGoslingSpec, AltTrack } from '../schema/alt-gosling-schema';
 import { arrayToString } from './util';
 
 
-export function createAltTree(data: AltGoslingSpec) {
+export function renderAltTree(data: AltGoslingSpec) {
     return createTreeMUI(data)
     // try {
     //     createTreeMUI(data)
