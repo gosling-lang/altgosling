@@ -1,21 +1,19 @@
 import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, OverlaidTrack, OverlaidTracks } from 'gosling.js/dist/src/gosling-schema';
-import { IsOverlaidTracks, IsChannelDeep, IsChannelValue } from 'gosling.js/dist/src/gosling-schema';
+// import { IsOverlaidTracks, IsChannelDeep, IsChannelValue } from 'gosling.js/dist/src/gosling-schema';
 import type { 
     AltGoslingSpec, AltTrack, AltTrackSingle, 
     AltTrackOverlaid, AltTrackOverlaidByMark, AltTrackOverlaidByData, 
     AltSpecComposition, AltCounter, AltParentValues, AltTrackPosition, AltTrackPositionDetails,
     AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid,  AltTrackAppearanceDetailsOverlaid, 
     AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields, 
-    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '../schema/alt-gosling-schema';
+    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '../../schema/alt-gosling-schema';
 import { attributeExists } from '../util';
 import { determineSpecialCases } from './chart-types';
 
 import { SUPPORTED_CHANNELS } from 'gosling.js/dist/src/core/mark';
 import { getGenomicChannelFromTrack } from 'gosling.js/dist/src/gosling-schema';
-import { convertToFlatTracks } from 'gosling.js/dist/src/compiler/spec-preprocess';
-import { spreadTracksByData } from 'gosling.js/dist/src/core/utils/overlay';
-
-
+// import { convertToFlatTracks } from 'gosling.js/dist/src/compiler/spec-preprocess';
+// import { spreadTracksByData } from 'gosling.js/dist/src/core/utils/overlay';
 
 
 
@@ -196,8 +194,6 @@ function altSingleTrack(
 
     // empty description, to be filled in.
     altTrack.description = '';
-
-    console.log('type', altTrack.alttype)
 
     return altTrack;
     
@@ -423,20 +419,20 @@ export function getSeparatedEncodings(track: SingleTrack | OverlaidTracks | Part
     const encodingDeepQuantitative: EncodingDeepSingle[] = [];
     const encodingDeepNominal: EncodingDeepSingle[] = [];
     const encodingValue: EncodingValueSingle[] = [];
-    SUPPORTED_CHANNELS.forEach(k => {
-        const c = track[k];
-        if (IsChannelDeep(c)) {
-            if (c.type === 'genomic') {
-                encodingDeepGenomic.push({name: k, description: '', details: c});
-            } else if (c.type === 'quantitative') {
-                encodingDeepQuantitative.push({name: k, description: '', details: c});
-            } else {
-                encodingDeepNominal.push({name: k, description: '', details: c});
-            }
-        } else if (IsChannelValue(c)) {
-            encodingValue.push({name: k, description: '', details: c});
-        }
-    });
+    // SUPPORTED_CHANNELS.forEach(k => {
+    //     const c = track[k];
+    //     if (IsChannelDeep(c)) {
+    //         if (c.type === 'genomic') {
+    //             encodingDeepGenomic.push({name: k, description: '', details: c});
+    //         } else if (c.type === 'quantitative') {
+    //             encodingDeepQuantitative.push({name: k, description: '', details: c});
+    //         } else {
+    //             encodingDeepNominal.push({name: k, description: '', details: c});
+    //         }
+    //     } else if (IsChannelValue(c)) {
+    //         encodingValue.push({name: k, description: '', details: c});
+    //     }
+    // });
     // bundle together
     const encodingSeparated: AltEncodingSeparated = {encodingDeepGenomic: encodingDeepGenomic, encodingDeepQuantitative: encodingDeepQuantitative, encodingDeepNominal: encodingDeepNominal, encodingValue: encodingValue};
     return encodingSeparated;
