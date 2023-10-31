@@ -6,6 +6,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import type { Datum } from 'gosling.js/dist/src/gosling-schema';
 import type { AltGoslingSpec, AltTrack } from '../schema/alt-gosling-schema';
+import { createDataTable } from './data-table';
 import { arrayToString } from './util';
 
 
@@ -201,30 +202,31 @@ function createTreeTrackDataStatistics(t: AltTrack, uid: string) {
                     </TreeItem>
                     <TreeItem key={'T-'+uid+'-details-data-details-rawdata'} nodeId={'T-'+uid+'-details-data-details-rawdata'} label={'Raw data table'}>
                         {t.data.details.dataStatistics?.flatTileData ? (
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        {Object.keys(
-                                            (t.data.details.dataStatistics?.flatTileData[0])
-                                        ).map((field: string, i: number) => (
-                                            <th key={i}>{field}</th>
-                                        ))}
-                                    </tr>
-                                    {t.data.details.dataStatistics?.flatTileData.map(
-                                        (row: Datum, i: number) => (
-                                            <tr key={i}>
-                                                {Object.keys(row).map(
-                                                    (field: string, j: number) => (
-                                                        <td key={j}>
-                                                            {row[field]?.toString()}
-                                                        </td>
-                                                    )
-                                                )}
-                                            </tr>
-                                        )
-                                    )}
-                                </tbody>
-                            </table>
+                            createDataTable(t.data.details.dataStatistics?.flatTileData)
+                            // <table>
+                            //     <tbody>
+                            //         <tr>
+                            //             {Object.keys(
+                            //                 (t.data.details.dataStatistics?.flatTileData[0])
+                            //             ).map((field: string, i: number) => (
+                            //                 <th key={i}>{field}</th>
+                            //             ))}
+                            //         </tr>
+                            //         {t.data.details.dataStatistics?.flatTileData.map(
+                            //             (row: Datum, i: number) => (
+                            //                 <tr key={i}>
+                            //                     {Object.keys(row).map(
+                            //                         (field: string, j: number) => (
+                            //                             <td key={j}>
+                            //                                 {row[field]?.toString()}
+                            //                             </td>
+                            //                         )
+                            //                     )}
+                            //                 </tr>
+                            //             )
+                            //         )}
+                            //     </tbody>
+                            // </table>
                             
                         ): null}       
                     </TreeItem>
