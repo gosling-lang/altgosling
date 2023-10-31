@@ -1,4 +1,3 @@
-
 import type { AltGoslingSpec, AltTrack } from '../../schema/alt-gosling-schema';
 
 export function addGlobalDescription(altGoslingSpec: AltGoslingSpec) {

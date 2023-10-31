@@ -195,8 +195,6 @@ function altSingleTrack(
     // empty description, to be filled in.
     altTrack.description = '';
 
-    console.log('type', altTrack.alttype)
-
     return altTrack;
     
 }

@@ -185,7 +185,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             }
     
             let encodingDescriptions = addEncodingDescriptions(track);
-            console.log('encdesc', encodingDescriptions);
+            // console.log('encdesc', encodingDescriptions);
 
             desc = desc.concat(' ' + encodingDescriptions.desc);
         
