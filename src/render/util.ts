@@ -5,3 +5,11 @@ export function arrayToString(arr: string[] | number[]): string {
         return arr.slice(0, -1).join(', ') + ' and ' + arr.slice(-1);
     } 
 }
+
+export function booleanToString(b: boolean): string {
+    if (b) {
+        return 'true';
+    } else {
+        return 'false';
+    }
+}

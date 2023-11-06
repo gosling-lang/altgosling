@@ -5,12 +5,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import type { Datum } from 'gosling.js/dist/src/gosling-schema';
-import type { AltGoslingSpec, AltTrack } from '../schema/alt-gosling-schema';
+import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '../schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
-import { arrayToString } from './util';
+import { arrayToString, booleanToString } from './util';
 
-
-export function renderAltTree(data: AltGoslingSpec) {
+/**
+ * Wrapper function to generate tree from AltGoslingSpec
+ * @param {AltGoslingSpec} data AltGoslingSpec 
+ * @returns {JSX.Element} tree element
+ */
+export function renderAltTree(data: AltGoslingSpec): JSX.Element {
     return createTreeMUI(data)
     // try {
     //     createTreeMUI(data)
@@ -20,6 +24,212 @@ export function renderAltTree(data: AltGoslingSpec) {
 }
 
 
+class AltNode {
+    name: string;
+    key: string;
+    always_show: boolean;
+    collapsing: boolean;
+    children: string | undefined | AltNode | Array<AltNode> | Datum[];
+
+    constructor(name: string, key: string, always_show: boolean, collapsing: boolean, children: string | undefined | AltNode | Array<AltNode> | Datum[]) {
+        this.name = name;
+        this.key = key;
+        this.always_show = always_show;
+        this.collapsing = collapsing;
+        this.children = children;
+    }
+}
+
+function structureToTree(altSpec: AltGoslingSpec): JSX.Element {
+    const structure = createAltNodes(altSpec);
+    
+}
+
+function nodeToJSX(node: AltNode): JSX.Element {
+    // if typeof(node.children) === string 
+}
+
+
+function createAltNodes(altSpec: AltGoslingSpec) {
+    const structure = new AltNode('Automatic description', 'tree', true, true, [
+        new AltNode('Alt-text', 'alt', true, true, altSpec.alt),
+        new AltNode('Description', 'long', true, true, altSpec.longDescription),
+        new AltNode('Details', 'details', true, true, [
+            new AltNode('Title', 'title', false, true, altSpec.title),
+            new AltNode('Subtitle', 'subtitle', false, true, altSpec.subtitle),
+            ...trackNode(altSpec)
+        ]),
+    ]);
+    return(structure);
+}
+
+
+function trackNode(altSpec: AltGoslingSpec): Array<AltNode> {
+    if (altSpec.composition.nTracks === 1) {
+        return(trackNodeSingle(altSpec.tracks[0]))
+    } else {
+        const tracks = Object.keys(altSpec.tracks).map((t, i) => (trackNodeMulti(altSpec.tracks[i])))
+        return([
+            new AltNode('Composition', 'composition', true, true, altSpec.composition.description),
+            new AltNode('Tracks', 'tracks', true, true, tracks)
+        ])
+    }
+
+}
+
+
+function trackNodeSingle(t: AltTrack): Array<AltNode> {
+
+    const structureList = [
+        new AltNode('Description', 'T-1-desc', true, true, t.description),
+        new AltNode('Details', 'T-1-det', true, true, [
+            new AltNode('Title', 'T-1-det-title', false, true, t.title),
+            chartTypeNode(t, '1'),
+            appearanceNode(t, '1'),
+            new AltNode('Data', 'T-1-det-data', true, true, [
+                dataNode(t, '1')
+            ]),
+        ]),
+    ]
+    return(structureList);
+}
+
+
+function trackNodeMulti(t: AltTrack): AltNode {
+    var uid = t.position.details.trackNumber as any as string;
+
+    const structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, [
+        new AltNode('Description', 'T-'+uid+'-desc', true, true, t.description),
+        new AltNode('Details', 'T-'+uid+'-det', true, true, [
+            new AltNode('Title', 'T-'+uid+'-det-title', false, true, t.title),
+            new AltNode('Position', 'T-'+uid+'-det-pos', true, true, [
+                new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, t.position.description),
+                new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, (t.position.details.trackNumber + 1).toString()),
+            ]),
+            chartTypeNode(t, uid),
+            appearanceNode(t, uid),
+            dataNode(t, uid),
+        ]),
+    ])
+    return(structure);
+    
+}
+
+
+function chartTypeNode(t: AltTrack, uid: string): AltNode {
+    var charttype;
+
+    if (t.alttype === 'single') {
+        charttype = t.charttype;
+    } else if (t.alttype === 'ov-mark') {
+        if (t.charttype) {
+            charttype = arrayToString(t.charttype);
+        }
+    }
+    return(new AltNode('Type', 'T-'+uid+'-det-type', false, false, charttype));
+}
+
+
+function appearanceNode(t: AltTrack, uid: string) {
+    if (t.alttype === 'single' || t.alttype === 'ov-mark') {
+        return(
+            new AltNode('Appearance', 'T-'+uid+'-det-app', false, true, [
+                new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, t.appearance.description),
+                new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, [
+                    markNode(t, uid),
+                    new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, false, t.appearance.details.layout),
+                    new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, booleanToString(t.appearance.details.overlaid)),
+                    ...encodingNode(t, uid)
+                ]),
+            ])
+        )
+    } else {
+        var temp;
+        return(new AltNode('Appearance', 'T-'+uid+'-det-app', false, true, temp));
+    }
+}
+
+
+function markNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): AltNode {
+    var mark;
+    if (t.alttype === 'ov-mark') {
+        mark = arrayToString(t.appearance.details.mark);
+    } else {
+        mark = t.appearance.details.mark;
+    }
+    return(new AltNode('Mark', 'T-'+uid+'-det-pos-app-mark', false, false, mark));
+}
+
+
+//   {t.appearance.details.encodingsDescList.map((enc, i) => createTreeItemNode('T-'+uid+'-details-pos-details-enc'+enc[0]+i, enc[0], enc[1], true))}
+function encodingNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): Array<AltNode> {
+    const nodeList = t.appearance.details.encodingsDescList.map((enc, i) => {
+        return new AltNode(enc[0], 'T-'+uid+'-det-pos-enc'+enc[0]+i, false, true, enc[1])
+    })
+    return nodeList;
+}
+
+
+function dataNode(t: AltTrack, uid: string): AltNode {
+    if ((t.alttype === 'single' || t.alttype === 'ov-mark') && t.data.details.dataStatistics) {
+        return (new AltNode('Data', 'T-'+uid+'-det-data', true, true, [
+            new AltNode('Description', 'T-'+uid+'-det-data-desc', true, true, t.data.description),
+            dataNodeStats(t.data.details.dataStatistics, uid),
+            new AltNode('Raw data', 'T-'+uid+'-det-data-desc', true, true, t.data.details.dataStatistics?.flatTileData)
+        ]));
+    }
+    else {
+        var temp;
+        return (new AltNode('Data', 'T-'+uid+'-det-data', true, true, temp));
+    }
+}
+
+
+function dataNodeStats(dataStatistics: AltDataStatistics, uid: string): AltNode {
+    const stats = new AltNode('Data statistics', 'T-'+uid+'-det-data-stats', false, true, [
+        new AltNode('Genomic range', 'T-'+uid+'-det-data-stats-genomic', false, true, [
+            new AltNode('Minimum', 'T-'+uid+'-det-data-stats-genomic-min', true, false, dataStatistics.genomicMin?.toString()),
+            new AltNode('Maximum', 'T-'+uid+'-det-data-stats-genomic-max', true, false, dataStatistics.genomicMin?.toString())
+        ]),
+        new AltNode('Value range', 'T-'+uid+'-det-data-stats-value', false, true, [
+            new AltNode('Minimum: ' + dataStatistics.valueMin, 'T-'+uid+'-det-data-stats-value-min', true, false, 'Found at position(s)' + dataStatistics.valueMinGenomic?.toString()),
+            new AltNode('Maximum: ' + dataStatistics.valueMax, 'T-'+uid+'-det-data-stats-value-max', true, false, 'Found at position(s)' + dataStatistics.valueMaxGenomic?.toString())
+        ]),
+        categoriesNode(dataStatistics, uid)
+    ]);
+    return stats;
+}
+
+
+function categoriesNode(dataStatistics: AltDataStatistics, uid: string): AltNode {
+    return(new AltNode('Categories', 'T-'+uid+'-det-data-stats-categories', false, false, arrayToString(dataStatistics.categories)))
+
+}
+
+
+
+/**
+ * 
+ * 
+ * Structure: 
+ * 
+ * Automatic description
+ *      Alt-text
+ *          {alt-text}
+ *      Description
+ *          {long description}
+ *      Details
+ *          ?Title
+ *              {title}
+ *          ?Subtitle
+ *              {subtitle}
+ *          Composition
+ *              {composition.description}
+ *          Tracks
+ *              {tracks}
+ * @param data 
+ * @returns 
+ */
 function createTreeMUI(data: AltGoslingSpec) {
     return (
         <TreeView
@@ -79,7 +289,22 @@ function createTreeMUI(data: AltGoslingSpec) {
 // }
 
 
-
+/**
+ * 
+ * 
+ * Structure 
+ * 
+ * Track: {position}
+ *      Description:
+ *          Title
+ *          Position
+ *          Chart Type
+ *          Appearance
+ *          Track Data Stats
+ * 
+ * @param t 
+ * @returns 
+ */
 function createTreeTrackMUI(t: AltTrack) {
     var uid = t.position.details.trackNumber as any as string;
     
@@ -174,7 +399,7 @@ function createTreeTrackAppearance(t: AltTrack, uid: string) {
     
 }
 
-function createTreeTrackDataStatistics(t: AltTrack, uid: string) {
+export function createTreeTrackDataStatistics(t: AltTrack, uid: string, dataTable = true) {
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
         return (
             (
@@ -200,36 +425,12 @@ function createTreeTrackDataStatistics(t: AltTrack, uid: string) {
                             </TreeItem>
                         ): null}
                     </TreeItem>
-                    <TreeItem key={'T-'+uid+'-details-data-details-rawdata'} nodeId={'T-'+uid+'-details-data-details-rawdata'} label={'Raw data table'}>
-                        {t.data.details.dataStatistics?.flatTileData ? (
-                            createDataTable(t.data.details.dataStatistics?.flatTileData)
-                            // <table>
-                            //     <tbody>
-                            //         <tr>
-                            //             {Object.keys(
-                            //                 (t.data.details.dataStatistics?.flatTileData[0])
-                            //             ).map((field: string, i: number) => (
-                            //                 <th key={i}>{field}</th>
-                            //             ))}
-                            //         </tr>
-                            //         {t.data.details.dataStatistics?.flatTileData.map(
-                            //             (row: Datum, i: number) => (
-                            //                 <tr key={i}>
-                            //                     {Object.keys(row).map(
-                            //                         (field: string, j: number) => (
-                            //                             <td key={j}>
-                            //                                 {row[field]?.toString()}
-                            //                             </td>
-                            //                         )
-                            //                     )}
-                            //                 </tr>
-                            //             )
-                            //         )}
-                            //     </tbody>
-                            // </table>
-                            
-                        ): null}       
-                    </TreeItem>
+                    {dataTable? (
+                        <TreeItem key={'T-'+uid+'-details-data-details-rawdata'} nodeId={'T-'+uid+'-details-data-details-rawdata'} label={'Raw data table'}>
+                            {t.data.details.dataStatistics?.flatTileData ? (
+                                createDataTable(t.data.details.dataStatistics?.flatTileData)
+                            ): null}       
+                        </TreeItem>): null}
                 </TreeItem>
             )
         )
