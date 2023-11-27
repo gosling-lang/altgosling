@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import gosling, { GoslingComponent } from 'gosling.js';
 import { AltGoslingComponent } from '../src/AltGoslingComponent';
 import type { Datum, GoslingSpec } from 'gosling.js/dist/src/gosling-schema';
-import type { AltGoslingSpec, PreviewAlt } from '../src/schema/alt-gosling-schema';
+import type { AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics } from '../src/schema/alt-gosling-schema';
 import './Demo.css';
 import { bar } from './examples/bar';
 import { visualEncoding } from './examples/visualEncoding';
@@ -11,7 +11,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 import { getAlt, updateAlt } from '../src/alt-gosling-model';
-import { renderAltTree } from '../src/render';
+import { renderAltTree, renderDataPanel } from '../src/render';
 
 function Demo() {
     // spec
@@ -22,6 +22,8 @@ function Demo() {
     // // alt
     const previewAlt = useRef<PreviewAlt[]>([]);
     const [selectedPreviewAlt, setSelectedPreviewAlt] = useState<number>(0);
+
+    const [previewDataPanel, setPreviewDataPanel] = useState<[AltTrack, AltDataStatistics]>();
 
     useEffect(() => {
         previewAlt.current = [];
@@ -57,6 +59,8 @@ function Demo() {
             // get latest AltGoslingSpec
             const updatedAlt = updateAlt(previewAlt.current[selectedPreviewAlt].data, data.id, data.data)
             updateDisplay(updatedAlt);
+            
+            setPreviewDataPanel([updatedAlt.tracks[0], updatedAlt.tracks[0].data.details.dataStatistics]);
         });
     }
 
@@ -90,6 +94,8 @@ function Demo() {
         </div>
     );
 
+
+    
   
 
     return (
@@ -97,7 +103,7 @@ function Demo() {
             <div className='demo'>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={6}>
                         {goslingSpec ? 
                             <GoslingComponent ref={gosRef} spec={goslingSpec} /> 
                         : null}
@@ -106,6 +112,10 @@ function Demo() {
                     <Grid item xs={12}>
                         Test
                         {altComponent}
+                    </Grid> */}
+
+                    <Grid item xs={12}>
+                        {previewDataPanel ? renderDataPanel(previewDataPanel[0], previewDataPanel[1]) : null}
                     </Grid>
 
                 </Grid>
