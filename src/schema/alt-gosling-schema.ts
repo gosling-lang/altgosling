@@ -1,4 +1,4 @@
-import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, Datum } from 'gosling.js/dist/src/gosling-schema';
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, Datum, GenomicPosition } from 'gosling.js/dist/src/gosling-schema';
 
 export type AltCounter = {
     nTracks: number;
@@ -143,6 +143,8 @@ export interface AltDataStatistics {
     flatTileData: Datum[];
     genomicMin?: number;
     genomicMax?: number;
+    genomicMinRel?: GenomicPosition;
+    genomicMaxRel?: GenomicPosition;
     valueMin?: number;
     valueMax?: number;
     valueMinGenomic?: number[];

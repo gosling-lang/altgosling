@@ -195,108 +195,18 @@ function Demo() {
   //   }
   // }, [goslingSpec]);
 
-  
-  useEffect(() => {
-    if (gosRef.current) {
-        gosRef.current.api.subscribe('rawdata', (type, data) => {
-        console.log('rawdata', data);
-        });
-        // gosRef.current.api.zoomTo('bam-1', `chr${data.data.chr1}:${data.data.start1}-${data.data.end1}`, 2000);
-        // gosRef.current.api.zoomTo('bam-2', `chr${data.data.chr2}:${data.data.start2}-${data.data.end2}`, 2000);
-        // console.log('click', data.data);
-        // TODO: show messages on the right-bottom of the editor
-        // gosRef.current.api.subscribe('mouseOver', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicPosition, eventData.data);
-        //     // setMouseEventInfo({ type: 'mouseOver', data: eventData.data, position: eventData.genomicPosition });
-        // });
-        // gosRef.current.api.subscribe('click', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicPosition, eventData.data);
-        //     // setMouseEventInfo({ type: 'click', data: eventData.data, position: eventData.genomicPosition });
-        // });
-        // Range Select API
-        // gosRef.current.api.subscribe('rangeSelect', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicRange, eventData.data);
-        // });
-        // Mouse click on a track
-        // gosRef.current.api.subscribe('trackClick', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.spec, eventData.shape);
-        // });
-        // Location API
-        // gosRef.current.api.subscribe('location', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicRange);
-        // New Track
-        // gosRef.current.api.subscribe('onNewTrack', (type, eventData) => {
-        //     console.warn(type, eventData);
-        // });
-        // New View
-        // gosRef.current.api.subscribe('onNewView', (type, eventData) => {
-        //     console.warn(type, eventData);
-        // });
-        // specProcessed
-        gosRef.current.api.subscribe('specProcessed', (type, eventData) => {
-            console.warn(type, eventData);
-        });
+  if (gosRef.current) {
+      //rawData
+      const currentRef = gosRef.current;
+      currentRef.api.subscribe("rawData", (type, data) => {
+        console.log("rawData", data);
+      });
+      // specProcessed
+      currentRef.api.subscribe("specProcessed", (type, data) => {
+        console.log("specProcessed", data);
+      });
     }
-    return () => {
-        // gosRef.current?.api.unsubscribe('mouseOver');
-        // gosRef.current?.api.unsubscribe('click');
-        // gosRef.current?.api.unsubscribe('rangeSelect');
-        // gosRef.current?.api.unsubscribe('trackClick');
-        // gosRef.current?.api.unsubscribe('location');
-        gosRef.current?.api.unsubscribe('rawData');
-        gosRef.current?.api.unsubscribe('specProcessed');
-    };
-}, [gosRef.current]);
 
-  useEffect(() => {
-    if (gosRef.current) {
-        // gosRef.current.api.subscribe('rawdata', (type, data) => {
-        // console.log('rawdata', data);
-        // gosRef.current.api.zoomTo('bam-1', `chr${data.data.chr1}:${data.data.start1}-${data.data.end1}`, 2000);
-        // gosRef.current.api.zoomTo('bam-2', `chr${data.data.chr2}:${data.data.start2}-${data.data.end2}`, 2000);
-        // console.log('click', data.data);
-        // TODO: show messages on the right-bottom of the editor
-        // gosRef.current.api.subscribe('mouseOver', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicPosition, eventData.data);
-        //     // setMouseEventInfo({ type: 'mouseOver', data: eventData.data, position: eventData.genomicPosition });
-        // });
-        // gosRef.current.api.subscribe('click', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicPosition, eventData.data);
-        //     // setMouseEventInfo({ type: 'click', data: eventData.data, position: eventData.genomicPosition });
-        // });
-        // Range Select API
-        // gosRef.current.api.subscribe('rangeSelect', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicRange, eventData.data);
-        // });
-        // Mouse click on a track
-        // gosRef.current.api.subscribe('trackClick', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.spec, eventData.shape);
-        // });
-        // Location API
-        // gosRef.current.api.subscribe('location', (type, eventData) => {
-        //     console.warn(type, eventData.id, eventData.genomicRange);
-        // New Track
-        // gosRef.current.api.subscribe('onNewTrack', (type, eventData) => {
-        //     console.warn(type, eventData);
-        // });
-        // New View
-        // gosRef.current.api.subscribe('onNewView', (type, eventData) => {
-        //     console.warn(type, eventData);
-        // });
-        // specProcessed
-        gosRef.current.api.subscribe('specProcessed', (type, eventData) => {
-            console.warn(type, eventData);
-        });
-    }
-    return () => {
-        // gosRef.current?.api.unsubscribe('mouseOver');
-        // gosRef.current?.api.unsubscribe('click');
-        // gosRef.current?.api.unsubscribe('rangeSelect');
-        // gosRef.current?.api.unsubscribe('trackClick');
-        // gosRef.current?.api.unsubscribe('location');
-        gosRef.current?.api.unsubscribe('specProcessed');
-    };
-}, [gosRef.current]);
 
 
 
