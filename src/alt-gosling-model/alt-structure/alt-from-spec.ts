@@ -10,8 +10,8 @@ import type {
 import { attributeExists } from '../util';
 import { determineSpecialCases } from './chart-types';
 
-import { SUPPORTED_CHANNELS } from 'gosling.js/dist/src/core/mark';
-import { getGenomicChannelFromTrack } from 'gosling.js/dist/src/gosling-schema';
+// import { SUPPORTED_CHANNELS } from 'gosling.js/dist/src/core/mark';
+// import { getGenomicChannelFromTrack } from 'gosling.js/dist/src/gosling-schema';
 // import { convertToFlatTracks } from 'gosling.js/dist/src/compiler/spec-preprocess';
 // import { spreadTracksByData } from 'gosling.js/dist/src/core/utils/overlay';
 
