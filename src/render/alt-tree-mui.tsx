@@ -50,7 +50,7 @@ function structureToTree(structure: AltNode): JSX.Element {
     );
 }
 
-function nodeToJSX(node: AltNode): JSX.Element {
+export function nodeToJSX(node: AltNode): JSX.Element {
     if (!node.children) {
         if (node.always_show) {
             node.children = 'This information cannot be displayed.';
@@ -225,7 +225,7 @@ function dataNode(t: AltTrack, uid: string): AltNode {
 }
 
 
-function dataNodeStats(dataStatistics: AltDataStatistics, uid: string): AltNode {
+export function dataNodeStats(dataStatistics: AltDataStatistics, uid: string): AltNode {
     const stats = new AltNode('Data statistics', 'T-'+uid+'-det-data-stats', false, true, 'altnodelist', [
         new AltNode('Genomic range', 'T-'+uid+'-det-data-stats-genomic', false, true, 'altnodelist', [
             new AltNode('Minimum', 'T-'+uid+'-det-data-stats-genomic-min', true, false, 'value', dataStatistics.genomicMin?.toString()),
