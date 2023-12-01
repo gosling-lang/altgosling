@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react';
+import { StrictMode, useEffect, useRef, useState } from 'react';
 import gosling, { GoslingComponent, GoslingSpec } from 'gosling.js';
 import type { Datum } from 'gosling.js/dist/src/gosling-schema';
 import type { AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics } from '../src/schema/alt-gosling-schema';
@@ -11,8 +11,13 @@ import { getAlt, updateAlt } from '../src/alt-gosling-model';
 import { renderAltTree, renderDataPanel } from '../src/render';
 
 
+
+import Button from '@mui/material/Button';
+
+
 interface AltGoslingCompProps {
     spec?: gosling.GoslingSpec,
+    theme?: 'light' | 'dark',
     test?: boolean
 }
 
@@ -20,6 +25,11 @@ interface AltGoslingCompProps {
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     console.log('first line')
     // gosling ref
+    // const gosRef = useRef<gosling.GoslingRef>(null);
+
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    const [margin, setMargin] = useState<number>(0);
+
     const gosRef = useRef<gosling.GoslingRef>(null);
 
     // alt
@@ -33,6 +43,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const [selectedAltPanel, setSelectedAltPanel] = useState<number>(0);
     // const [selectedDataPanel, setSelectedDataPanel] = useState<number>(0);
     const [selectedTestPanel, setSelectedTestPanel] = useState<number>(0);
+
+    const [specProcessed, setSpecProcessed] = useState<any>();
  
     useEffect(() => {
         AltPanels.current = [];
@@ -41,6 +53,29 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         TestPanels.current = [];
         setSelectedTestPanel(0);
     }, []);
+
+
+    useEffect(() => {
+        console.log('specP', specProcessed)
+    }, [specProcessed]);
+
+    // var spec = props.spec ? props.spec : null
+    // var margin = props.margin ? props.margin : 0
+    // ?var theme = props.theme ? props.theme : 'light'
+    const doSomething = () => {
+        console.log(theme)
+        setTheme('dark')
+        // setMargin(1)
+
+        // console.log('changed')
+        // theme = 'dark'
+        // console.log(theme)
+        
+        // margin = margin + 1
+        // console.log('margin changed')
+        // console.log(margin)
+    }
+ 
  
     function updateAltPanelDisplay(altSpec: AltGoslingSpec) {
         const NewAltPanelID = JSON.stringify(altSpec);
@@ -81,7 +116,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             });
             //rawData
             currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
-                // console.log("rawData", data);
+                console.log("rawData", data);
 
                 const NewTestPanelID = data.id;
                 const NewTestPanel = NewTestPanelID;
@@ -173,9 +208,15 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     
     return(
         <>
-            <GoslingComponent ref={gosRef} {...props}/>
+            {/* <StrictMode> */}
+                <GoslingComponent ref={gosRef} spec={props.spec} theme={theme} margin={margin} compiled={(gs,hs,specProcessed) => {setSpecProcessed(specProcessed['_processedSpec'])}}/>
+            {/* </StrictMode> */}
+            
             {/* <AltPanelComponent/> */}
             <TestPanelComponent/>
+            <div>
+                <Button variant="contained" onClick={doSomething}>Reset example</Button>
+            </div>
         </>
     )
 }
