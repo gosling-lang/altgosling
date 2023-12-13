@@ -128,9 +128,7 @@ function trackNodeSingle(t: AltTrack): Array<AltNode> {
             new AltNode('Title', 'T-1-det-title', false, true, 'value', t.title),
             chartTypeNode(t, '1'),
             appearanceNode(t, '1'),
-            new AltNode('Data', 'T-1-det-data', true, true, 'altnodelist', [
-                dataNode(t, '1')
-            ]),
+            dataNode(t, '1')
         ]),
     ]
     return(structureList);
