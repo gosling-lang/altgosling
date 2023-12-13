@@ -29,7 +29,16 @@ export function addTrackDataDescriptionsTrack(track: AltTrack) {
 
             // genomic and expression ranges
             if (track.data.details.dataStatistics?.genomicMin && track.data.details.dataStatistics?.genomicMax) {
-                desc = desc.concat('The genomic range shown is from ' + track.data.details.dataStatistics?.genomicMin + ' to ' + track.data.details.dataStatistics?.genomicMax + ' basepairs.');
+                // add here check for genrel
+                if (track.data.details.dataStatistics?.genomicMinRel?.chromosome && track.data.details.dataStatistics?.genomicMaxRel?.chromosome) {
+                    if (track.data.details.dataStatistics?.genomicMinRel?.chromosome == track.data.details.dataStatistics?.genomicMaxRel?.chromosome) {
+                        desc = desc.concat('The genomic range shown is from basepair ' + track.data.details.dataStatistics?.genomicMinRel.position + ' to ' + track.data.details.dataStatistics?.genomicMaxRel.position + ' on chromosome ' + track.data.details.dataStatistics?.genomicMinRel.chromosome + '.');
+                    } else {
+                        desc = desc.concat('The genomic range shown is from chromosome ' + track.data.details.dataStatistics?.genomicMinRel.chromosome + ' basepair'  + track.data.details.dataStatistics?.genomicMinRel.position + ' to chromosome ' + track.data.details.dataStatistics?.genomicMinRel.chromosome + ' basepair ' + track.data.details.dataStatistics?.genomicMinRel.position + '.');
+                    }
+                } else {
+                    desc = desc.concat('The genomic range shown is from ' + track.data.details.dataStatistics?.genomicMin + ' to ' + track.data.details.dataStatistics?.genomicMax + ' basepairs.');
+                }
             }
             if (track.data.details.dataStatistics?.valueMin && track.data.details.dataStatistics?.valueMax) {
                 desc = desc.concat(' The expression values range from ' + track.data.details.dataStatistics?.valueMin + ' to ' + track.data.details.dataStatistics?.valueMax + '.');
