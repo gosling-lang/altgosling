@@ -52,6 +52,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const [selectedAltPanel, setSelectedAltPanel] = useState<number>(-1);
     const [selectedDataPanel, setSelectedDataPanel] = useState<number>(-1);
     // const [selectedTestPanel, setSelectedTestPanel] = useState<number>(0);
+    const [amountOfDataFetched, setAmountOfDataFetched] = useState<number>(0);
 
     
     useEffect(() => {
@@ -91,6 +92,17 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         console.log('after updating', selectedAltPanel)
     }
 
+    function updateDataPanelDisplay(altTrack: AltTrack, altDataStatistics: AltDataStatistics) {
+        console.log('updating data panel...')
+        setAmountOfDataFetched(amountOfDataFetched + 1)
+        // check if id is the same
+        // check if range is the same
+
+        // const AltPanelsFiltered = AltPanels.current.filter(d => d.id !== NewAltPanelID);
+        // // AltPanels.current = [...DataPanelsFiltered, { ...NewAltPanel }];
+        // setSelectedDataPanel(DataPanels.current.length - 1);
+    }
+
     useEffect(() => {
         console.log('now its updated', selectedAltPanel)
     }, [selectedAltPanel])
@@ -126,9 +138,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 
                 const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data)
                 updateAltPanelDisplay(updatedAlt);
+                updateDataPanelDisplay(updatedAlt.tracks[0], updatedAlt.tracks[0].data.details.dataStatistics)
                 
-                setAltDataPanel([updatedAlt.tracks[0], updatedAlt.tracks[0].data.details.dataStatistics]);
-                console.log(updatedAlt)
             });
         }
 
@@ -140,7 +151,6 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
 
     const AltPanelComponent = () => {
-
         console.log('altcomp rerender')
         return (
             <div className="editor-alt-text-panel">    
@@ -160,6 +170,26 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             </div>
         )
     } 
+
+    const DataPanelComponent = () => {
+        console.log('datapanel rerender')
+        return (
+            <div className="editor-data-panel">    
+                {/* {selectedDataPanel >= 0 && 
+                // AltPanels.current.length > selectedAltPanel &&
+                DataPanels.current[selectedDataPanel] ? ( */}
+                    <>
+                        <div className="editor-alt-text-body">
+                            <div>
+                                {'Amount of data fetched:' + amountOfDataFetched}
+                                {/* {renderDataPanel(DataPanels.current[selectedDataPanel].altTrack, DataPanels.current[selectedDataPanel].altDataStatistics)} */}
+                            </div>
+                        </div>
+                    </>
+                {/* ) : null} */}
+            </div>
+        )
+    } 
     
 
     return(
@@ -167,6 +197,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             <GoslingComponent ref={gosRef} {...props} compiled={(gs: GoslingSpec, hs: HiGlassSpec, additionalData: any) => {setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec)}}/>
 
             <AltPanelComponent/>
+
+            <DataPanelComponent/>
             {/* <TestPanelComponent/> */}
             {/* <div>
                 <Button variant="contained" onClick={doSomething}>Reset example</Button>
