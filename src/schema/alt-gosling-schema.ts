@@ -149,6 +149,8 @@ export interface AltDataStatistics {
     valueMax?: number;
     valueMinGenomic?: number[];
     valueMaxGenomic?: number[];
+    valueMinGenomicRel?: GenomicPosition[];
+    valueMaxGenomicRel?: GenomicPosition[];
     categories?: string[];
     categoryMinMaxWG?: { [key: string]: (number | number[])[] };
     highestCategory?: string[];

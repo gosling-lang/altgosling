@@ -1,12 +1,16 @@
 //const _spec = models[0]?.spec(); _spec?.id
-import type { Assembly, Datum } from 'gosling.js/dist/src/gosling-schema';
-// import { getRelativeGenomicPosition } from 'gosling.js';
+import type { Assembly, Datum, GenomicPosition } from 'gosling.js/dist/src/gosling-schema';
+import { getRelativeGenomicPosition } from 'gosling.js/utils';
 import type { AltGoslingSpec, AltTrackDataFields, AltDataStatistics, AltTrack } from '../../schema/alt-gosling-schema';
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription } from '../alt-text/text-global';
 
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields, assembly?: Assembly): AltDataStatistics {
 
+
+    // import { getRelativeGenomicPosition } from 'gosling.js/utils';
+    // const smth = getRelativeGenomicPosition(11000)
+    // console.log('get rel', smth)
     var altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
 
     if (!dataFields) {
@@ -20,8 +24,8 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.genomicMin  = Math.min(...genomicValues);
                 altDataStatistics.genomicMax = Math.max(...genomicValues);
 
-                altDataStatistics.genomicMinRel = getRelativeGenomicPosition(altDataStatistics.genomicMin);         
-                // console.log(altDataStatistics.genomicMinRel);   
+                altDataStatistics.genomicMinRel = getRelativeGenomicPosition(altDataStatistics.genomicMin, assembly);   
+                altDataStatistics.genomicMaxRel = getRelativeGenomicPosition(altDataStatistics.genomicMax, assembly);         
             } catch {}
         }
 
@@ -40,6 +44,9 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
             try {
                 altDataStatistics.valueMinGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMin).map(d => d[genomicField]) as unknown as number[]);
                 altDataStatistics.valueMaxGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMax).map(d => d[genomicField]) as unknown as number[]);
+
+                altDataStatistics.valueMinGenomicRel = altDataStatistics.valueMinGenomic.map(d => getRelativeGenomicPosition(d, assembly));
+                altDataStatistics.valueMaxGenomicRel = altDataStatistics.valueMaxGenomic.map(d => getRelativeGenomicPosition(d, assembly));
             } catch {}
         }
     
