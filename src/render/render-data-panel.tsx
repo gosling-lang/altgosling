@@ -3,7 +3,7 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import { AltTrack, AltDataStatistics, AltTrackSingle, AltTrackOverlaidByMark } from "../schema/alt-gosling-schema";
+import { AltTrack, AltDataStatistics, AltTrackSingle, AltTrackOverlaidByMark } from '../schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
 import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
 

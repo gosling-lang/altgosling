@@ -1,4 +1,4 @@
-import type { Datum } from 'gosling.js/dist/src/gosling-schema';
+import type { Datum } from '../schema/gosling.schema';
 import { Cell, Column, Row, Table, TableBody, TableHeader } from 'react-aria-components';
 
 export function createDataTable(flatTileData: Datum[]) {

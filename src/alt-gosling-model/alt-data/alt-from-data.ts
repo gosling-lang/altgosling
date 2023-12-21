@@ -1,16 +1,11 @@
 //const _spec = models[0]?.spec(); _spec?.id
-import type { Assembly, Datum, GenomicPosition } from 'gosling.js/dist/src/gosling-schema';
+import type { Assembly, Datum, GenomicPosition } from '../../schema/gosling.schema';
 import { getRelativeGenomicPosition } from 'gosling.js/utils';
 import type { AltGoslingSpec, AltTrackDataFields, AltDataStatistics, AltTrack } from '../../schema/alt-gosling-schema';
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription } from '../alt-text/text-global';
 
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields, assembly?: Assembly): AltDataStatistics {
-
-
-    // import { getRelativeGenomicPosition } from 'gosling.js/utils';
-    // const smth = getRelativeGenomicPosition(11000)
-    // console.log('get rel', smth)
     var altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
 
     if (!dataFields) {
@@ -121,12 +116,12 @@ export function altUpdateSpecWithData(
 }
 
 
-export function altCreateDataPanel(
-    track: AltTrack,
-    altDataStatistics: AltDataStatistics, 
-) {
+// export function altCreateDataPanel(
+//     track: AltTrack,
+//     altDataStatistics: AltDataStatistics, 
+// ) {
 
-}
+// }
 
 
 

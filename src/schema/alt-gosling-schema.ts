@@ -1,4 +1,4 @@
-import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, Datum, GenomicPosition } from 'gosling.js/dist/src/gosling-schema';
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, Datum, GenomicPosition } from './gosling.schema';
 
 export type AltCounter = {
     nTracks: number;

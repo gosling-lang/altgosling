@@ -29,7 +29,8 @@ export function addTrackDataDescriptionsTrack(track: AltTrack) {
 
             // genomic and expression ranges
             if (track.data.details.dataStatistics?.genomicMin && track.data.details.dataStatistics?.genomicMax) {
-                // add here check for genrel
+                // check if we have the relative positions
+                // if chromosome is unknown, we can just default to the absolute positions
                 if (track.data.details.dataStatistics?.genomicMinRel?.chromosome && track.data.details.dataStatistics?.genomicMaxRel?.chromosome) {
                     if (track.data.details.dataStatistics?.genomicMinRel?.chromosome == track.data.details.dataStatistics?.genomicMaxRel?.chromosome) {
                         desc = desc.concat('The genomic range shown is from basepair ' + track.data.details.dataStatistics?.genomicMinRel.position + ' to ' + track.data.details.dataStatistics?.genomicMaxRel.position + ' on chromosome ' + track.data.details.dataStatistics?.genomicMinRel.chromosome + '.');
