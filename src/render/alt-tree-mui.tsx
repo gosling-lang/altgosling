@@ -3,14 +3,14 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import type { Datum } from 'gosling.js/dist/src/gosling-schema';
+import type { Datum } from '../schema/gosling.schema';
 import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '../schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
 import { arrayToString, booleanToString } from './util';
 
 /**
  * Wrapper function to generate tree from AltGoslingSpec
- * @param {AltGoslingSpec} data AltGoslingSpec 
+ * @param {AltGoslingSpec} altSpec AltGoslingSpec 
  * @returns {JSX.Element} tree element
  */
 export function renderAltTree(altSpec: AltGoslingSpec): JSX.Element {
@@ -128,9 +128,7 @@ function trackNodeSingle(t: AltTrack): Array<AltNode> {
             new AltNode('Title', 'T-1-det-title', false, true, 'value', t.title),
             chartTypeNode(t, '1'),
             appearanceNode(t, '1'),
-            new AltNode('Data', 'T-1-det-data', true, true, 'altnodelist', [
-                dataNode(t, '1')
-            ]),
+            dataNode(t, '1')
         ]),
     ]
     return(structureList);

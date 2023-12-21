@@ -1,4 +1,4 @@
-import type { GoslingSpec, Datum } from 'gosling.js/dist/src/gosling-schema';
+import type { GoslingSpec, Datum } from '../schema/gosling.schema';
 import type {  AltGoslingSpec } from '../schema/alt-gosling-schema';
 import { getAltSpec } from './alt-structure/alt-from-spec';
 import { treeText, dataText } from './alt-text';
@@ -14,7 +14,8 @@ export function getAlt(
     const altSpec = getAltSpec(specProcessed) as AltGoslingSpec;
 
     // add descriptions
-    treeText(altSpec)
+    treeText(altSpec);
+    dataText(altSpec);
 
     return altSpec;
 }
