@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { AltTrack, AltTrackSingle, AltTrackOverlaidByMark, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
 import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
@@ -10,7 +12,32 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { getRangeText } from '@alt-gosling/alt-gosling-model/alt-text/text-data';
 
 
-export function renderDataPanel(track: AltTrack, altDataStatistics: AltDataStatistics, previousAltDataStatistics?: AltDataStatistics) {
+export function renderDataPanel(
+        expandedStart: string[], setExpandedDataPanelWrapper: any, focusStart: string, setFocusDataPanelWrapper: any, 
+        track: AltTrack, altDataStatistics: AltDataStatistics, previousAltDataStatistics?: AltDataStatistics
+    ) {
+
+    /**
+     * Keep track of the expanded nodes.
+     * The tree does not depend on these component so it does not rerender every time it is updated
+     */
+    const [expanded, setExpanded] = useState<string[]>(expandedStart);
+    const [focus, setFocus] = useState<string>(focusStart);
+
+    /**
+     * Any time expanded is updated, call setExpandedDataPanelWrapper, which will update the state of the parent component
+     */
+    useEffect(() => {
+        setExpandedDataPanelWrapper(expanded);
+    }, [expanded])
+
+    /**
+     * Any time focus is updated, call setFocusDataPanelWrapper, which will update the state of the parent component
+     */
+    useEffect(() => {
+        setFocusDataPanelWrapper(focus);
+    }, [focus])
+
     // console.log(track.alttype)
     if (track.alttype == 'ov-data') {
         console.log('overlaid with data not yet supported')
@@ -50,9 +77,18 @@ export function renderDataPanel(track: AltTrack, altDataStatistics: AltDataStati
     return (
         <TreeView
             className = 'data-panel-tree'
-            aria-label="Hierarchical tree describing updated data."
+            aria-label='Hierarchical tree describing updated data.'
             defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpanded={['root']}
+            defaultExpanded={expandedStart}
+            // When nodes are collapsed, save this in the state
+            onNodeToggle={(_, nodeIds) => {
+                setExpanded(nodeIds)
+            }}
+            defaultSelected={focusStart}
+            // Save the focus state in the state
+            onNodeFocus={(_, nodeId) => {
+                setFocus(nodeId)
+            }}
             defaultExpandIcon={<ChevronRightIcon />}
         >
             <TreeItem nodeId='desc' label={desc}></TreeItem>

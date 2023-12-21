@@ -68,6 +68,15 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         focusAltPanelRef.current = newFocus
     }
 
+    const expandedDataPanelRef = useRef<string[]>(['tree'])
+    const focusDataPanelRef = useRef<string>('tree')
+    const setExpandedDataPanelWrapper = (newExpanded: string[]) => {
+        expandedDataPanelRef.current = newExpanded
+    }
+    const setFocusDataPanelWrapper = (newFocus: string) => {
+        focusDataPanelRef.current = newFocus
+    }
+
     // useEffect(() => {
     //     AltPanels.current = [];
     //     DataPanels.current = [];
@@ -101,44 +110,10 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     function updateDataPanelDisplay(altTrack: AltTrack, altDataStatistics: AltDataStatistics) {
         // console.log('updating data panel...')
-        // async, so doesn't work
-        // setAmountOfDataFetched(amountOfDataFetched + 1);
-
         const NewDataPanel = {altTrack: altTrack, altDataStatistics: altDataStatistics};
-
         setDataPanelPrevious(dataPanelCurrent);
         setDataPanelCurrent(NewDataPanel);
-        // only need to store the previous panel
-        // however, we need to change the selectedDataPanel to trigger a rerender
-        // therefore, this alternates between saving the last 2 or 3 panels
-        // const l = DataPanels.current.length
-        // if (l == 0) {
-        //     DataPanels.current = [NewDataPanel];
-        // } else if (l == 1 || l == 3) {
-        //     DataPanels.current = [DataPanels.current[l-1], NewDataPanel]
-        // } else {
-        //     DataPanels.current = [DataPanels.current[l-2], DataPanels.current[l-1], NewDataPanel]
-        // }
-        
-        // setting state is asynchronous
-        // setSelectedDataPanel(DataPanels.current.length - 1);
     }
-
-    // useEffect(() => {
-    //     // console.log('now its updated', selectedAltPanel)
-    // }, [selectedAltPanel]);
-
-    // The state of useState is updated asynchronously
-    // Therefore, we update the panel based on SelectedAltPanel
-    
-    // function updateDataPanelDisplay() {
-    //     const NewDataPanelID = 0 // change
-    //     const PreviouwDataPanelID = 0 // change
-
-    //     if (NewDataPanelID !== PreviouwDataPanelID) {
-    //         console.log('test')
-    //     }
-    // }
 
     // subscribe to the gosRef specResolved and rawData apis
     useEffect(() => {
@@ -219,12 +194,21 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     const DataPanelComponent = () => {
         // console.log('datapanel rerender')
+        let expandedStart = ['tree'];
+        if (expandedDataPanelRef.current) {
+            expandedStart = expandedDataPanelRef.current;
+        }
+        let focusStart = 'tree';
+        if (focusDataPanelRef.current) {
+            focusStart = focusDataPanelRef.current;
+        }
+
         let panel;
         if (dataPanelCurrent) {
             if (dataPanelPrevious) {
-                panel = renderDataPanel(dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, dataPanelPrevious.altDataStatistics);
+                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, dataPanelPrevious.altDataStatistics);
             } else {
-                panel = renderDataPanel(dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics);
+                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics);
             }
             return (
                 <div className="editor-data-panel">
