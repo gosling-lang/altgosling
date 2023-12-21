@@ -305,7 +305,7 @@ function addEncodingDescriptions(track: AltTrackSingle) {
             }
         }
     }
-    else {
+    else if (nominalEncodingsI.length == 1) {
         if (nominalEncodingsI.includes('row')) {
             descNominal = descNominal.concat('The chart is stratified by rows for the categories.');
             descList.push(['row', 'The chart is stratified by rows for the categories.']);
