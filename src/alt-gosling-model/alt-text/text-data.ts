@@ -71,7 +71,8 @@ export function addTrackDataDescriptionsTrack(track: AltTrack) {
             // genomic and expression ranges
             if (track.data.details.dataStatistics?.genomicMin !== undefined &&  track.data.details.dataStatistics?.genomicMax !== undefined) {
                 // get text for min and max
-                desc = desc.concat(getRangeText(track.data.details.dataStatistics.genomicMin, track.data.details.dataStatistics.genomicMax, assembly));
+                const rangeText = getRangeText(track.data.details.dataStatistics.genomicMin, track.data.details.dataStatistics.genomicMax, assembly);
+                desc = desc.concat(` The genomic range is shown from ${rangeText}.`);
             }
             if (track.data.details.dataStatistics?.valueMin !== undefined && track.data.details.dataStatistics?.valueMax !== undefined) {
                 desc = desc.concat(` The expression values range from ${track.data.details.dataStatistics?.valueMin} to ${track.data.details.dataStatistics?.valueMax}.`);
