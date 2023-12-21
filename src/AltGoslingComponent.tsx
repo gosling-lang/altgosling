@@ -55,7 +55,13 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     // const [selectedTestPanel, setSelectedTestPanel] = useState<number>(0);
     const [amountOfDataFetched, setAmountOfDataFetched] = useState<number>(0);
 
-    
+    // expansion of panels
+    const [expandedAltPanel, setExpandedAltPanel] = useState<string[]>(['tree']);
+
+    const setExpandedAltPanelWrapper = (newExpanded: string[]) => {
+        setExpandedAltPanel(newExpanded)
+    }
+
     useEffect(() => {
         AltPanels.current = [];
         DataPanels.current = [];
@@ -163,7 +169,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                         <div className="editor-alt-text-body">
                             <div>
                                 {/* {AltPanels.current[selectedAltPanel].id} */}
-                                {renderAltTree(AltPanels.current[selectedAltPanel].data)}
+                                {renderAltTree(AltPanels.current[selectedAltPanel].data, expandedAltPanel, setExpandedAltPanelWrapper)}
                             </div>
                         </div>
                     </>

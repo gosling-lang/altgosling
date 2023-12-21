@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+
 import type { Datum } from '@alt-gosling/schema/gosling.schema';
 import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
@@ -10,18 +12,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 
-
-/**
- * Wrapper function to generate tree from AltGoslingSpec
- * @param {AltGoslingSpec} altSpec AltGoslingSpec
- * @returns {JSX.Element} tree element
- */
-export function renderAltTree(altSpec: AltGoslingSpec): JSX.Element {
-    const structure = createAltNodes(altSpec);
-    return structureToTree(structure);
-}
-
-
+/* -------------------- NODE CLASS -------------------- */
 class AltNode {
     name: string;
     key: string;
@@ -40,19 +31,85 @@ class AltNode {
     }
 }
 
-function structureToTree(structure: AltNode): JSX.Element {
+/* ------------------------------ MAIN RENDERER ------------------------------ */
+/**
+ * Wrapper function to generate tree from AltGoslingSpec
+ * @param altSpec AltGoslingSpec
+ * @param expandedStart List of node names to be expanded when the tree is made
+ * @param setExpandedAltPanelWrapper Function to edit the expanded state of parent component
+ * @returns MUI TreeView
+ */
+export const renderAltTree = (altSpec: AltGoslingSpec, expandedStart: string[], setExpandedAltPanelWrapper: any) => {
+    const structure = createAltNodes(altSpec);
+    return structureToTree(structure, expandedStart, setExpandedAltPanelWrapper);
+}
+
+
+/* ------------------------------ CREATING FINAL TREE ------------------------------ */
+/**
+ * Given a structure, create a MUI TreeView element
+ * @param structure AltNode of content for alt tree panel
+ * @param expandedStart List of node names to be expanded when the tree is made
+ * @param setExpandedAltPanelWrapper Function to edit the expanded state of parent component
+ * @returns MUI TreeView
+ */
+const structureToTree = (structure: AltNode, expandedStart: string[], setExpandedAltPanelWrapper: any) => {
+    /**
+     * Keep track of the expanded nodes.
+     */
+    const [expanded, setExpanded] = useState<string[]>(expandedStart);
+
+    /**
+     * Any time expanded is updated, call setExpandedAltPanelWrapper, which will update the state of the parent component
+     */
+    useEffect(() => {
+        setExpandedAltPanelWrapper(expanded);
+    }, [expanded])
+
+    /**
+     * Retrieve the tree content
+     */
     const treeContent = nodeToJSX(structure);
     return(
         <TreeView
             className = 'tree-view'
-            aria-label="Hierarchical tree describing displayed Gosling visualization."
+            aria-label='Hierarchical tree describing displayed Gosling visualization.'
             defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpanded={['tree']}
+            defaultExpanded={expandedStart}
+            // expanded={expanded}
+            // When nodes are collapsed, save this in the state
+            onNodeToggle={(event, nodeIds) => {
+                setExpanded(nodeIds)
+            }}
+            // onNodeSelect={(event, nodeId) => {
+            //     // get index of node
+            //     const index = expanded.indexOf(nodeId);
+            //     const expandedCopy = [...expanded];
+            //     if (index === -1) {
+            //         // if index = -1 -> node isn't expanded, add it to expanded
+            //         expandedCopy.push(nodeId);
+            //     } else {
+            //         // else, node is in expanded, so remove it
+            //         expandedCopy.splice(index, 1);
+            //     }
+            //     setExpanded(expandedCopy);
+            //   }}
+            // defaultExpanded={['tree']}
             defaultExpandIcon={<ChevronRightIcon />}
         >{treeContent}</TreeView>
     );
 }
 
+/**
+ * For structure of AltNodes, create TreeItems. 
+ * If AltNode is string, create TreeItem of its content. 
+ * If AltNode is altNodeList, then do the same thing for its children nodes
+ * AltNode has a parameter always_show, which dictates whether if an element has no info, 
+ * a comment that the information cannot be displayed is shown.
+ * AltNode has a parameter collapsing, indicating if node should be returned as name: info or name /n /t info
+ * @param node AltNode
+ * @returns MUI TreeItem
+ */
 export function nodeToJSX(node: AltNode): JSX.Element {
     if (!node.children) {
         if (node.always_show) {
@@ -97,6 +154,27 @@ export function nodeToJSX(node: AltNode): JSX.Element {
 }
 
 
+// /* ------------------------------ GETTING EXPANDED ------------------------------ */
+// export function getNodeNames(structure: AltNode) {
+//     // get all node names
+//     const all_nodes = [] as string[];
+//     getNodeNamesRecursive(structure, all_nodes);
+//     // filter out empty nodes
+//     all_nodes.filter(n => n !== '');
+//     return all_nodes;
+// }
+
+// function getNodeNamesRecursive(node: AltNode, all_nodes: string[]) {
+//     all_nodes.push(node.key);
+//     if (node.children_type == 'altnodelist') {
+//         for (const n of (node.children as AltNode[])) {
+//             getNodeNamesRecursive(n, all_nodes);
+//         }
+//     }
+// }
+
+
+/* ------------------------------ CREATING NODE STRUCTURE ------------------------------ */
 function createAltNodes(altSpec: AltGoslingSpec): AltNode {
     const structure = new AltNode('Automatic description', 'tree', true, true, 'altnodelist', [
         new AltNode('Alt-text', 'alt', true, true, 'value', altSpec.alt),
