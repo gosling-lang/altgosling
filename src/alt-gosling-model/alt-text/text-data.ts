@@ -3,6 +3,7 @@ import type { AltGoslingSpec, AltTrack } from '@alt-gosling/schema/alt-gosling-s
 
 import { arrayToString, chrNumberOnly } from '../util';
 
+// @ts-expect-error no ktype definition
 import { getRelativeGenomicPosition } from 'gosling.js/utils';
 
 
