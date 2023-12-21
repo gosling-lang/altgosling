@@ -10,11 +10,11 @@ import type { AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics } from './
 import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
 
+// import Button from '@mui/material/Button';
 
 
-import Button from '@mui/material/Button';
-
-
+// todo: add goslingcompprops as 1 attribute and add others for altgoslingprops e.g. padding and size
+// then if compiled in goslingcompprops is defined, raise error that this is overridden
 interface AltGoslingCompProps {
     spec?: gosling.GoslingSpec;
     padding?: number;
@@ -59,7 +59,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         AltPanels.current = [];
         DataPanels.current = [];
         // setSelectedAltPanel(-1);
-        console.log('at start', selectedAltPanel)
+        // console.log('at start', selectedAltPanel)
         // setSelectedDataPanel(0);
         // TestPanels.current = [];
         // setSelectedTestPanel(0);
@@ -67,7 +67,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
 
     useEffect(() => {
-        console.log('specP', specProcessed)
+        // console.log('specP', specProcessed)
         if (specProcessed) {
             // get AltGoslingSpec
             const altSpec = getAlt(specProcessed);
@@ -80,20 +80,20 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     }, [specProcessed]);
 
     function updateAltPanelDisplay(altSpec: AltGoslingSpec) {
-        console.log('updating alt panel...')
+        // console.log('updating alt panel...')
         const NewAltPanelID = JSON.stringify(altSpec);
         const NewAltPanel: PreviewAlt = {id: NewAltPanelID, data: altSpec};
         const AltPanelsFiltered = AltPanels.current.filter(d => d.id !== NewAltPanelID);
         AltPanels.current = [...AltPanelsFiltered, { ...NewAltPanel }];
-        console.log('cur', AltPanels.current)
-        console.log('new one', AltPanels.current.length - 1)
-        console.log('the selected', selectedAltPanel)
+        // console.log('cur', AltPanels.current)
+        // console.log('new one', AltPanels.current.length - 1)
+        // console.log('the selected', selectedAltPanel)
         setSelectedAltPanel(AltPanels.current.length - 1);
-        console.log('after updating', selectedAltPanel)
+        // console.log('after updating', selectedAltPanel)
     }
 
     function updateDataPanelDisplay(altTrack: AltTrack, altDataStatistics: AltDataStatistics) {
-        console.log('updating data panel...')
+        // console.log('updating data panel...')
         setAmountOfDataFetched(amountOfDataFetched + 1)
         // check if id is the same
         // check if range is the same
@@ -104,7 +104,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     }
 
     useEffect(() => {
-        console.log('now its updated', selectedAltPanel)
+        // console.log('now its updated', selectedAltPanel)
     }, [selectedAltPanel])
 
     // The state of useState is updated asynchronously
@@ -151,7 +151,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
 
     const AltPanelComponent = () => {
-        console.log('altcomp rerender')
+        // console.log('altcomp rerender')
         return (
             <div className="editor-alt-text-panel">    
                 {selectedAltPanel >= 0 && 
@@ -172,7 +172,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     } 
 
     const DataPanelComponent = () => {
-        console.log('datapanel rerender')
+        // console.log('datapanel rerender')
         return (
             <div className="editor-data-panel">    
                 {/* {selectedDataPanel >= 0 && 
