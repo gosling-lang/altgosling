@@ -25,8 +25,8 @@ export function addTrackDescriptions(altGoslingSpec: AltGoslingSpec) {
     if (Object.keys(altGoslingSpec.tracks).length === 1) {
         addTrackDescription(altGoslingSpec.tracks[0], false);
     } else {
-        for (const t of altGoslingSpec.tracks) {
-            addTrackDescription(t, true);
+        for (const t in Object.keys(altGoslingSpec.tracks)) {
+            addTrackDescription(altGoslingSpec.tracks[t], true);
         }
     }
 }
