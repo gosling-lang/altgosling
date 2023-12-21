@@ -1,12 +1,14 @@
 //const _spec = models[0]?.spec(); _spec?.id
-import type { Assembly, Datum, GenomicPosition } from '../../schema/gosling.schema';
-import { getRelativeGenomicPosition } from 'gosling.js/utils';
-import type { AltGoslingSpec, AltTrackDataFields, AltDataStatistics, AltTrack } from '../../schema/alt-gosling-schema';
+import type { Assembly, GenomicPosition } from '@alt-gosling/schema/gosling.schema';
+import type { Datum, AltGoslingSpec, AltTrackDataFields, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
 
+// import { getRelativeGenomicPosition } from 'gosling.js/utils';
+
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields, assembly?: Assembly): AltDataStatistics {
-    var altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
+    const altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
 
     if (!dataFields) {
         return altDataStatistics;
@@ -19,9 +21,11 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.genomicMin  = Math.min(...genomicValues);
                 altDataStatistics.genomicMax = Math.max(...genomicValues);
 
-                // altDataStatistics.genomicMinRel = getRelativeGenomicPosition(altDataStatistics.genomicMin, assembly);   
-                // altDataStatistics.genomicMaxRel = getRelativeGenomicPosition(altDataStatistics.genomicMax, assembly);         
-            } catch {}
+                // altDataStatistics.genomicMinRel = getRelativeGenomicPosition(altDataStatistics.genomicMin, assembly);
+                // altDataStatistics.genomicMaxRel = getRelativeGenomicPosition(altDataStatistics.genomicMax, assembly);
+            } catch (e) {
+                console.log(e);
+            }
         }
 
         if (dataFields.valueField !== undefined) {
@@ -30,7 +34,9 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 const valueValues = (flatTileData.map(d => d[valueField]) as unknown as number[]).filter(d => !isNaN(d));
                 altDataStatistics.valueMin = Math.min(...valueValues);
                 altDataStatistics.valueMax = Math.max(...valueValues);
-            } catch {}
+            } catch (e) {
+                console.log(e);
+            }
         }
 
         if (dataFields.genomicField !== undefined && dataFields.valueField !== undefined) {
@@ -40,9 +46,11 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.valueMinGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMin).map(d => d[genomicField]) as unknown as number[]);
                 altDataStatistics.valueMaxGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMax).map(d => d[genomicField]) as unknown as number[]);
 
-                altDataStatistics.valueMinGenomicRel = altDataStatistics.valueMinGenomic.map(d => getRelativeGenomicPosition(d, assembly));
-                altDataStatistics.valueMaxGenomicRel = altDataStatistics.valueMaxGenomic.map(d => getRelativeGenomicPosition(d, assembly));
-            } catch {}
+                // altDataStatistics.valueMinGenomicRel = altDataStatistics.valueMinGenomic.map(d => getRelativeGenomicPosition(d, assembly));
+                // altDataStatistics.valueMaxGenomicRel = altDataStatistics.valueMaxGenomic.map(d => getRelativeGenomicPosition(d, assembly));
+            } catch (e) {
+                console.log(e);
+            }
         }
     
         if (dataFields.categoryField !== undefined) {
@@ -51,21 +59,21 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
             const categoryField = dataFields.categoryField as string;
 
             try {
-                var categoryValues = flatTileData.map(d => d[categoryField]);
-                const categories = [... new Set(categoryValues)] as unknown as string[]
+                const categoryValues = flatTileData.map(d => d[categoryField]);
+                const categories = [... new Set(categoryValues)] as unknown as string[];
 
                 const categoryMinMaxWG: { [key: string]: (number | number[])[] } = {};
 
-                var highestCategory = [] as string[];
+                const highestCategory = [] as string[];
 
-                for (let category of categories) {
-                    let dataCat = flatTileData.filter(d => d[categoryField] === category);
-                    let valueValuesCat = (dataCat.map(d => d[valueField]) as unknown as number[]).filter(d => !isNaN(d));
-                    let valueMinCat = Math.min(...valueValuesCat);
-                    let valueMaxCat = Math.max(...valueValuesCat);
+                for (const category of categories) {
+                    const dataCat = flatTileData.filter(d => d[categoryField] === category);
+                    const valueValuesCat = (dataCat.map(d => d[valueField]) as unknown as number[]).filter(d => !isNaN(d));
+                    const valueMinCat = Math.min(...valueValuesCat);
+                    const valueMaxCat = Math.max(...valueValuesCat);
 
-                    let valueMinCatGenomic = (dataCat.filter(d => d[valueField] == valueMinCat).map(d => d[genomicField]) as unknown as number[])
-                    let valueMaxCatGenomic = (dataCat.filter(d => d[valueField] == valueMaxCat).map(d => d[genomicField]) as unknown as number[])
+                    const valueMinCatGenomic = (dataCat.filter(d => d[valueField] == valueMinCat).map(d => d[genomicField]) as unknown as number[]);
+                    const valueMaxCatGenomic = (dataCat.filter(d => d[valueField] == valueMaxCat).map(d => d[genomicField]) as unknown as number[]);
 
                     categoryMinMaxWG[category] = [valueMinCat, valueMinCatGenomic, valueMaxCat, valueMaxCatGenomic];
 
@@ -76,23 +84,25 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.categories = categories;
                 altDataStatistics.categoryMinMaxWG = categoryMinMaxWG;
                 altDataStatistics.highestCategory = highestCategory;
-            } catch {}
-        }   
+            } catch (e) {
+                console.log(e);
+            }
+        }
         return(altDataStatistics);
     }
 }
 
 
 export function altUpdateSpecWithData(
-    altGoslingSpec: AltGoslingSpec, 
-    id: string, 
+    altGoslingSpec: AltGoslingSpec,
+    id: string,
     flatTileData: Datum[]
 ): AltGoslingSpec {
 
-    var includePosition = altGoslingSpec.tracks.length > 1;
+    const includePosition = altGoslingSpec.tracks.length > 1;
     // get correct track index
     for (let i = 0; i < Object.keys(altGoslingSpec.tracks).length; i++) {
-        var track = altGoslingSpec.tracks[i];
+        const track = altGoslingSpec.tracks[i];
 
         let fields;
 
@@ -100,26 +110,26 @@ export function altUpdateSpecWithData(
             if (track.uid === id) {
                 // get genomic field headers for that track
                 fields = track.data.details.fields;
-            } 
+            }
             // retrieve data statistics
             const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
 
             // fill in data
             track.data.details.dataStatistics = altDataStatistics;
 
-            // update description            
+            // update description
             addTrackDataDescriptionsTrack(track);
-            addTrackDescription(track, includePosition);       
-        }     
+            addTrackDescription(track, includePosition);
+        }
     }
-    addGlobalDescription(altGoslingSpec, false)
+    addGlobalDescription(altGoslingSpec, false);
     return(altGoslingSpec);
 }
 
 
 // export function altCreateDataPanel(
 //     track: AltTrack,
-//     altDataStatistics: AltDataStatistics, 
+//     altDataStatistics: AltDataStatistics,
 // ) {
 
 // }
@@ -151,7 +161,7 @@ export function altUpdateSpecWithData(
 //             } 
 //         } else {
 //             // just get the raw data
-//         }     
+//         }    
 //     }
 
 //     return(altGoslingSpec);

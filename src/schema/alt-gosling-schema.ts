@@ -1,4 +1,12 @@
-import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, Datum, GenomicPosition } from './gosling.schema';
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation } from './gosling.schema';
+
+/**
+ * Values in the form of JSON.
+ * Same as in gosling.js
+*/
+export interface Datum {
+    [k: string]: number | string;
+}
 
 export type AltCounter = {
     nTracks: number;
@@ -27,13 +35,13 @@ export type AltEncodingSeparated = {
 
 export type EncodingDeepSingle = {
     name: keyof typeof ChannelTypes;
-    description: String;
+    description: string;
     details: ChannelDeep;
 }
 
 export type EncodingValueSingle = {
     name: keyof typeof ChannelTypes;
-    description: String;
+    description: string;
     details: ChannelValue;
 }
 
@@ -100,7 +108,7 @@ export interface AltTrackOverlaidByDataInd {
     description: string;
     charttype?: string;
     appearance: AltTrackAppearance;
-    data: AltTrackData; 
+    data: AltTrackData;
 }
 
 export interface AltTrackBase {
@@ -116,7 +124,7 @@ export interface AltTrackSingle extends AltTrackBase {
     uid: string;
     charttype?: string;
     appearance: AltTrackAppearance;
-    data: AltTrackData; 
+    data: AltTrackData;
 }
 
 export interface AltTrackOverlaidByMark extends AltTrackBase {
@@ -124,7 +132,7 @@ export interface AltTrackOverlaidByMark extends AltTrackBase {
     uid: string;
     charttype?: string[];
     appearance: AltTrackAppearanceOverlaid;
-    data: AltTrackData; 
+    data: AltTrackData;
 }
 
 export interface AltTrackOverlaidByData extends AltTrackBase {
@@ -149,8 +157,8 @@ export interface AltDataStatistics {
     valueMax?: number;
     valueMinGenomic?: number[];
     valueMaxGenomic?: number[];
-    valueMinGenomicRel?: GenomicPosition[];
-    valueMaxGenomicRel?: GenomicPosition[];
+    // valueMinGenomicRel?: GenomicPosition[];
+    // valueMaxGenomicRel?: GenomicPosition[];
     categories?: string[];
     categoryMinMaxWG?: { [key: string]: (number | number[])[] };
     highestCategory?: string[];

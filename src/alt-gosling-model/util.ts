@@ -4,9 +4,9 @@
  * @param attribute 
  * @returns true is attribute is attribute in object, false otherwise
  */
-export function attributeExists(object: any, attribute: any): Boolean {
+export function attributeExists(object: any, attribute: any): boolean {
     return(attribute in object);
-};
+}
 
 // /**
 //  * Returns the attribute in the object.
@@ -47,7 +47,7 @@ export function arrayToString(arr: string[] | number[]): string {
         return arr[0] as string;
     } else {
         return arr.slice(0, -1).join(', ') + ' and ' + arr.slice(-1);
-    } 
+    }
 }
 
 /**

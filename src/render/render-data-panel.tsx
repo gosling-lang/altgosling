@@ -1,16 +1,18 @@
+import { AltDataStatistics, AltTrackSingle, AltTrackOverlaidByMark } from '@alt-gosling/schema/alt-gosling-schema';
+import { createDataTable } from './data-table';
+import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
+
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import { AltTrack, AltDataStatistics, AltTrackSingle, AltTrackOverlaidByMark } from '../schema/alt-gosling-schema';
-import { createDataTable } from './data-table';
-import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
+
 
 
 export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, altDataStatistics: AltDataStatistics, previousAltDataStatistics?: AltDataStatistics) {
 
-    // data panel has 3 pieces: 
+    // data panel has 3 pieces:
     // - description of which track & what's different
     // ---- either 'showing track xx, bar chart' or 'genomic range changed to xxx to xxx'
     // - altDataStatistics
@@ -23,12 +25,12 @@ export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, 
     // }
 
     const dataNode = dataNodeStats(altDataStatistics, track.uid);
-    var desc;
+    let desc;
 
     if (previousAltDataStatistics) {
-        desc = 'changed'
+        desc = 'changed';
     } else {
-        desc = 'Genomic range has been changed to 0 - 132000000'
+        desc = 'Genomic range has been changed to 0 - 132000000';
     }
 
     return (
@@ -44,7 +46,7 @@ export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, 
             <TreeItem nodeId='rawData' label='Raw Data'>{createDataTable(altDataStatistics.flatTileData)}</TreeItem>
             
         </TreeView>
-    )
+    );
 
 }
 
@@ -63,21 +65,21 @@ export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, 
 //                     {createTreeItemLeaf('T-'+uid+'-details-data-desc', 'Description', t.data.description, true)}
 //                     <TreeItem key={'T-'+uid+'-details-data-details-stats'} nodeId={'T-'+uid+'-details-data-details-stats'} label={'Data statistics'}>
 //                         <TreeItem key={'T-'+uid+'-details-data-details-stats-genomic'} nodeId={'T-'+uid+'-details-data-details-stats-genomic'} label={'Genomic range'}>
-//                             {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-genomic-min', 'Minimum', t.data.details.dataStatistics?.genomicMin, false)}    
+//                             {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-genomic-min', 'Minimum', t.data.details.dataStatistics?.genomicMin, false)}
 //                             {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-genomic-max', 'Maximum', t.data.details.dataStatistics?.genomicMax, false)}
 //                         </TreeItem>
 //                         <TreeItem key={'T-'+uid+'-details-data-details-stats-value'} nodeId={'T-'+uid+'-details-data-details-stats-value'} label={'Value range'}>
 //                             <TreeItem key={'T-'+uid+'-details-data-details-stats-value-min'} nodeId={'T-'+uid+'-details-data-details-stats-value-min'} label={'Minimum: ' + t.data.details.dataStatistics?.valueMin}>
-//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-min-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMinGenomic?.toString(), false)}    
+//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-min-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMinGenomic?.toString(), false)}
 //                             </TreeItem>
 //                             <TreeItem key={'T-'+uid+'-details-data-details-stats-value-max'} nodeId={'T-'+uid+'-details-data-details-stats-value-max'} label={'Maxmimum: ' + t.data.details.dataStatistics?.valueMax}>
-//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-max-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMaxGenomic?.toString(), false)}    
+//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-max-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMaxGenomic?.toString(), false)}
 //                             </TreeItem>
 //                         </TreeItem>
 
 //                         {t.data.details.dataStatistics?.categories ? (
 //                             <TreeItem key={'T-'+uid+'-details-data-details-stats-category'} nodeId={'T-'+uid+'-details-data-details-stats-category'} label={'Categories'}>
-//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-category-list', 'Categories', arrayToString(t.data.details.dataStatistics.categories), false)}    
+//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-category-list', 'Categories', arrayToString(t.data.details.dataStatistics.categories), false)}
 //                             </TreeItem>
 //                         ): null}
 //                     </TreeItem>
@@ -109,7 +111,7 @@ export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, 
 //                             //     </tbody>
 //                             // </table>
                             
-//                         ): null}       
+//                         ): null}
 //                     </TreeItem>
 //                 </TreeItem>
 //             )

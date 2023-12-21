@@ -1,14 +1,15 @@
 
-import { StrictMode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gosling, { GoslingComponent, GoslingSpec, HiGlassSpec } from 'gosling.js';
-import type { Datum } from 'gosling.js/dist/src/gosling-schema';
-import type { AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics } from './schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+
+import { getAlt, updateAlt } from './alt-gosling-model';
+import { renderAltTree, renderDataPanel } from './render';
 
 // import Grid from '@mui/material/Grid';
 // import TextField from '@mui/material/TextField';
 
-import { getAlt, updateAlt } from './alt-gosling-model';
-import { renderAltTree, renderDataPanel } from './render';
+
 
 // import Button from '@mui/material/Button';
 
@@ -94,7 +95,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     function updateDataPanelDisplay(altTrack: AltTrack, altDataStatistics: AltDataStatistics) {
         // console.log('updating data panel...')
-        setAmountOfDataFetched(amountOfDataFetched + 1)
+        setAmountOfDataFetched(amountOfDataFetched + 1);
         // check if id is the same
         // check if range is the same
 
@@ -105,7 +106,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     useEffect(() => {
         // console.log('now its updated', selectedAltPanel)
-    }, [selectedAltPanel])
+    }, [selectedAltPanel]);
 
     // The state of useState is updated asynchronously
     // Therefore, we update the panel based on SelectedAltPanel
@@ -136,16 +137,16 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
                 // get latest AltGoslingSpec
                 
-                const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data)
+                const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data);
                 updateAltPanelDisplay(updatedAlt);
-                updateDataPanelDisplay(updatedAlt.tracks[0], updatedAlt.tracks[0].data.details.dataStatistics)
+                updateDataPanelDisplay(updatedAlt.tracks[0], updatedAlt.tracks[0].data.details.dataStatistics);
                 
             });
         }
 
         return () => {
             gosRef.current?.api.unsubscribe('rawData');
-        }
+        };
     }, [gosRef.current]);
 
 
@@ -153,8 +154,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const AltPanelComponent = () => {
         // console.log('altcomp rerender')
         return (
-            <div className="editor-alt-text-panel">    
-                {selectedAltPanel >= 0 && 
+            <div className="editor-alt-text-panel">
+                {selectedAltPanel >= 0 &&
                 // AltPanels.current.length > selectedAltPanel &&
                 AltPanels.current[selectedAltPanel] &&
                 Object.keys(AltPanels.current[selectedAltPanel].data).length > 0 ? (
@@ -168,14 +169,14 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                     </>
                 ) : null}
             </div>
-        )
-    } 
+        );
+    };
 
     const DataPanelComponent = () => {
         // console.log('datapanel rerender')
         return (
-            <div className="editor-data-panel">    
-                {/* {selectedDataPanel >= 0 && 
+            <div className="editor-data-panel">
+                {/* {selectedDataPanel >= 0 &&
                 // AltPanels.current.length > selectedAltPanel &&
                 DataPanels.current[selectedDataPanel] ? ( */}
                     <>
@@ -188,13 +189,15 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                     </>
                 {/* ) : null} */}
             </div>
-        )
-    } 
+        );
+    };
     
 
     return(
         <>
-            <GoslingComponent ref={gosRef} {...props} compiled={(gs: GoslingSpec, hs: HiGlassSpec, additionalData: any) => {setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec)}}/>
+            <GoslingComponent ref={gosRef} {...props} compiled={(gs: GoslingSpec, hs: HiGlassSpec, additionalData: any) => {
+                setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec);
+                }}/>
 
             <AltPanelComponent/>
 
@@ -204,8 +207,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 <Button variant="contained" onClick={doSomething}>Reset example</Button>
             </div> */}
         </>
-    )
-}
+    );
+};
 
 export default AltGoslingComponent;
 
@@ -336,7 +339,7 @@ export default AltGoslingComponent;
 
 
 // // i want the ref to point to goslingcomponent
-// // 
+// //
 
 // // export const AltGoslingComponent = forwardRef<GoslingRef>((props, gosRef) => {
 
@@ -378,7 +381,7 @@ export default AltGoslingComponent;
 // //     useEffect(() => {
 // //         gosApi.subscribe('rawData', (_: string, data: {id: string, data: Datum[]}) => {
 // //             console.log('Updated data was seen for', data.id);
-// //         }); 
+// //         });
 // //         // return () => {
 // //         //     gosApi.unsubscribe('rawData');
 // //         // }

@@ -1,7 +1,9 @@
 import { Assembly, GenomicPosition } from '@alt-gosling/schema/gosling.schema';
-import { getRelativeGenomicPosition } from 'gosling.js/utils';
-import type { AltGoslingSpec, AltTrack } from '../../schema/alt-gosling-schema';
+import type { AltGoslingSpec, AltTrack } from '@alt-gosling/schema/alt-gosling-schema';
+
 import { arrayToString, chrNumberOnly } from '../util';
+
+import { getRelativeGenomicPosition } from 'gosling.js/utils';
 
 
 export function addTrackDataDescriptions(altGoslingSpec: AltGoslingSpec) {
@@ -13,13 +15,13 @@ export function addTrackDataDescriptions(altGoslingSpec: AltGoslingSpec) {
 
 // used in addTrackDataDescriptions
 function addMinMaxDescription(values: number[], key: 'minimum' | 'maximum', assembly?: Assembly) {
-    var descMinMax = ''
+    let descMinMax = '';
     if (values.length === 1 ) {
         descMinMax = descMinMax.concat(` The ${key} expression is shown at ${getOnePositionText(values[0], assembly)}.`);
     } else if (values.length < 6 ) {
-        descMinMax = descMinMax.concat(` The ${key} expression is shown at absolute positions ${arrayToString(values)}.`)
+        descMinMax = descMinMax.concat(` The ${key} expression is shown at absolute positions ${arrayToString(values)}.`);
     } else {
-        descMinMax = descMinMax.concat(` The ${key} expression is shown at ${values.length} different genomic positions, the first being ${getOnePositionText(values[0], assembly)}.`)
+        descMinMax = descMinMax.concat(` The ${key} expression is shown at ${values.length} different genomic positions, the first being ${getOnePositionText(values[0], assembly)}.`);
     }
     return descMinMax;
 }
@@ -32,7 +34,7 @@ function getRelativeGenomicPositionText(p: number, assembly?: Assembly) {
 function getOnePositionText(p: number, assembly?: Assembly) {
     const pt = getRelativeGenomicPositionText(p, assembly);
     if (pt[0] !== 'unknown') {
-        return `absolute position ${pt[1]} (chromosome unknown)`
+        return `absolute position ${pt[1]} (chromosome unknown)`;
     } else {
         return `chromosome ${pt[0]} position ${pt[1]}`;
     }
@@ -44,29 +46,29 @@ function getRangeText(p1: number, p2: number, assembly?: Assembly): string {
 
     if (p1t[0] !== 'unknown' && p2t[0] !== 'unknown') {
         if (p1t == p2t) {
-            return `from position ${p1t[1]} to position ${p2t[1]} on chromosome ${p1t[0]}`
+            return `from position ${p1t[1]} to position ${p2t[1]} on chromosome ${p1t[0]}`;
         } else {
-            return `from chromosome ${p1t[0]} position ${p1t[1]} to chromosome ${p2t[0]} position ${p2t[1]}`
+            return `from chromosome ${p1t[0]} position ${p1t[1]} to chromosome ${p2t[0]} position ${p2t[1]}`;
         }
-    } 
+    }
 
     if (p1t[0] === 'unknown' && p2t[0] !== 'unknown') {
-        return `from absolute position ${p1t[1]} (chromosome unknown) to chromosome ${p2t[0]} position ${p2t[1]}`
+        return `from absolute position ${p1t[1]} (chromosome unknown) to chromosome ${p2t[0]} position ${p2t[1]}`;
     }
     
     if (p1t[0] !== 'unknown' && p2t[0] === 'unknown') {
-        return `from chromosome ${p1t[0]} position ${p1t[1]} to absolute position ${p2t[1]} (chromosome unknown)`
+        return `from chromosome ${p1t[0]} position ${p1t[1]} to absolute position ${p2t[1]} (chromosome unknown)`;
     }
 
     // if (p1t[0] === 'unknown' && p2t[0] === 'unknown') {
-    return `from absolute positions ${p1t[1]} to ${p2t[1]} (chromosome unknown)`
+    return `from absolute positions ${p1t[1]} to ${p2t[1]} (chromosome unknown)`;
     // }
 }
 
 export function addTrackDataDescriptionsTrack(track: AltTrack) {
     if (track.alttype === 'single' || track.alttype === 'ov-mark') {
         if (track.data.details.dataStatistics) {
-            var desc = '';
+            let desc = '';
             const assembly = track.appearance.details.assembly;
             // genomic and expression ranges
             if (track.data.details.dataStatistics?.genomicMin !== undefined &&  track.data.details.dataStatistics?.genomicMax !== undefined) {
@@ -95,7 +97,7 @@ export function addTrackDataDescriptionsTrack(track: AltTrack) {
                     } else {
                         desc = desc.concat(` The highest value is observed in samples ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
                     }
-                }    
+                }
                 // See if genomic positions are the same for the min and max values of each category
             }
             track.data.description = desc;

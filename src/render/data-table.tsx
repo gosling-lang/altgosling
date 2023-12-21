@@ -1,4 +1,4 @@
-import type { Datum } from '../schema/gosling.schema';
+import type { Datum } from '@alt-gosling/schema/alt-gosling-schema';
 import { Cell, Column, Row, Table, TableBody, TableHeader } from 'react-aria-components';
 
 export function createDataTable(flatTileData: Datum[]) {
@@ -16,7 +16,7 @@ export function createDataTable(flatTileData: Datum[]) {
                             ))}
                         </Row>))}
                 </TableBody>
-            </Table>  
+            </Table>
         </>
-    )
+    );
 }
