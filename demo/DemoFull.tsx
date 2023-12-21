@@ -14,7 +14,7 @@ import FormLabel from '@mui/material/FormLabel';
 
 
 function Demo() {
-    const examples = {'bar': bar, 'visualEncoding': visualEncoding}
+    const examples = {'bar': bar, 'visualEncoding': visualEncoding};
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
     const ExampleOptions = () => {
@@ -34,8 +34,8 @@ function Demo() {
                     ))}
                 </RadioGroup>
             </FormControl>
-        )
-    }
+        );
+    };
 
     return (
         <>
@@ -46,7 +46,7 @@ function Demo() {
                 <Grid item aria-label='alt-gosling component' xs={12}>
                     <AltGoslingComponent spec={examples[selectedExample]}/>
                 </Grid>
-            </Grid>         
+            </Grid>
        </>
    );
 }

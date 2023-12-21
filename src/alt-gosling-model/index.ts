@@ -9,8 +9,6 @@ import { altUpdateSpecWithData } from './alt-data/alt-from-data';
 export function getAlt(
     specProcessed: GoslingSpec,
 ): AltGoslingSpec {
-    // console.log(specProcessed)
-
     // get altSpec
     const altSpec = getAltSpec(specProcessed) as AltGoslingSpec;
 
