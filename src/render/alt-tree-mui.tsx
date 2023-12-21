@@ -219,7 +219,7 @@ function dataNode(t: AltTrack, uid: string): AltNode {
         return (new AltNode('Data', 'T-'+uid+'-det-data', true, true, 'altnodelist', [
             new AltNode('Description', 'T-'+uid+'-det-data-desc', true, true, 'value', t.data.description),
             dataNodeStats(t.data.details.dataStatistics, uid),
-            new AltNode('Raw data', 'T-'+uid+'-det-data-desc', true, true, 'rawData', t.data.details.dataStatistics?.flatTileData)
+            new AltNode('Raw data', 'T-'+uid+'-det-data-raw-data', true, true, 'rawData', t.data.details.dataStatistics?.flatTileData)
         ]));
     }
     else {
