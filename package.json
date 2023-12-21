@@ -5,8 +5,8 @@
   "homepage": "https://thomcsmits.github.io/alt-gosling/",
   "type": "module",
   "scripts": {
-    "predeploy" : "npm run build",
-    "deploy" : "gh-pages -d dist",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build-only": "vite build",
     "build": "tsc && vite build",
@@ -18,7 +18,7 @@
     "@mui/material": "^5.15.1",
     "@mui/x-tree-view": "6.0.0-beta.0",
     "gosling.js": "^0.13.2",
-    "pixi.js": "^7.3.1",
+    "pixi.js": "^6.5.10",
     "react": "^18.2.0",
     "react-aria-components": "1.0.0-beta.2",
     "react-dom": "^18.2.0"
