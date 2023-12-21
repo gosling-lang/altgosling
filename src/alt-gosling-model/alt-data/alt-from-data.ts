@@ -1,13 +1,9 @@
-//const _spec = models[0]?.spec(); _spec?.id
-import type { Assembly, GenomicPosition } from '@alt-gosling/schema/gosling.schema';
 import type { Datum, AltGoslingSpec, AltTrackDataFields, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
 
-// import { getRelativeGenomicPosition } from 'gosling.js/utils';
-
-export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields, assembly?: Assembly): AltDataStatistics {
+export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields): AltDataStatistics {
     const altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
 
     if (!dataFields) {
@@ -20,9 +16,6 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 const genomicValues = (flatTileData.map(d => d[genomicField]) as unknown as number[]).filter(d => !isNaN(d));
                 altDataStatistics.genomicMin  = Math.min(...genomicValues);
                 altDataStatistics.genomicMax = Math.max(...genomicValues);
-
-                // altDataStatistics.genomicMinRel = getRelativeGenomicPosition(altDataStatistics.genomicMin, assembly);
-                // altDataStatistics.genomicMaxRel = getRelativeGenomicPosition(altDataStatistics.genomicMax, assembly);
             } catch (e) {
                 console.log(e);
             }
@@ -45,9 +38,6 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
             try {
                 altDataStatistics.valueMinGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMin).map(d => d[genomicField]) as unknown as number[]);
                 altDataStatistics.valueMaxGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMax).map(d => d[genomicField]) as unknown as number[]);
-
-                // altDataStatistics.valueMinGenomicRel = altDataStatistics.valueMinGenomic.map(d => getRelativeGenomicPosition(d, assembly));
-                // altDataStatistics.valueMaxGenomicRel = altDataStatistics.valueMaxGenomic.map(d => getRelativeGenomicPosition(d, assembly));
             } catch (e) {
                 console.log(e);
             }
@@ -125,46 +115,3 @@ export function altUpdateSpecWithData(
     addGlobalDescription(altGoslingSpec, false);
     return(altGoslingSpec);
 }
-
-
-// export function altCreateDataPanel(
-//     track: AltTrack,
-//     altDataStatistics: AltDataStatistics,
-// ) {
-
-// }
-
-
-
-// export function altCreateDataPanel(
-//     altGoslingSpec: AltGoslingSpec, 
-//     id: string, 
-//     flatTileData: Datum[]
-// ): AltDataStatistics {
-
-//     var includePosition = altGoslingSpec.tracks.length > 1;
-//     // get correct track index
-//     for (let i = 0; i < Object.keys(altGoslingSpec.tracks).length; i++) {
-//         var track = altGoslingSpec.tracks[i];
-
-//         if (track.alttype === 'single' || track.alttype === 'ov-mark') {
-//             if (track.uid === id) {
-
-//                 // get genomic field headers for that track
-//                 const fields = track.data.details.fields;
-    
-//                 // retrieve data statistics
-//                 const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
-
-                
-    
-//             } 
-//         } else {
-//             // just get the raw data
-//         }    
-//     }
-
-//     return(altGoslingSpec);
-// }
-
-

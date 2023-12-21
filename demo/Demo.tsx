@@ -4,7 +4,6 @@ import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
 import { bar } from './examples/bar';
 
-
 function Demo() {
     const goslingSpec = bar as gosling.GoslingSpec;
     return (

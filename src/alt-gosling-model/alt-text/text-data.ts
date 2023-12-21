@@ -40,7 +40,7 @@ function getOnePositionText(p: number, assembly?: Assembly) {
     }
 }
 
-function getRangeText(p1: number, p2: number, assembly?: Assembly): string {
+export function getRangeText(p1: number, p2: number, assembly?: Assembly): string {
     const p1t = getRelativeGenomicPositionText(p1, assembly);
     const p2t = getRelativeGenomicPositionText(p2, assembly);
 
