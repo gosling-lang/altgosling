@@ -6,7 +6,7 @@ import type { Datum, AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics, Al
 import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
 
-// import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid';
 // import TextField from '@mui/material/TextField';
 
 
@@ -214,7 +214,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 <div className="editor-data-panel">
                     <div className="editor-alt-text-body">
                         <div>
-                            {'----------------------------------------------'}
+                            {/* {'----------------------------------------------'} */}
                             {/* {'Amount of data fetched:' + amountOfDataFetched} */}
                             {panel}
                         </div>
@@ -229,13 +229,19 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     return(
         <>
-            <GoslingComponent ref={gosRef} {...props} compiled={(gs: GoslingSpec, hs: HiGlassSpec, additionalData: any) => {
-                setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec);
-                }}/>
-
-            <AltPanelComponent/>
-
-            <DataPanelComponent/>
+            <Grid container rowSpacing={3} columnSpacing={{xs: 3, sm: 12}}>
+                <Grid item xs={12}>
+                    <GoslingComponent ref={gosRef} {...props} compiled={(gs: GoslingSpec, hs: HiGlassSpec, additionalData: any) => {
+                        setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec);
+                        }}/>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <AltPanelComponent/>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <DataPanelComponent/>
+                </Grid>
+            </Grid>
         </>
     );
 };
