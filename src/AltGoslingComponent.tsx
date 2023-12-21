@@ -55,11 +55,14 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     // const [selectedTestPanel, setSelectedTestPanel] = useState<number>(0);
     const [amountOfDataFetched, setAmountOfDataFetched] = useState<number>(0);
 
-    // expansion of panels
-    const [expandedAltPanel, setExpandedAltPanel] = useState<string[]>(['tree']);
-
+    // expansion and focus of panel, using refs to avoid updating the state
+    const expandedAltPanelRef = useRef<string[]>(['tree'])
+    const focusAltPanelRef = useRef<string>('tree')
     const setExpandedAltPanelWrapper = (newExpanded: string[]) => {
-        setExpandedAltPanel(newExpanded)
+        expandedAltPanelRef.current = newExpanded
+    }
+    const setFocusAltPanelWrapper = (newFocus: string) => {
+        focusAltPanelRef.current = newFocus
     }
 
     useEffect(() => {
@@ -159,6 +162,14 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     const AltPanelComponent = () => {
         // console.log('altcomp rerender')
+        let expandedStart = ['tree'];
+        if (expandedAltPanelRef.current) {
+            expandedStart = expandedAltPanelRef.current;
+        }
+        let focusStart = 'tree';
+        if (focusAltPanelRef.current) {
+            focusStart = focusAltPanelRef.current;
+        }
         return (
             <div className="editor-alt-text-panel">
                 {selectedAltPanel >= 0 &&
@@ -169,7 +180,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                         <div className="editor-alt-text-body">
                             <div>
                                 {/* {AltPanels.current[selectedAltPanel].id} */}
-                                {renderAltTree(AltPanels.current[selectedAltPanel].data, expandedAltPanel, setExpandedAltPanelWrapper)}
+                                {renderAltTree(AltPanels.current[selectedAltPanel].data, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper)}
                             </div>
                         </div>
                     </>

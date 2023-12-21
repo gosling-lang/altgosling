@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { Datum } from '@alt-gosling/schema/gosling.schema';
 import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
@@ -39,9 +39,9 @@ class AltNode {
  * @param setExpandedAltPanelWrapper Function to edit the expanded state of parent component
  * @returns MUI TreeView
  */
-export const renderAltTree = (altSpec: AltGoslingSpec, expandedStart: string[], setExpandedAltPanelWrapper: any) => {
+export const renderAltTree = (altSpec: AltGoslingSpec, expandedStart: string[], setExpandedAltPanelWrapper: any, focusStart: string, setFocusAltPanelWrapper: any) => {
     const structure = createAltNodes(altSpec);
-    return structureToTree(structure, expandedStart, setExpandedAltPanelWrapper);
+    return structureToTree(structure, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper);
 }
 
 
@@ -53,11 +53,13 @@ export const renderAltTree = (altSpec: AltGoslingSpec, expandedStart: string[], 
  * @param setExpandedAltPanelWrapper Function to edit the expanded state of parent component
  * @returns MUI TreeView
  */
-const structureToTree = (structure: AltNode, expandedStart: string[], setExpandedAltPanelWrapper: any) => {
+const structureToTree = (structure: AltNode, expandedStart: string[], setExpandedAltPanelWrapper: any, focusStart: string, setFocusAltPanelWrapper: any) => {
     /**
      * Keep track of the expanded nodes.
+     * The tree does not depend on these component so it does not rerender every time it is updated
      */
     const [expanded, setExpanded] = useState<string[]>(expandedStart);
+    const [focus, setFocus] = useState<string>(focusStart);
 
     /**
      * Any time expanded is updated, call setExpandedAltPanelWrapper, which will update the state of the parent component
@@ -65,6 +67,14 @@ const structureToTree = (structure: AltNode, expandedStart: string[], setExpande
     useEffect(() => {
         setExpandedAltPanelWrapper(expanded);
     }, [expanded])
+
+    /**
+     * Any time focus is updated, call setFocusAltPanelWrapper, which will update the state of the parent component
+     */
+    useEffect(() => {
+        setFocusAltPanelWrapper(focus);
+    }, [focus])
+    
 
     /**
      * Retrieve the tree content
@@ -76,25 +86,15 @@ const structureToTree = (structure: AltNode, expandedStart: string[], setExpande
             aria-label='Hierarchical tree describing displayed Gosling visualization.'
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpanded={expandedStart}
-            // expanded={expanded}
             // When nodes are collapsed, save this in the state
-            onNodeToggle={(event, nodeIds) => {
+            onNodeToggle={(_, nodeIds) => {
                 setExpanded(nodeIds)
             }}
-            // onNodeSelect={(event, nodeId) => {
-            //     // get index of node
-            //     const index = expanded.indexOf(nodeId);
-            //     const expandedCopy = [...expanded];
-            //     if (index === -1) {
-            //         // if index = -1 -> node isn't expanded, add it to expanded
-            //         expandedCopy.push(nodeId);
-            //     } else {
-            //         // else, node is in expanded, so remove it
-            //         expandedCopy.splice(index, 1);
-            //     }
-            //     setExpanded(expandedCopy);
-            //   }}
-            // defaultExpanded={['tree']}
+            defaultSelected={focusStart}
+            // Save the focus state in the state
+            onNodeFocus={(_, nodeId) => {
+                setFocus(nodeId)
+            }}
             defaultExpandIcon={<ChevronRightIcon />}
         >{treeContent}</TreeView>
     );
