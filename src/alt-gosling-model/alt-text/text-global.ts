@@ -1,12 +1,8 @@
 import type { AltGoslingSpec, AltTrack } from '../../schema/alt-gosling-schema';
 
-export function addGlobalDescription(altGoslingSpec: AltGoslingSpec) {
-    if (altGoslingSpec.tracks.length === 1) {
-        addTrackDescription(altGoslingSpec.tracks[0], false)
-    } else if (altGoslingSpec.tracks.length > 1) {
-        for (let t of altGoslingSpec.tracks) {
-            addTrackDescription(t, true)
-        }
+export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: boolean) {
+    if (update !== false) {
+        addTrackDescriptions(altGoslingSpec);
     }
 
     altGoslingSpec.alt = 'Gosling visualization.';
@@ -24,6 +20,15 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec) {
     }    
 }
 
+export function addTrackDescriptions(altGoslingSpec: AltGoslingSpec) {
+    if (Object.keys(altGoslingSpec.tracks).length === 1) {
+        addTrackDescription(altGoslingSpec.tracks[0], false)
+    } else {
+        for (let t of altGoslingSpec.tracks) {
+            addTrackDescription(t, true)
+        }
+    }
+}
 
 export function addTrackDescription(t: AltTrack, includePosition: boolean) {
     var desc = '';

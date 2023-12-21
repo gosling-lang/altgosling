@@ -3,7 +3,7 @@ import type { Assembly, Datum, GenomicPosition } from '../../schema/gosling.sche
 import { getRelativeGenomicPosition } from 'gosling.js/utils';
 import type { AltGoslingSpec, AltTrackDataFields, AltDataStatistics, AltTrack } from '../../schema/alt-gosling-schema';
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
-import { addTrackDescription } from '../alt-text/text-global';
+import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
 
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields, assembly?: Assembly): AltDataStatistics {
     var altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
@@ -112,6 +112,7 @@ export function altUpdateSpecWithData(
             addTrackDescription(track, includePosition);       
         }     
     }
+    addGlobalDescription(altGoslingSpec, false)
     return(altGoslingSpec);
 }
 
