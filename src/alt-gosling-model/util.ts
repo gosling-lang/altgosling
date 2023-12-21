@@ -1,12 +1,12 @@
-// /**
-//  * Returns whether the attribute is an attribute of the object
-//  * @param object 
-//  * @param attribute 
-//  * @returns true is attribute is attribute in object, false otherwise
-//  */
-// export function attributeExists(object: any, attribute: any): Boolean {
-//     return(attribute in object);
-// };
+/**
+ * Returns whether the attribute is an attribute of the object
+ * @param object 
+ * @param attribute 
+ * @returns true is attribute is attribute in object, false otherwise
+ */
+export function attributeExists(object: any, attribute: any): Boolean {
+    return(attribute in object);
+};
 
 // /**
 //  * Returns the attribute in the object.
