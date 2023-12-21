@@ -9,6 +9,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
 
     if (altGoslingSpec.composition.nTracks === 1) {
         altGoslingSpec.longDescription = altGoslingSpec.tracks[0].description;
+        altGoslingSpec.alt = altGoslingSpec.longDescription.split('.')[0];
     } else if (altGoslingSpec.composition.nTracks === 2) {
         var desc = '';
         desc = desc.concat('Figure with two charts.');
@@ -17,7 +18,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         var desc = '';
         desc = desc.concat('Figure with ' + altGoslingSpec.composition.nTracks + ' individual charts.');
         altGoslingSpec.longDescription = desc;
-    }    
+    }
 }
 
 export function addTrackDescriptions(altGoslingSpec: AltGoslingSpec) {
