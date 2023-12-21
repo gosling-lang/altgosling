@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from 'react';
-import gosling, { GoslingComponent, GoslingSpec, HiGlassSpec } from 'gosling.js';
+import { GoslingComponent, type GoslingRef, type GoslingSpec, type HiGlassSpec, type Theme, type TemplateTrackDef } from 'gosling.js';
 import type { Datum, AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { getAlt, updateAlt } from './alt-gosling-model';
@@ -11,14 +11,15 @@ import Grid from '@mui/material/Grid';
 // todo: add goslingcompprops as 1 attribute and add others for altgoslingprops e.g. padding and size
 // then if compiled in goslingcompprops is defined, raise error that this is overridden
 interface AltGoslingCompProps {
-    spec?: gosling.GoslingSpec;
+    spec?: GoslingSpec;
     padding?: number;
     margin?: number;
     border?: string;
     id?: string;
     className?: string;
-    theme?: gosling.Theme;
-    templates?: gosling.TemplateTrackDef[];
+    theme?: Theme;
+    templates?: TemplateTrackDef[];
+    // @ts-expect-error `gosling.UrlToFetchOptions` does not exist I think
     urlToFetchOptions?: gosling.UrlToFetchOptions;
     experimental?: {
         reactive?: boolean;
@@ -32,7 +33,7 @@ interface DataPanelInformation {
 }
 
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
-    const gosRef = useRef<gosling.GoslingRef>(null);
+    const gosRef = useRef<GoslingRef>(null);
 
     const [specProcessed, setSpecProcessed] = useState<any>();
 
