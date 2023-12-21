@@ -1,4 +1,4 @@
-import { AltDataStatistics, AltTrackSingle, AltTrackOverlaidByMark } from '@alt-gosling/schema/alt-gosling-schema';
+import { AltTrack, AltTrackSingle, AltTrackOverlaidByMark, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
 import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
 
@@ -7,11 +7,15 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
+import { getRangeText } from '@alt-gosling/alt-gosling-model/alt-text/text-data';
 
 
-
-export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, altDataStatistics: AltDataStatistics, previousAltDataStatistics?: AltDataStatistics) {
-
+export function renderDataPanel(track: AltTrack, altDataStatistics: AltDataStatistics, previousAltDataStatistics?: AltDataStatistics) {
+    // console.log(track.alttype)
+    if (track.alttype == 'ov-data') {
+        console.log('overlaid with data not yet supported')
+        return <></>
+    }
     // data panel has 3 pieces:
     // - description of which track & what's different
     // ---- either 'showing track xx, bar chart' or 'genomic range changed to xxx to xxx'
@@ -23,15 +27,25 @@ export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, 
     // } else {
     //     renderNewDataPanel(altDataStatistics)
     // }
-
-    const dataNode = dataNodeStats(altDataStatistics, track.uid);
     let desc;
 
     if (previousAltDataStatistics) {
-        desc = 'changed';
+        // check if the ids are the same
+        if (previousAltDataStatistics.id == altDataStatistics.id) {
+            if (altDataStatistics.genomicMin && altDataStatistics.genomicMax)
+            desc = `Genomic range has been changed, now showing ${getRangeText(altDataStatistics.genomicMin, altDataStatistics.genomicMax)}.`
+        } else {
+            desc = `Showing track ${altDataStatistics.id}`;
+        }
     } else {
-        desc = 'Genomic range has been changed to 0 - 132000000';
+        desc = `Showing track ${altDataStatistics.id}`;
     }
+
+    // console.log('desc data panel', desc)
+
+    const dataNode = dataNodeStats(altDataStatistics, track.uid);
+
+    const dataTable = createDataTable(altDataStatistics.flatTileData);
 
     return (
         <TreeView
@@ -43,7 +57,7 @@ export function renderDataPanel(track: AltTrackSingle | AltTrackOverlaidByMark, 
         >
             <TreeItem nodeId='desc' label={desc}></TreeItem>
             {nodeToJSX(dataNode)}
-            <TreeItem nodeId='rawData' label='Raw Data'>{createDataTable(altDataStatistics.flatTileData)}</TreeItem>
+            <TreeItem nodeId='rawData' label='Raw Data'>{dataTable}</TreeItem>
             
         </TreeView>
     );

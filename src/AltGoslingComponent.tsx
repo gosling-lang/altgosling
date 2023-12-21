@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import gosling, { GoslingComponent, GoslingSpec, HiGlassSpec } from 'gosling.js';
-import type { Datum, AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
@@ -52,7 +52,6 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     const [selectedAltPanel, setSelectedAltPanel] = useState<number>(-1);
     const [selectedDataPanel, setSelectedDataPanel] = useState<number>(-1);
-    // const [selectedTestPanel, setSelectedTestPanel] = useState<number>(0);
     const [amountOfDataFetched, setAmountOfDataFetched] = useState<number>(0);
 
     // expansion and focus of panel, using refs to avoid updating the state
@@ -65,15 +64,10 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         focusAltPanelRef.current = newFocus
     }
 
-    useEffect(() => {
-        AltPanels.current = [];
-        DataPanels.current = [];
-        // setSelectedAltPanel(-1);
-        // console.log('at start', selectedAltPanel)
-        // setSelectedDataPanel(0);
-        // TestPanels.current = [];
-        // setSelectedTestPanel(0);
-    }, []);
+    // useEffect(() => {
+    //     AltPanels.current = [];
+    //     DataPanels.current = [];
+    // }, []);
 
 
     useEffect(() => {
@@ -86,7 +80,6 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             updateAltPanelDisplay(altSpec);
             // console.log(AltPanels.current);
         }
-        
     }, [specProcessed]);
 
     function updateAltPanelDisplay(altSpec: AltGoslingSpec) {
@@ -104,13 +97,25 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     function updateDataPanelDisplay(altTrack: AltTrack, altDataStatistics: AltDataStatistics) {
         // console.log('updating data panel...')
+        // async, so doesn't work
         setAmountOfDataFetched(amountOfDataFetched + 1);
-        // check if id is the same
-        // check if range is the same
 
-        // const AltPanelsFiltered = AltPanels.current.filter(d => d.id !== NewAltPanelID);
-        // // AltPanels.current = [...DataPanelsFiltered, { ...NewAltPanel }];
-        // setSelectedDataPanel(DataPanels.current.length - 1);
+        const NewDataPanel = {altTrack: altTrack, altDataStatistics: altDataStatistics}
+
+        // only need to store the previous panel
+        // however, we need to change the selectedDataPanel to trigger a rerender
+        // therefore, this alternates between saving the last 2 or 3 panels
+        const l = DataPanels.current.length
+        if (l == 0) {
+            DataPanels.current = [NewDataPanel];
+        } else if (l == 1 || l == 3) {
+            DataPanels.current = [DataPanels.current[l-1], NewDataPanel]
+        } else {
+            DataPanels.current = [DataPanels.current[l-2], DataPanels.current[l-1], NewDataPanel]
+        }
+        
+        // setting state is asynchronous
+        setSelectedDataPanel(DataPanels.current.length - 1);
     }
 
     useEffect(() => {
@@ -146,10 +151,27 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
                 // get latest AltGoslingSpec
                 
+                // could set state of rawdata, then based on state update
+                // as setstate is asynchronous, this delays the updating of the panel
                 const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data);
                 updateAltPanelDisplay(updatedAlt);
-                updateDataPanelDisplay(updatedAlt.tracks[0], updatedAlt.tracks[0].data.details.dataStatistics);
                 
+                let t;
+                for (const i in updatedAlt.tracks) {
+                    if (updatedAlt.tracks[i].alttype == 'ov-data') {
+                        t = updatedAlt.tracks[i] as AltTrackOverlaidByData;
+                        if (data.id in t.uids) {
+                            // updateDataPanelDisplay(t, t.data.details.dataStatistics)
+                        }
+                    } else {
+                        t = updatedAlt.tracks[i] as AltTrackSingle | AltTrackOverlaidByMark;
+                        if (data.id == t.uid) {
+                            if (t.data.details.dataStatistics){
+                                updateDataPanelDisplay(t, t.data.details.dataStatistics)
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -191,23 +213,29 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     const DataPanelComponent = () => {
         // console.log('datapanel rerender')
-        return (
-            <div className="editor-data-panel">
-                {/* {selectedDataPanel >= 0 &&
-                // AltPanels.current.length > selectedAltPanel &&
-                DataPanels.current[selectedDataPanel] ? ( */}
-                    <>
-                        <div className="editor-alt-text-body">
-                            <div>
-                                {'Amount of data fetched:' + amountOfDataFetched}
-                                {/* {renderDataPanel(DataPanels.current[selectedDataPanel].altTrack, DataPanels.current[selectedDataPanel].altDataStatistics)} */}
-                            </div>
+        let panel;
+        if (selectedDataPanel >= 0 && DataPanels.current[selectedDataPanel]) {
+            console.log(DataPanels.current)
+            if (DataPanels.current.length > 1) {
+                panel = renderDataPanel(DataPanels.current[selectedDataPanel].altTrack, DataPanels.current[selectedDataPanel].altDataStatistics, DataPanels.current[selectedDataPanel - 1].altDataStatistics);
+            } else {
+                panel = renderDataPanel(DataPanels.current[selectedDataPanel].altTrack, DataPanels.current[selectedDataPanel].altDataStatistics);
+            }
+            return (
+                <div className="editor-data-panel">
+                    <div className="editor-alt-text-body">
+                        <div>
+                            {'----------------------------------------------'}
+                            {'Amount of data fetched:' + amountOfDataFetched}
+                            {panel}
                         </div>
-                    </>
-                {/* ) : null} */}
-            </div>
-        );
-    };
+                    </div>
+                </div>
+            )
+        } else {
+            return <></>
+        }
+    }
     
 
     return(
@@ -219,10 +247,6 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             <AltPanelComponent/>
 
             <DataPanelComponent/>
-            {/* <TestPanelComponent/> */}
-            {/* <div>
-                <Button variant="contained" onClick={doSomething}>Reset example</Button>
-            </div> */}
         </>
     );
 };

@@ -133,7 +133,7 @@ export function nodeToJSX(node: AltNode): JSX.Element {
     
     else if (node.children_type === 'altnodelist') {
         const nodeList = node.children as AltNode[];
-        const elementList = Object.keys(node.children).map((n, i) => {
+        const elementList = Object.keys(node.children).map((_, i) => {
             return nodeToJSX(nodeList[i]);
         });
         return(
@@ -193,7 +193,7 @@ function trackNode(altSpec: AltGoslingSpec): Array<AltNode> {
     if (altSpec.composition.nTracks === 1) {
         return(trackNodeSingle(altSpec.tracks[0]));
     } else {
-        const tracks = Object.keys(altSpec.tracks).map((t, i) => (trackNodeMulti(altSpec.tracks[i])));
+        const tracks = Object.keys(altSpec.tracks).map((_, i) => (trackNodeMulti(altSpec.tracks[i])));
         return([
             new AltNode('Composition', 'composition', true, true, 'value', altSpec.composition.description),
             new AltNode('Tracks', 'tracks', true, true, 'altnodelist', tracks)
