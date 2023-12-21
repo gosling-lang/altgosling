@@ -78,7 +78,7 @@ export const channelToText = new Map([['y', 'height'], ['color', 'color'], ['str
  */
 export function chrNumberOnly(chr: string): string {
     if (chr.includes('chr')) {
-        chr.replace('chr', '')
+        chr = chr.replace('chr', '')
         return chr 
     } else {
         return chr
