@@ -1,16 +1,19 @@
+import type { Datum } from '@alt-gosling/schema/gosling.schema';
+import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+
+import { arrayToString, booleanToString } from './util';
+import { createDataTable } from './data-table';
+
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import type { Datum } from '../schema/gosling.schema';
-import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '../schema/alt-gosling-schema';
-import { createDataTable } from './data-table';
-import { arrayToString, booleanToString } from './util';
+
 
 /**
  * Wrapper function to generate tree from AltGoslingSpec
- * @param {AltGoslingSpec} altSpec AltGoslingSpec 
+ * @param {AltGoslingSpec} altSpec AltGoslingSpec
  * @returns {JSX.Element} tree element
  */
 export function renderAltTree(altSpec: AltGoslingSpec): JSX.Element {
@@ -55,7 +58,7 @@ export function nodeToJSX(node: AltNode): JSX.Element {
         if (node.always_show) {
             node.children = 'This information cannot be displayed.';
         } else {
-            return <></>
+            return <></>;
         }
     }
 
@@ -69,19 +72,21 @@ export function nodeToJSX(node: AltNode): JSX.Element {
         } else {
             return(<TreeItem nodeId={node.key} label={node.name + ': ' + node.children}></TreeItem>);
         }
-    } 
+    }
     
     else if (node.children_type === 'altnodelist') {
         const nodeList = node.children as AltNode[];
-        const elementList = Object.keys(node.children).map((n, i) => {return nodeToJSX(nodeList[i])});
+        const elementList = Object.keys(node.children).map((n, i) => {
+            return nodeToJSX(nodeList[i]);
+        });
         return(
             <TreeItem nodeId={node.key} label={node.name}>
                 {...elementList}
             </TreeItem>
         );
-    } 
+    }
     
-    else {   
+    else {
         const rawData = node.children as Datum[];
         return(
             <TreeItem nodeId={node.key} label={node.name}>
@@ -108,13 +113,13 @@ function createAltNodes(altSpec: AltGoslingSpec): AltNode {
 
 function trackNode(altSpec: AltGoslingSpec): Array<AltNode> {
     if (altSpec.composition.nTracks === 1) {
-        return(trackNodeSingle(altSpec.tracks[0]))
+        return(trackNodeSingle(altSpec.tracks[0]));
     } else {
-        const tracks = Object.keys(altSpec.tracks).map((t, i) => (trackNodeMulti(altSpec.tracks[i])))
+        const tracks = Object.keys(altSpec.tracks).map((t, i) => (trackNodeMulti(altSpec.tracks[i])));
         return([
             new AltNode('Composition', 'composition', true, true, 'value', altSpec.composition.description),
             new AltNode('Tracks', 'tracks', true, true, 'altnodelist', tracks)
-        ])
+        ]);
     }
 
 }
@@ -130,13 +135,13 @@ function trackNodeSingle(t: AltTrack): Array<AltNode> {
             appearanceNode(t, '1'),
             dataNode(t, '1')
         ]),
-    ]
+    ];
     return(structureList);
 }
 
 
 function trackNodeMulti(t: AltTrack): AltNode {
-    var uid = t.position.details.trackNumber as any as string;
+    const uid = t.position.details.trackNumber as any as string;
 
     const structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
         new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
@@ -150,14 +155,14 @@ function trackNodeMulti(t: AltTrack): AltNode {
             appearanceNode(t, uid),
             dataNode(t, uid),
         ]),
-    ])
+    ]);
     return(structure);
     
 }
 
 
 function chartTypeNode(t: AltTrack, uid: string): AltNode {
-    var charttype;
+    let charttype;
 
     if (t.alttype === 'single') {
         charttype = t.charttype;
@@ -190,7 +195,7 @@ function appearanceNode(t: AltTrack, uid: string): AltNode {
 
 
 function markNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): AltNode {
-    var mark;
+    let mark;
     if (t.alttype === 'ov-mark') {
         mark = arrayToString(t.appearance.details.mark);
     } else {
@@ -203,8 +208,8 @@ function markNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): AltN
 //   {t.appearance.details.encodingsDescList.map((enc, i) => createTreeItemNode('T-'+uid+'-details-pos-details-enc'+enc[0]+i, enc[0], enc[1], true))}
 function encodingNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): Array<AltNode> {
     const nodeList = t.appearance.details.encodingsDescList.map((enc, i) => {
-        return new AltNode(enc[0], 'T-'+uid+'-det-pos-enc'+enc[0]+i, false, true, 'value', enc[1])
-    })
+        return new AltNode(enc[0], 'T-'+uid+'-det-pos-enc'+enc[0]+i, false, true, 'value', enc[1]);
+    });
     return nodeList;
 }
 
@@ -347,7 +352,7 @@ function emptyNode() {
 //  *          Appearance
 //  *          Track Data Stats
 //  * 
-//  * @param t 
+//  * @param t
 //  * @returns 
 //  */
 // function createTreeTrackMUI(t: AltTrack) {
@@ -356,7 +361,7 @@ function emptyNode() {
 //     return (
 //         <TreeItem key={'T-'+uid} nodeId={'T-'+uid} label={'Track: '+ t.position.description}>
 //             {createTreeItemLeaf('T-'+uid+'-desc', 'Description', t.description, true)}
-//             <TreeItem key={'T-'+uid+'-details'} nodeId={'T-'+uid+'details'} label={'Details'}>  
+//             <TreeItem key={'T-'+uid+'-details'} nodeId={'T-'+uid+'details'} label={'Details'}>
 //                 {createTreeTrackTitle(t, uid)}
 //                 {createTreeTrackPosition(t, uid)}
 //                 {createTreeTrackChartType(t, uid)}
@@ -385,7 +390,7 @@ function emptyNode() {
 //     //     <>
 //     //         {t.title ? (
 //     //                 <TreeItem key={'T-'+uid+'details-title'} nodeId={'T-'+uid+'details-title'} label={'Title: '+t.title}></TreeItem>
-//     //             ): null}   
+//     //             ): null}
 //     //     </>
 //     // )
 // }
@@ -432,8 +437,8 @@ function emptyNode() {
 //                     {t.alttype === 'ov-mark' ? (
 //                         createTreeItemLeaf('T-'+uid+'-details-pos-details-mark', 'Mark', arrayToString(t.appearance.details.mark), true)
 //                         ) : (createTreeItemLeaf('T-'+uid+'-details-pos-details-mark', 'Mark', t.appearance.details.mark, true))}
-//                     {createTreeItemLeaf('T-'+uid+'-details-pos-details-layout', 'Layout (linear or circular)', t.appearance.details.layout, false)} 
-//                     {createTreeItemLeaf('T-'+uid+'-details-pos-details-overlaid', 'Overlaid', t.appearance.details.overlaid, false)}   
+//                     {createTreeItemLeaf('T-'+uid+'-details-pos-details-layout', 'Layout (linear or circular)', t.appearance.details.layout, false)}
+//                     {createTreeItemLeaf('T-'+uid+'-details-pos-details-overlaid', 'Overlaid', t.appearance.details.overlaid, false)}
 //                     {t.appearance.details.encodingsDescList.map((enc, i) => createTreeItemNode('T-'+uid+'-details-pos-details-enc'+enc[0]+i, enc[0], enc[1], true))}
 //                 </TreeItem>
 //             </TreeItem>
@@ -452,21 +457,21 @@ function emptyNode() {
 //                     {createTreeItemLeaf('T-'+uid+'-details-data-desc', 'Description', t.data.description, true)}
 //                     <TreeItem key={'T-'+uid+'-details-data-details-stats'} nodeId={'T-'+uid+'-details-data-details-stats'} label={'Data statistics'}>
 //                         <TreeItem key={'T-'+uid+'-details-data-details-stats-genomic'} nodeId={'T-'+uid+'-details-data-details-stats-genomic'} label={'Genomic range'}>
-//                             {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-genomic-min', 'Minimum', t.data.details.dataStatistics?.genomicMin, false)}    
+//                             {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-genomic-min', 'Minimum', t.data.details.dataStatistics?.genomicMin, false)}
 //                             {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-genomic-max', 'Maximum', t.data.details.dataStatistics?.genomicMax, false)}
 //                         </TreeItem>
 //                         <TreeItem key={'T-'+uid+'-details-data-details-stats-value'} nodeId={'T-'+uid+'-details-data-details-stats-value'} label={'Value range'}>
 //                             <TreeItem key={'T-'+uid+'-details-data-details-stats-value-min'} nodeId={'T-'+uid+'-details-data-details-stats-value-min'} label={'Minimum: ' + t.data.details.dataStatistics?.valueMin}>
-//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-min-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMinGenomic?.toString(), false)}    
+//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-min-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMinGenomic?.toString(), false)}
 //                             </TreeItem>
 //                             <TreeItem key={'T-'+uid+'-details-data-details-stats-value-max'} nodeId={'T-'+uid+'-details-data-details-stats-value-max'} label={'Maxmimum: ' + t.data.details.dataStatistics?.valueMax}>
-//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-max-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMaxGenomic?.toString(), false)}    
+//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-value-max-genomic', 'Found at position(s)', t.data.details.dataStatistics?.valueMaxGenomic?.toString(), false)}
 //                             </TreeItem>
 //                         </TreeItem>
 
 //                         {t.data.details.dataStatistics?.categories ? (
 //                             <TreeItem key={'T-'+uid+'-details-data-details-stats-category'} nodeId={'T-'+uid+'-details-data-details-stats-category'} label={'Categories'}>
-//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-category-list', 'Categories', arrayToString(t.data.details.dataStatistics.categories), false)}    
+//                                 {createTreeItemLeaf('T-'+uid+'-details-data-details-stats-category-list', 'Categories', arrayToString(t.data.details.dataStatistics.categories), false)}
 //                             </TreeItem>
 //                         ): null}
 //                     </TreeItem>
@@ -474,7 +479,7 @@ function emptyNode() {
 //                         <TreeItem key={'T-'+uid+'-details-data-details-rawdata'} nodeId={'T-'+uid+'-details-data-details-rawdata'} label={'Raw data table'}>
 //                             {t.data.details.dataStatistics?.flatTileData ? (
 //                                 createDataTable(t.data.details.dataStatistics?.flatTileData)
-//                             ): null}       
+//                             ): null}
 //                         </TreeItem>): null}
 //                 </TreeItem>
 //             )
@@ -527,7 +532,7 @@ function emptyNode() {
 // //     return (
 // //         <TreeItem key={t.uid} nodeId={t.uid} label={'Track: ' + t.uid}>
 // //             <TreeItem key={t.uid + 'desc'} nodeId={t.uid + 'desc'} label={'Description: ' + t.description}></TreeItem>
-// //             <TreeItem key={t.uid + 'details'} nodeId={t.uid + 'details'} label={'Details'}>     
+// //             <TreeItem key={t.uid + 'details'} nodeId={t.uid + 'details'} label={'Details'}>
 // //                 <TreeItem key={t.uid + 'details-pos'} nodeId={t.uid + 'details-pos'} label={'Position'}>
 // //                     <TreeItem key={t.uid + 'details-pos-desc'} nodeId={t.uid + 'details-pos-desc'} label={'Description: ' + t.position.description}></TreeItem>
 // //                     <TreeItem key={t.uid + 'details-pos-details'} nodeId={t.uid + 'details-pos-details'} label={'Details'}>
@@ -672,7 +677,7 @@ function emptyNode() {
 // //                     {Object.keys(data.tracks).map(t => (createTreeTrackMUI(data.tracks[t as any])))}
 // //                 </TreeItem>
 
-// //             </TreeItem> 
+// //             </TreeItem>
         
 // //         </TreeItem>
 

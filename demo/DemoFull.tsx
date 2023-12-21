@@ -45,9 +45,9 @@ function Demo() {
     return (
         <>
             <p>hello</p>
-            <AltGoslingComponent spec={goslingSpec} test={true}/>
+            <AltGoslingComponent spec={goslingSpec}/>
        </>
-   )
+   );
 }
 
 function Demo2() {
@@ -82,12 +82,12 @@ function Demo2() {
             });
         }
 
-        return( 
+        return(
             <>
                 <GoslingComponent ref={gosRef} {...props}/>
             </>
-        )
-    }
+        );
+    };
 
 
 
@@ -96,10 +96,10 @@ function Demo2() {
             <p>hello</p>
             <AltGoslingComponent spec={goslingSpec} test={true}/>
         </>
-    )
+    );
 }
 
-export default Demo
+export default Demo;
 
 
 

@@ -1,5 +1,6 @@
-import type { GoslingSpec, Datum } from '../schema/gosling.schema';
-import type {  AltGoslingSpec } from '../schema/alt-gosling-schema';
+import type { GoslingSpec, Datum } from '@alt-gosling/schema/gosling.schema';
+import type {  AltGoslingSpec } from '@alt-gosling/schema/alt-gosling-schema';
+
 import { getAltSpec } from './alt-structure/alt-from-spec';
 import { treeText, dataText } from './alt-text';
 import { altUpdateSpecWithData } from './alt-data/alt-from-data';
@@ -22,8 +23,8 @@ export function getAlt(
 
 // this function is called every time the data is updated
 export function updateAlt(
-    altGoslingSpec: AltGoslingSpec, 
-    id: string, 
+    altGoslingSpec: AltGoslingSpec,
+    id: string,
     flatTileData: Datum[]
 ): AltGoslingSpec {
     return altUpdateSpecWithData(altGoslingSpec, id, flatTileData);

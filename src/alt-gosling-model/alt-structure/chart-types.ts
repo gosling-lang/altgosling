@@ -1,4 +1,4 @@
-import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByDataInd } from '../../schema/alt-gosling-schema';
+import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
 
 export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, markIndex?: number): string | undefined {
     let _mark;
@@ -7,9 +7,9 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     } else {
         _mark = altTrack.appearance.details.mark;
     }
-    let _genomicEncodings = altTrack.appearance.details.encodings.encodingDeepGenomic.map(o => o.name);
-    let _quantitativeEncodings = altTrack.appearance.details.encodings.encodingDeepQuantitative.map(o => o.name);
-    let _nominalEncodings = altTrack.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
+    const _genomicEncodings = altTrack.appearance.details.encodings.encodingDeepGenomic.map(o => o.name);
+    const _quantitativeEncodings = altTrack.appearance.details.encodings.encodingDeepQuantitative.map(o => o.name);
+    const _nominalEncodings = altTrack.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
 
     if (_mark === 'point' && _quantitativeEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
         return 'scatter plot';

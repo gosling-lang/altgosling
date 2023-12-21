@@ -1,6 +1,6 @@
-import type { AltGoslingSpec, AltTrackSingle,AltTrack } from '../../schema/alt-gosling-schema';
+import type { AltGoslingSpec, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
-// import { SUPPORTED_CHANNELS } from './../core/mark/index';
 
 
 export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec) {
@@ -17,7 +17,7 @@ function addTrackPositionDescriptions(altGoslingSpec: AltGoslingSpec) {
             altGoslingSpec.composition.description = 'There is one (overlaid) track.';
         }
     } else if (altGoslingSpec.composition.nTracks == 2) {
-        addTrackPositionDescriptionsTwo(altGoslingSpec);      
+        addTrackPositionDescriptionsTwo(altGoslingSpec);
     } else {
         addTrackPositionDescriptionsMulti(altGoslingSpec);
     }
@@ -32,36 +32,38 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
     if (altGoslingSpec.tracks[0].appearance.details.layout === 'circular' && altGoslingSpec.tracks[1].appearance.details.layout === 'circular') {
         
         switch(altGoslingSpec.composition.parentValues.arrangement) {
-            case 'serial': 
+            case 'serial':
                 firstPlace = 'left half of ring';
                 secondPlace = 'right half of ring';
-                desc = 'Two circular tracks form one ring, with both the half of the ring.'
+                desc = 'Two circular tracks form one ring, with both the half of the ring.';
                 break;
-            case 'parallel': 
+            case 'parallel':
                 firstPlace = 'outer ring';
                 secondPlace = 'inner ring';
-                desc = 'Two circular tracks form two rings, one around the other.'
+                desc = 'Two circular tracks form two rings, one around the other.';
+                break;
             case 'horizontal':
                 firstPlace = 'left';
                 secondPlace = 'right';
-                desc = 'Two circular tracks are shown next to each other.'
+                desc = 'Two circular tracks are shown next to each other.';
                 break;
-            default: 
+            default:
                 firstPlace = 'top';
                 secondPlace = 'bottom';
-                desc = 'Two circular tracks are shown below each other.'
+                desc = 'Two circular tracks are shown below each other.';
         }
     } else {
         const bothLinear = altGoslingSpec.tracks[0].appearance.details.layout === altGoslingSpec.tracks[1].appearance.details.layout;
         switch(altGoslingSpec.composition.parentValues.arrangement) {
-            case 'serial' || 'horizontal': 
+            case 'serial' || 'horizontal':
                 firstPlace = 'left';
                 secondPlace = 'right';
-                desc = ' are shown next to each other.'
-            default: 
+                desc = ' are shown next to each other.';
+                break;
+            default:
                 firstPlace = 'top';
                 secondPlace = 'bottom';
-                desc = 'are shown below each other.'
+                desc = 'are shown below each other.';
         }
         if (bothLinear) {
             desc = ''.concat('Two linear tracks ', desc);
@@ -78,18 +80,18 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
 function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
     const positionWords = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
 
-    let desc = ''
+    let desc = '';
     if (altGoslingSpec.composition.counter.totalRows === 1) {
         // all horizontal
-        desc = desc.concat('There are ' + (altGoslingSpec.composition.counter.nTracks) + ' tracks, displayed next to each other.')
+        desc = desc.concat('There are ' + (altGoslingSpec.composition.counter.nTracks) + ' tracks, displayed next to each other.');
 
     } else if (altGoslingSpec.composition.counter.totalCols === 1) {
         // all vertical
-        desc = desc.concat('There are ' + (altGoslingSpec.composition.counter.nTracks) + ' tracks, displayed below each other.')
+        desc = desc.concat('There are ' + (altGoslingSpec.composition.counter.nTracks) + ' tracks, displayed below each other.');
     }
 
     else {
-        desc = desc.concat('There are ' + (altGoslingSpec.composition.counter.nTracks) + ' tracks.')
+        desc = desc.concat('There are ' + (altGoslingSpec.composition.counter.nTracks) + ' tracks.');
         desc = desc.concat(' There are ' + (altGoslingSpec.composition.counter.totalRows) + ' rows.');
 
         const rowLengths = Object.keys(altGoslingSpec.composition.counter.matrix).map(t => Object.keys(altGoslingSpec.composition.counter.matrix[t as unknown as number]).length);
@@ -98,14 +100,14 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
         if (rowLengthsUnique.length == 1) {
             desc = desc.concat(' Each row has ' + rowLengthsUnique[0] + ' tracks next to each other');
         } else if (rowLengthsUnique.length == 2) {
-            let rowsWithFirstLength = [] as number[];
-            let rowsWithSecondLength = [] as number[];
+            const rowsWithFirstLength = [] as number[];
+            const rowsWithSecondLength = [] as number[];
             for(let i = 0; i < rowLengths.length; i++) {
                 if (rowLengths[i] === rowLengthsUnique[0]) {
                     rowsWithFirstLength.push(i);
                 } else {
                     rowsWithSecondLength.push(i);
-                }  
+                }
             }
             if (0 in rowsWithFirstLength) {
                 desc = desc.concat(' Row(s) ' + arrayToString(rowsWithFirstLength.map(t => t+1)) + ' have ' + rowLengthsUnique[0] + ' column(s) each.');
@@ -118,9 +120,9 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
         else {
             for (let i = 0; i < altGoslingSpec.composition.counter.totalRows; i++) {
                 if (i > 9) {
-                    desc = desc.concat(' Row number ' + i + ' has ' + altGoslingSpec.composition.counter.matrix[i].length + ' track(s) next to each other.')
+                    desc = desc.concat(' Row number ' + i + ' has ' + altGoslingSpec.composition.counter.matrix[i].length + ' track(s) next to each other.');
                 } else {
-                    desc = desc.concat(' The ' + positionWords[i] + ' row has ' + altGoslingSpec.composition.counter.matrix[i].length + ' track(s) next to each other.')
+                    desc = desc.concat(' The ' + positionWords[i] + ' row has ' + altGoslingSpec.composition.counter.matrix[i].length + ' track(s) next to each other.');
                 }
             }
         }
@@ -133,7 +135,7 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
     for (const i in altGoslingSpec.tracks) {
         let descTrack = '';
         const trackPosition = altGoslingSpec.tracks[i].position.details;
-        let counter = altGoslingSpec.composition.counter;
+        const counter = altGoslingSpec.composition.counter;
 
         // indication of row is only useful if there is more than 1 row
         if (altGoslingSpec.composition.counter.totalRows > 1) {
@@ -157,7 +159,7 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
                     descTrack = descTrack.concat('left');
                 } else if (trackPosition.colNumber === counter.matrix[trackPosition.rowNumber].length) {
                     descTrack = descTrack.concat('right');
-                } else if (trackPosition.colNumber === 1 && counter.matrix[trackPosition.rowNumber].length === 3) {
+                } else if (trackPosition.colNumber === 2 && counter.matrix[trackPosition.rowNumber].length === 3) {
                     descTrack = descTrack.concat('middle');
                 } else {
                     descTrack = descTrack.concat(positionWords[trackPosition.colNumber] + ' from left');
@@ -176,7 +178,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
         const track = altGoslingSpec.tracks[i];
 
         if (track.alttype === 'single') {
-            var desc = ''
+            let desc = '';
 
             if (track.charttype) {
                 desc = desc.concat(capDesc(track.charttype) + '.');
@@ -184,7 +186,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
                 desc = desc.concat('Chart with ' + markToText.get(track.appearance.details.mark) + '.');
             }
     
-            let encodingDescriptions = addEncodingDescriptions(track);
+            const encodingDescriptions = addEncodingDescriptions(track);
             // console.log('encdesc', encodingDescriptions);
 
             desc = desc.concat(' ' + encodingDescriptions.desc);
@@ -192,66 +194,66 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             track.appearance.description = desc;
             track.appearance.details.encodingsDescList = encodingDescriptions.descList;
         } else if (track.alttype === 'ov-mark') {
-            track.appearance.details.encodingsDescList = [[]]
+            track.appearance.details.encodingsDescList = [[]];
         } else {
-
+            // fill in later
         }
-    }   
+    }
 }
 
 
 function addEncodingDescriptions(track: AltTrackSingle) {
     const mark = track.appearance.details.mark as string;
     
-    var descGenomic = '';
-    var descQuantitative = '';
-    var descNominal = '';
-    var descValue = '';
+    let descGenomic = '';
+    let descQuantitative = '';
+    let descNominal = '';
+    let descValue = '';
 
-    var descList = [] as string[][];
+    const descList = [] as string[][];
 
     // genomic encodings
-    let genomicEncodingsI = track.appearance.details.encodings.encodingDeepGenomic.map(o => o.name);
+    const genomicEncodingsI = track.appearance.details.encodings.encodingDeepGenomic.map(o => o.name);
     if (genomicEncodingsI.includes('x') && genomicEncodingsI.includes('y')) {
-        descGenomic = descGenomic.concat('The genome is shown on both the x- and y-axes.')
+        descGenomic = descGenomic.concat('The genome is shown on both the x- and y-axes.');
         if (genomicEncodingsI.includes('xe') && genomicEncodingsI.includes('ye')) {
-            descGenomic = descGenomic.concat(' Each displays genomic intervals.')
-            descList.push(['x', 'The x-axis show genomic intervals.'])
-            descList.push(['y', 'The y-axis show genomic intervals.'])
+            descGenomic = descGenomic.concat(' Each displays genomic intervals.');
+            descList.push(['x', 'The x-axis show genomic intervals.']);
+            descList.push(['y', 'The y-axis show genomic intervals.']);
         } else if (genomicEncodingsI.includes('xe')) {
-            descGenomic = descGenomic.concat(' The genome on the x-axis displays genomic intervals.')
-            descList.push(['x', 'The x-axis show genomic intervals.'])
-            descList.push(['y', 'The y-axis shows the genome.'])
+            descGenomic = descGenomic.concat(' The genome on the x-axis displays genomic intervals.');
+            descList.push(['x', 'The x-axis show genomic intervals.']);
+            descList.push(['y', 'The y-axis shows the genome.']);
 
         } else if (genomicEncodingsI.includes('ye')) {
-            descGenomic = descGenomic.concat(' The genome on the y-axis displays genomic intervals.')
-            descList.push(['x', 'The x-axis shows the genome.'])
-            descList.push(['y', 'The y-axis show genomic intervals.'])
+            descGenomic = descGenomic.concat(' The genome on the y-axis displays genomic intervals.');
+            descList.push(['x', 'The x-axis shows the genome.']);
+            descList.push(['y', 'The y-axis show genomic intervals.']);
         } else {
-            descList.push(['x', 'The x-axis shows the genome.'])
-            descList.push(['y', 'The y-axis shows the genome.'])
+            descList.push(['x', 'The x-axis shows the genome.']);
+            descList.push(['y', 'The y-axis shows the genome.']);
         }
     } else {
         if (genomicEncodingsI.includes('x')) {
-            let add = ''
+            let add = '';
             if (genomicEncodingsI.includes('xe')) {
-                add = 'in intervals'
-                descList.push(['x', 'The x-axis show genomic intervals.'])
+                add = 'in intervals';
+                descList.push(['x', 'The x-axis show genomic intervals.']);
             } else {
-                descList.push(['x', 'The x-axis shows the genome.'])
+                descList.push(['x', 'The x-axis shows the genome.']);
             }
-            descGenomic = descGenomic.concat('The genome is shown ' + add + ' on the x-axis.')
+            descGenomic = descGenomic.concat('The genome is shown ' + add + ' on the x-axis.');
         }
 
         if (genomicEncodingsI.includes('y')) {
-            let add = ''
+            let add = '';
             if (genomicEncodingsI.includes('ye')) {
-                add = 'in intervals'
-                descList.push(['y', 'The y-axis show genomic intervals.'])
+                add = 'in intervals';
+                descList.push(['y', 'The y-axis show genomic intervals.']);
             } else {
-                descList.push(['y', 'The y-axis shows the genome.'])
+                descList.push(['y', 'The y-axis shows the genome.']);
             }
-            descGenomic = descGenomic.concat('The genome is shown ' + add + ' on the y-axis.')
+            descGenomic = descGenomic.concat('The genome is shown ' + add + ' on the y-axis.');
         }
     }
     // if (attributeExists(track.data.details.data, 'binSize')) {
@@ -262,50 +264,50 @@ function addEncodingDescriptions(track: AltTrackSingle) {
     // }
 
     // expression encodings
-    let quantitativeEncodingsI = track.appearance.details.encodings.encodingDeepQuantitative.map(o => o.name);
+    const quantitativeEncodingsI = track.appearance.details.encodings.encodingDeepQuantitative.map(o => o.name);
 
     if (quantitativeEncodingsI.length > 1) {
         descQuantitative = descQuantitative.concat('The expression values are shown with ' + markToText.get(mark) + ' on the ' + arrayToString(quantitativeEncodingsI) + '-axes.');
-        for (let q of quantitativeEncodingsI) {
-            descList.push([q, 'The ' + q + ' of the ' + markToText.get(mark) + ' shows the expression values.'])
+        for (const q of quantitativeEncodingsI) {
+            descList.push([q, 'The ' + q + ' of the ' + markToText.get(mark) + ' shows the expression values.']);
         }
     } else if (quantitativeEncodingsI.length === 1) {
         if (quantitativeEncodingsI.includes('y')) {
             descQuantitative = descQuantitative.concat('The expression is shown on the y-axis with ' + markToText.get(mark) + '.');
-            descList.push(['y', 'The y-axis shows the expression with' + markToText.get(mark) + '.'])
+            descList.push(['y', 'The y-axis shows the expression with' + markToText.get(mark) + '.']);
         }
         else if (quantitativeEncodingsI.includes('color')) {
             descQuantitative = descQuantitative.concat('The height of the expression values is shown with color.');
-            descList.push(['color', 'The color of the ' + markToText.get(mark) + ' shows the expression values.'])
+            descList.push(['color', 'The color of the ' + markToText.get(mark) + ' shows the expression values.']);
         }
         else {
             descQuantitative = descQuantitative.concat('The height of the expression values is shown with the ' + quantitativeEncodingsI[0] + '-axis.');
-            descList.push([channelToText.get(quantitativeEncodingsI[0]) as string, 'The ' + channelToText.get(quantitativeEncodingsI[0]) + ' of the ' + markToText.get(mark) + ' shows the expression values.'])
+            descList.push([channelToText.get(quantitativeEncodingsI[0]) as string, 'The ' + channelToText.get(quantitativeEncodingsI[0]) + ' of the ' + markToText.get(mark) + ' shows the expression values.']);
         }
     }
 
     // nominal encodings
-    let nominalEncodingsI = track.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
+    const nominalEncodingsI = track.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
 
     if (nominalEncodingsI.length > 1) {
         if (nominalEncodingsI.includes('row')) {
             descNominal = descNominal.concat('The chart is stratified by rows for the categories.');
-            let nominalEncodingsINames = nominalEncodingsI.filter(e => e !== 'row').map(e => channelToText.get(e)) as string[];
+            const nominalEncodingsINames = nominalEncodingsI.filter(e => e !== 'row').map(e => channelToText.get(e)) as string[];
             descNominal = descNominal.concat(' The categories are also shown with the ' + arrayToString(nominalEncodingsINames) + ' of the ' + markToText.get(mark) + '.');
             descList.push(['row', 'The chart is stratified by rows for the categories.']);
-            for (let q of nominalEncodingsINames) {
+            for (const q of nominalEncodingsINames) {
                 descList.push([channelToText.get(q) as string, 'The ' + q + ' of the ' + markToText.get(mark) + ' show the different categories.']);
             }
         }
         else {
-            let nominalEncodingsINames = nominalEncodingsI.map(e => channelToText.get(e)) as string[];
+            const nominalEncodingsINames = nominalEncodingsI.map(e => channelToText.get(e)) as string[];
             descNominal = descNominal.concat('The categories are shown with the ' + arrayToString(nominalEncodingsINames) + ' of the ' + markToText.get(mark) + '.');
-            for (let q of nominalEncodingsI) {
+            for (const q of nominalEncodingsI) {
                 descList.push([channelToText.get(q) as string, 'The ' + q + ' of the ' + markToText.get(mark) + ' show the different categories.']);
             }
         }
     }
-    else {
+    else if (nominalEncodingsI.length == 1) {
         if (nominalEncodingsI.includes('row')) {
             descNominal = descNominal.concat('The chart is stratified by rows for the categories.');
             descList.push(['row', 'The chart is stratified by rows for the categories.']);

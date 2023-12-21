@@ -1,32 +1,31 @@
-import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, OverlaidTrack, OverlaidTracks } from '../../schema/gosling.schema';
-import type { 
-    AltGoslingSpec, AltTrack, AltTrackSingle, 
-    AltTrackOverlaid, AltTrackOverlaidByMark, AltTrackOverlaidByData, 
+import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, OverlaidTrack, OverlaidTracks } from '@alt-gosling/schema/gosling.schema';
+import type {
+    AltGoslingSpec, AltTrack, AltTrackSingle,
+    AltTrackOverlaid, AltTrackOverlaidByMark, AltTrackOverlaidByData,
     AltSpecComposition, AltCounter, AltParentValues, AltTrackPosition, AltTrackPositionDetails,
-    AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid,  AltTrackAppearanceDetailsOverlaid, 
-    AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields, 
-    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '@alt-gosling/alt-gosling-schema';
-import { attributeExists } from '../util';
+    AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid,  AltTrackAppearanceDetailsOverlaid,
+    AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields,
+    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import { IsOverlaidTracks, IsChannelDeep, IsChannelValue } from '@alt-gosling/schema/gosling.schema.guard';
 import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
+
+import { attributeExists } from '../util';
 import { determineSpecialCases } from './chart-types';
 
-// import { SUPPORTED_CHANNELS } from 'gosling.js/dist/src/core/mark';
-import { IsOverlaidTracks, IsChannelDeep, IsChannelValue } from '@alt-gosling/schema/gosling.schema.guard';
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
-
 
 
 export function getAltSpec(
     spec: GoslingSpec
 ): AltGoslingSpec {
-    var altSpec = {} as AltGoslingSpec;
+    const altSpec = {} as AltGoslingSpec;
     altSpec.tracks = {} as (AltTrack)[];
 
     altSpec.title =  spec.title;
     altSpec.subtitle =  spec.subtitle;
 
-    var counter = {'nTracks' : 0, 'rowViews' : 0, 'colViews' : 0, 'allPositions': [[0,0]] as number[][], 'totalRows': 0, 'totalCols': 0, 'matrix': {} as number[][]};
-    var altParentValues = {} as AltParentValues;
+    const counter = {'nTracks' : 0, 'rowViews' : 0, 'colViews' : 0, 'allPositions': [[0,0]] as number[][], 'totalRows': 0, 'totalCols': 0, 'matrix': {} as number[][]};
+    const altParentValues = {} as AltParentValues;
     altParentValues.arrangement = 'vertical';
     altParentValues.layout = 'linear';
 
@@ -34,7 +33,7 @@ export function getAltSpec(
 
     getPositionMatrix(counter);
 
-    var composition: AltSpecComposition = { description: '', nTracks: counter.nTracks, parentValues: altParentValues, counter: counter }
+    const composition: AltSpecComposition = { description: '', nTracks: counter.nTracks, parentValues: altParentValues, counter: counter };
     altSpec.composition = composition;
 
     altSpec.alt = '';
@@ -51,7 +50,7 @@ function determineStructure(
     counter: AltCounter,
 ) {
     // singleview
-    if ('tracks' in specPart) { 
+    if ('tracks' in specPart) {
 
         const altParentValuesCopy = altUpdateParentValues(specPart, altParentValues);
 
@@ -63,7 +62,7 @@ function determineStructure(
                 const track =  specPart as OverlaidTracks;
                 altSpec.tracks[counter.nTracks] = altOverlaidTracks(track, altParentValuesCopy, counter);
                 if (counter.nTracks > 0) {
-                    counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]]
+                    counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
                 }
                 counter.nTracks ++;
 
@@ -73,7 +72,7 @@ function determineStructure(
                     const track =  specPart.tracks[i] as SingleTrack;
                     altSpec.tracks[counter.nTracks] = altSingleTrack(track, altParentValuesCopy, counter);
                     if (counter.nTracks > 0) {
-                        counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]]
+                        counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
                     }
                     counter.nTracks ++;
                 }
@@ -84,7 +83,7 @@ function determineStructure(
             const track = specPart.tracks[0] as SingleTrack;
             altSpec.tracks[counter.nTracks] = altSingleTrack(track, altParentValues, counter);
             if (counter.nTracks > 0) {
-                counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]]
+                counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
             }
             counter.nTracks ++;
         }
@@ -118,7 +117,7 @@ function altUpdateParentValues(
     specPart: any,
     altParentValues: AltParentValues
 ) {
-    var altParentValuesCopy = JSON.parse(JSON.stringify(altParentValues));
+    const altParentValuesCopy = JSON.parse(JSON.stringify(altParentValues));
 
     if (attributeExists(specPart, 'arrangement')) {
         altParentValuesCopy.arrangement = specPart.arrangement;
@@ -131,7 +130,7 @@ function altUpdateParentValues(
 
 // function altTrackBase(
 //     track: SingleTrack | OverlaidTracks,
-//     altParentValues: AltParentValues, 
+//     altParentValues: AltParentValues,
 //     counter: AltCounter
 // ) {
 
@@ -144,26 +143,27 @@ function altUpdateParentValues(
 
 function altSingleTrack(
     track: SingleTrack,
-    altParentValues: AltParentValues, 
+    altParentValues: AltParentValues,
     counter: AltCounter
 ): AltTrackSingle {
-    var altTrack = {} as AltTrackSingle;
+    const altTrack = {} as AltTrackSingle;
     altTrack.alttype = 'single';
 
     // uid
+    let uid;
     if (track.id !== 'unknown') {
-        var uid = track.id as string;
+        uid = track.id as string;
     } else {
         // figure out how to get the uid.
-        var uid = '';
+        uid = '';
     }
     
     
     // position
-    var positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews}
+    const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
     // appearance (anything from mark to layout to encodings)
-    var appearanceDetails = {} as AltTrackAppearanceDetails;
+    const appearanceDetails = {} as AltTrackAppearanceDetails;
 
     appearanceDetails.assembly = track.assembly;
     appearanceDetails.layout = altParentValues.layout;
@@ -173,13 +173,13 @@ function altSingleTrack(
 
     // data
     // add genomic_field, value_field, category_field for data retrieval
-    var dataFields = determineFields(track.data, appearanceDetails.encodings);
-    var dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
+    const dataFields = determineFields(track.data, appearanceDetails.encodings);
+    const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
    
     // add temporary empty descriptions
-    var position: AltTrackPosition = {description: '', details: positionDetails}
-    var appearance: AltTrackAppearance = {description: '', details: appearanceDetails};
-    var data: AltTrackData = {description: '', details: dataDetails};
+    const position: AltTrackPosition = {description: '', details: positionDetails};
+    const appearance: AltTrackAppearance = {description: '', details: appearanceDetails};
+    const data: AltTrackData = {description: '', details: dataDetails};
     
     // add to altTrack
     altTrack.uid = uid;
@@ -201,7 +201,7 @@ function altSingleTrack(
 
 function altOverlaidTracks(
     specPart: OverlaidTracks,
-    altParentValues: AltParentValues, 
+    altParentValues: AltParentValues,
     counter: AltCounter
 ): AltTrackOverlaid {
     let tracks: Track[] = _convertToFlatTracks(specPart);
@@ -218,38 +218,39 @@ function altOverlaidTracks(
 
 function altOverlaidByMark(
     track: OverlaidTracks,
-    altParentValues: AltParentValues, 
+    altParentValues: AltParentValues,
     counter: AltCounter
 ): AltTrackOverlaidByMark {
-    var altTrack = {} as AltTrackOverlaidByMark;
+    const altTrack = {} as AltTrackOverlaidByMark;
     altTrack.alttype = 'ov-mark';
 
     // uid
+    let uid;
     if (track.id !== 'unknown') {
-        var uid = track.id as string;
+        uid = track.id as string;
     } else {
         // figure out how to get the uid.
-        var uid = '';
+        uid = '';
     }
 
     // position
-    var positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews}
+    const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
     // appearance (anything from mark to layout to encodings)
-    var appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
+    const appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
     
     appearanceDetails.assembly = track.assembly;
     appearanceDetails.layout = altParentValues.layout;
     appearanceDetails.overlaid = true;
     appearanceDetails.encodings = getSeparatedEncodings(track);
     
-    var marks = [] as Mark[];
-    var encodingsByMark = [] as AltEncodingSeparated[];
+    const marks = [] as Mark[];
+    const encodingsByMark = [] as AltEncodingSeparated[];
     if (track.mark) {
         marks.push(track.mark);
-    } 
-    for (let o of track.tracks) {
-        let partialOverlaidTrack = o as Partial<OverlaidTrack>;
+    }
+    for (const o of track.tracks) {
+        const partialOverlaidTrack = o as Partial<OverlaidTrack>;
         if (partialOverlaidTrack.mark) {
             marks.push(partialOverlaidTrack.mark);
         }
@@ -261,15 +262,15 @@ function altOverlaidByMark(
     
     // data
     if (track.data) {
-        var dataFields = determineFields(track.data, appearanceDetails.encodings);
-        var dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
-        var data: AltTrackData = {description: '', details: dataDetails};
+        const dataFields = determineFields(track.data, appearanceDetails.encodings);
+        const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
+        const data: AltTrackData = {description: '', details: dataDetails};
         altTrack.data = data;
     }
 
     // add temporary empty descriptions
-    var position: AltTrackPosition = {description: '', details: positionDetails}
-    var appearance: AltTrackAppearanceOverlaid = {description: '', details: appearanceDetails};
+    const position: AltTrackPosition = {description: '', details: positionDetails};
+    const appearance: AltTrackAppearanceOverlaid = {description: '', details: appearanceDetails};
    
     // add to altTrack
     altTrack.uid = uid;
@@ -279,14 +280,14 @@ function altOverlaidByMark(
    
     
     // determine type if possible
-    var charttypes = [] as string[];
+    const charttypes = [] as string[];
     for (let i = 0; i < marks.length; i++) {
-        let charttype = determineSpecialCases(altTrack, i);
+        const charttype = determineSpecialCases(altTrack, i);
         if (charttype) {
             charttypes.push(charttype);
         }
     }
-    altTrack.charttype = charttypes
+    altTrack.charttype = charttypes;
 
     // empty description, to be filled in.
     altTrack.description = '';
@@ -297,31 +298,32 @@ function altOverlaidByMark(
 function altOverlaidByData(
     specPart: OverlaidTracks,
     tracks: Track[],
-    altParentValues: AltParentValues, 
+    altParentValues: AltParentValues,
     counter: AltCounter
 ): AltTrackOverlaidByData {
-    var altTrack = {} as AltTrackOverlaidByData;
+    const altTrack = {} as AltTrackOverlaidByData;
     altTrack.alttype = 'ov-data';
 
     // position
-    var positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews}
+    const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
-    var uids = [] as string[]
-    var altTrackInd = [] as AltTrackOverlaidByDataInd[];
-    for (var t of tracks) {
-        let track = t as SingleTrack;
+    const uids = [] as string[];
+    const altTrackInd = [] as AltTrackOverlaidByDataInd[];
+    for (const t of tracks) {
+        const track = t as SingleTrack;
         // uid
+        let uid;
         if (track.id !== 'unknown') {
-            var uid = track.id as string;
+            uid = track.id as string;
         } else {
             // figure out how to get the uid.
-            var uid = '';
+            uid = '';
         }
         uids.push(uid);
         altTrackInd.push(altOverlaidByDataSingleTrack(track, altParentValues, counter));
     }
 
-    var position: AltTrackPosition = {description: '', details: positionDetails};
+    const position: AltTrackPosition = {description: '', details: positionDetails};
     altTrack.position = position;
     
     altTrack.title = specPart.title;
@@ -339,13 +341,13 @@ function altOverlaidByData(
 
 function altOverlaidByDataSingleTrack(
     track: SingleTrack,
-    altParentValues: AltParentValues, 
+    altParentValues: AltParentValues,
     counter: AltCounter
 ): AltTrackOverlaidByDataInd {
-    var altTrack = {} as AltTrackOverlaidByDataInd;
+    const altTrack = {} as AltTrackOverlaidByDataInd;
 
     // appearance (anything from mark to layout to encodings)
-    var appearanceDetails = {} as AltTrackAppearanceDetails;
+    const appearanceDetails = {} as AltTrackAppearanceDetails;
 
     appearanceDetails.assembly = track.assembly;
     appearanceDetails.layout = altParentValues.layout;
@@ -355,12 +357,12 @@ function altOverlaidByDataSingleTrack(
 
     // data
     // add genomic_field, value_field, category_field for data retrieval
-    var dataFields = determineFields(track.data, appearanceDetails.encodings);
-    var dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
+    const dataFields = determineFields(track.data, appearanceDetails.encodings);
+    const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
    
     // add temporary empty descriptions
-    var appearance: AltTrackAppearance = {description: '', details: appearanceDetails};
-    var data: AltTrackData = {description: '', details: dataDetails};
+    const appearance: AltTrackAppearance = {description: '', details: appearanceDetails};
+    const data: AltTrackData = {description: '', details: dataDetails};
     
     // add to altTrack
     altTrack.appearance = appearance;
@@ -442,11 +444,11 @@ function getPositionMatrix(counter: AltCounter) {
     counter.totalRows = Math.max(...counter.allPositions.map(t => t[0])) + 1;
     counter.totalCols = Math.max(...counter.allPositions.map(t => t[1])) + 1;
 
-    let matrix = {} as number[][];
+    const matrix = {} as number[][];
     for (let i = 0; i < counter.totalRows; i++) {
-        let colValsI  = counter.allPositions.filter(t => t[0] === i).map(t => t[1])
-        let colValsIStructured = {} as number[];
-        for (let j of colValsI) {
+        const colValsI  = counter.allPositions.filter(t => t[0] === i).map(t => t[1]);
+        const colValsIStructured = {} as number[];
+        for (const j of colValsI) {
             if (colValsIStructured[j]) {
                 colValsIStructured[j] = colValsIStructured[j] + 1;
             } else {

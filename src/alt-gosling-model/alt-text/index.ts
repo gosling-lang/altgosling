@@ -1,7 +1,8 @@
-import type { AltGoslingSpec } from '../../schema/alt-gosling-schema';
+import type { AltGoslingSpec } from '@alt-gosling/schema/alt-gosling-schema';
+
 import { addTreeDescriptions } from './text-tree';
 import { addTrackDataDescriptions } from './text-data';
-import { addGlobalDescription } from './text-global'
+import { addGlobalDescription } from './text-global';
 
 
 export function treeText(altGoslingSpec: AltGoslingSpec) {
