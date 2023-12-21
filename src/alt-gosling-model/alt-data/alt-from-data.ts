@@ -19,8 +19,8 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.genomicMin  = Math.min(...genomicValues);
                 altDataStatistics.genomicMax = Math.max(...genomicValues);
 
-                altDataStatistics.genomicMinRel = getRelativeGenomicPosition(altDataStatistics.genomicMin, assembly);   
-                altDataStatistics.genomicMaxRel = getRelativeGenomicPosition(altDataStatistics.genomicMax, assembly);         
+                // altDataStatistics.genomicMinRel = getRelativeGenomicPosition(altDataStatistics.genomicMin, assembly);   
+                // altDataStatistics.genomicMaxRel = getRelativeGenomicPosition(altDataStatistics.genomicMax, assembly);         
             } catch {}
         }
 

@@ -143,8 +143,8 @@ export interface AltDataStatistics {
     flatTileData: Datum[];
     genomicMin?: number;
     genomicMax?: number;
-    genomicMinRel?: GenomicPosition;
-    genomicMaxRel?: GenomicPosition;
+    // genomicMinRel?: GenomicPosition;
+    // genomicMaxRel?: GenomicPosition;
     valueMin?: number;
     valueMax?: number;
     valueMinGenomic?: number[];
