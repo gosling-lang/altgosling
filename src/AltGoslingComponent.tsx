@@ -46,13 +46,17 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
      * Keep the array of all alt and data panels since rerender(?)
      */
     const AltPanels = useRef<PreviewAlt[]>([]);
-    const DataPanels = useRef<DataPanelInformation[]>([]);
+    // const DataPanels = useRef<DataPanelInformation[]>([]);
+
+    const [dataPanelCurrent, setDataPanelCurrent] = useState<DataPanelInformation>(null);
+    const [dataPanelPrevious, setDataPanelPrevious] = useState<DataPanelInformation>(null);
+    
     // const DataPanels = useRef<[AltTrack, AltDataStatistics]>();
     // const TestPanels = useRef<String[]>([]);
 
     const [selectedAltPanel, setSelectedAltPanel] = useState<number>(-1);
-    const [selectedDataPanel, setSelectedDataPanel] = useState<number>(-1);
-    const [amountOfDataFetched, setAmountOfDataFetched] = useState<number>(0);
+    // const [selectedDataPanel, setSelectedDataPanel] = useState<number>(-1);
+    // const [amountOfDataFetched, setAmountOfDataFetched] = useState<number>(0);
 
     // expansion and focus of panel, using refs to avoid updating the state
     const expandedAltPanelRef = useRef<string[]>(['tree'])
@@ -98,29 +102,31 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     function updateDataPanelDisplay(altTrack: AltTrack, altDataStatistics: AltDataStatistics) {
         // console.log('updating data panel...')
         // async, so doesn't work
-        setAmountOfDataFetched(amountOfDataFetched + 1);
+        // setAmountOfDataFetched(amountOfDataFetched + 1);
 
-        const NewDataPanel = {altTrack: altTrack, altDataStatistics: altDataStatistics}
+        const NewDataPanel = {altTrack: altTrack, altDataStatistics: altDataStatistics};
 
+        setDataPanelPrevious(dataPanelCurrent);
+        setDataPanelCurrent(NewDataPanel);
         // only need to store the previous panel
         // however, we need to change the selectedDataPanel to trigger a rerender
         // therefore, this alternates between saving the last 2 or 3 panels
-        const l = DataPanels.current.length
-        if (l == 0) {
-            DataPanels.current = [NewDataPanel];
-        } else if (l == 1 || l == 3) {
-            DataPanels.current = [DataPanels.current[l-1], NewDataPanel]
-        } else {
-            DataPanels.current = [DataPanels.current[l-2], DataPanels.current[l-1], NewDataPanel]
-        }
+        // const l = DataPanels.current.length
+        // if (l == 0) {
+        //     DataPanels.current = [NewDataPanel];
+        // } else if (l == 1 || l == 3) {
+        //     DataPanels.current = [DataPanels.current[l-1], NewDataPanel]
+        // } else {
+        //     DataPanels.current = [DataPanels.current[l-2], DataPanels.current[l-1], NewDataPanel]
+        // }
         
         // setting state is asynchronous
-        setSelectedDataPanel(DataPanels.current.length - 1);
+        // setSelectedDataPanel(DataPanels.current.length - 1);
     }
 
-    useEffect(() => {
-        // console.log('now its updated', selectedAltPanel)
-    }, [selectedAltPanel]);
+    // useEffect(() => {
+    //     // console.log('now its updated', selectedAltPanel)
+    // }, [selectedAltPanel]);
 
     // The state of useState is updated asynchronously
     // Therefore, we update the panel based on SelectedAltPanel
@@ -214,19 +220,18 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const DataPanelComponent = () => {
         // console.log('datapanel rerender')
         let panel;
-        if (selectedDataPanel >= 0 && DataPanels.current[selectedDataPanel]) {
-            console.log(DataPanels.current)
-            if (DataPanels.current.length > 1) {
-                panel = renderDataPanel(DataPanels.current[selectedDataPanel].altTrack, DataPanels.current[selectedDataPanel].altDataStatistics, DataPanels.current[selectedDataPanel - 1].altDataStatistics);
+        if (dataPanelCurrent) {
+            if (dataPanelPrevious) {
+                panel = renderDataPanel(dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, dataPanelPrevious.altDataStatistics);
             } else {
-                panel = renderDataPanel(DataPanels.current[selectedDataPanel].altTrack, DataPanels.current[selectedDataPanel].altDataStatistics);
+                panel = renderDataPanel(dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics);
             }
             return (
                 <div className="editor-data-panel">
                     <div className="editor-alt-text-body">
                         <div>
                             {'----------------------------------------------'}
-                            {'Amount of data fetched:' + amountOfDataFetched}
+                            {/* {'Amount of data fetched:' + amountOfDataFetched} */}
                             {panel}
                         </div>
                     </div>
