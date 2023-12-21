@@ -11,7 +11,7 @@ import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
 
 import { attributeExists } from '../util';
 import { determineSpecialCases } from './chart-types';
-// @ts-expect-error no ktype definition
+// @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
 
 
