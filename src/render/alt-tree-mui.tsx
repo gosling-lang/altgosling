@@ -305,16 +305,29 @@ function dataNode(t: AltTrack, uid: string): AltNode {
     }
 }
 
+function descList(uid: string, descList?: string[][], ): Array<AltNode> {
+    if (descList) {
+        const nodeList = descList.map((n, i) => {
+            return new AltNode(n[0], 'T-'+uid+'-det-pos-enc'+n[0]+i, false, false, 'value', n[1]);
+        });
+        return nodeList;
+    } else {
+        return [emptyNode()];
+    }
+}
+
 
 export function dataNodeStats(dataStatistics: AltDataStatistics, uid: string): AltNode {
     const stats = new AltNode('Data statistics', 'T-'+uid+'-det-data-stats', false, true, 'altnodelist', [
         new AltNode('Genomic range', 'T-'+uid+'-det-data-stats-genomic', false, true, 'altnodelist', [
-            new AltNode('Minimum', 'T-'+uid+'-det-data-stats-genomic-min', true, false, 'value', dataStatistics.genomicMin?.toString()),
-            new AltNode('Maximum', 'T-'+uid+'-det-data-stats-genomic-max', true, false, 'value', dataStatistics.genomicMax?.toString())
+            ...descList('T-'+uid+'-det-data-stats-genomic', dataStatistics.genomicDescList)
+            // new AltNode('Minimum', 'T-'+uid+'-det-data-stats-genomic-min', true, false, 'value', dataStatistics.genomicMin?.toString()),
+            // new AltNode('Maximum', 'T-'+uid+'-det-data-stats-genomic-max', true, false, 'value', dataStatistics.genomicMax?.toString())
         ]),
         new AltNode('Value range', 'T-'+uid+'-det-data-stats-value', false, true, 'altnodelist', [
-            new AltNode('Minimum: ' + dataStatistics.valueMin, 'T-'+uid+'-det-data-stats-value-min', true, false, 'value', 'Found at position(s)' + dataStatistics.valueMinGenomic?.toString()),
-            new AltNode('Maximum: ' + dataStatistics.valueMax, 'T-'+uid+'-det-data-stats-value-max', true, false, 'value', 'Found at position(s)' + dataStatistics.valueMaxGenomic?.toString())
+            ...descList('T-'+uid+'-det-data-stats-value', dataStatistics.valueDescList)
+            // new AltNode('Minimum: ' + dataStatistics.valueMin, 'T-'+uid+'-det-data-stats-value-min', true, false, 'value', 'Found at position(s)' + dataStatistics.valueMinGenomic?.toString()),
+            // new AltNode('Maximum: ' + dataStatistics.valueMax, 'T-'+uid+'-det-data-stats-value-max', true, false, 'value', 'Found at position(s)' + dataStatistics.valueMaxGenomic?.toString())
         ]),
         categoriesNode(dataStatistics, uid)
     ]);
