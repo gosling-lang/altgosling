@@ -18,11 +18,11 @@ export function addTrackDataDescriptions(altGoslingSpec: AltGoslingSpec) {
 function addMinMaxDescription(values: number[], key: 'minimum' | 'maximum', assembly?: Assembly) {
     let descMinMax = '';
     if (values.length === 1 ) {
-        descMinMax = descMinMax.concat(` The ${key} expression is shown at ${getOnePositionText(values[0], assembly)}.`);
+        descMinMax = descMinMax.concat(` The ${key} value is shown at ${getOnePositionText(values[0], assembly)}.`);
     } else if (values.length < 6 ) {
-        descMinMax = descMinMax.concat(` The ${key} expression is shown at ${values.length} different genomic positions: ${arrayToString(values.map(p => getOnePositionText(p, assembly)))}.`);
+        descMinMax = descMinMax.concat(` The ${key} value is shown at ${values.length} different genomic positions: ${arrayToString(values.map(p => getOnePositionText(p, assembly)))}.`);
     } else {
-        descMinMax = descMinMax.concat(` The ${key} expression is shown at ${values.length} different genomic positions, the first being ${getOnePositionText(values[0], assembly)}.`);
+        descMinMax = descMinMax.concat(` The ${key} value is shown at ${values.length} different genomic positions, the first being ${getOnePositionText(values[0], assembly)}.`);
     }
     return descMinMax;
 }
@@ -81,15 +81,25 @@ export function addTrackDataDescriptionsTrack(track: AltTrack) {
             if (track.data.details.dataStatistics?.genomicMin !== undefined &&  track.data.details.dataStatistics?.genomicMax !== undefined) {
                 // get text for min and max
                 const rangeText = getRangeText(track.data.details.dataStatistics.genomicMin, track.data.details.dataStatistics.genomicMax, assembly);
+                const genmin = getOnePositionText(track.data.details.dataStatistics?.genomicMin, assembly);
+                const genmax = getOnePositionText(track.data.details.dataStatistics?.genomicMax , assembly);
+                track.data.details.dataStatistics.genomicDescList = [['Minimum', genmin], ['Maximum', genmax]];
                 desc = desc.concat(rangeText);
             }
             if (track.data.details.dataStatistics?.valueMin !== undefined && track.data.details.dataStatistics?.valueMax !== undefined) {
-                desc = desc.concat(` The expression values range from ${track.data.details.dataStatistics?.valueMin} to ${track.data.details.dataStatistics?.valueMax}.`);
-            }
-            // where on the genome are the minimum and maximum expression
-            if (track.data.details.dataStatistics?.valueMaxGenomic && track.data.details.dataStatistics?.valueMinGenomic) {
-                desc = desc.concat(addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum', assembly));
-                desc = desc.concat(addMinMaxDescription(track.data.details.dataStatistics?.valueMinGenomic, 'minimum', assembly));
+                const valmin = track.data.details.dataStatistics?.valueMin;
+                const valmax = track.data.details.dataStatistics?.valueMax;
+                desc = desc.concat(` The expression values range from ${valmin} to ${valmax}.`);
+    
+                // where on the genome are the minimum and maximum expression
+                if (track.data.details.dataStatistics?.valueMaxGenomic && track.data.details.dataStatistics?.valueMinGenomic) {
+                    const valmingen = addMinMaxDescription(track.data.details.dataStatistics?.valueMinGenomic, 'minimum', assembly);
+                    const valmaxgen = addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum', assembly);
+                    desc = desc.concat(valmaxgen, valmingen);
+                    track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}. ${valmingen}`], ['Maximum', `${valmax}. ${valmaxgen}`]];
+                } else {
+                    track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}`], ['Maximum', `${valmax}`]];
+                }
             }
             // add category data information
             if (track.data.details.dataStatistics?.categories) {
@@ -107,6 +117,7 @@ export function addTrackDataDescriptionsTrack(track: AltTrack) {
                 }
                 // See if genomic positions are the same for the min and max values of each category
             }
+            // track.data.details.dataStatistics.genomicMaxDescription = ''
             track.data.description = desc;
         }
     }
