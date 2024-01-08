@@ -20,7 +20,7 @@ function addMinMaxDescription(values: number[], key: 'minimum' | 'maximum', asse
     if (values.length === 1 ) {
         descMinMax = descMinMax.concat(` The ${key} expression is shown at ${getOnePositionText(values[0], assembly)}.`);
     } else if (values.length < 6 ) {
-        descMinMax = descMinMax.concat(` The ${key} expression is shown at absolute positions ${arrayToString(values)}.`);
+        descMinMax = descMinMax.concat(` The ${key} expression is shown at ${values.length} different genomic positions: ${arrayToString(values.map(p => getOnePositionText(p, assembly)))}.`);
     } else {
         descMinMax = descMinMax.concat(` The ${key} expression is shown at ${values.length} different genomic positions, the first being ${getOnePositionText(values[0], assembly)}.`);
     }
@@ -34,8 +34,8 @@ function getRelativeGenomicPositionText(p: number, assembly?: Assembly) {
 
 function getOnePositionText(p: number, assembly?: Assembly) {
     const pt = getRelativeGenomicPositionText(p, assembly);
-    if (pt[0] !== 'unknown') {
-        return `absolute position ${pt[1]} (chromosome unknown)`;
+    if (pt[0] === 'unknown') {
+        return `absolute position ${pt[1]} (on the unmapped part of the genome)`;
     } else {
         return `chromosome ${pt[0]} position ${pt[1]}`;
     }
@@ -55,11 +55,11 @@ export function getRangeText(p1: number, p2: number, assembly?: Assembly): strin
         }
 
         if ((p1t[0] === 'chrX' || p1t[0] === 'X')) {
-            return ` The genomic range shown is chromomosome X, Y and an unmapped part of the genome at the end.`;
+            return ` The genomic range shown is chromomosome X (from position ${p1t[1]}), Y and an unmapped part of the genome at the end.`;
         }
 
         if ((p1t[0] === 'chrY' || p1t[0] === 'Y')) {
-            return ` The genomic range shown is chromomosome Y and an unmapped part of the genome at the end.`;
+            return ` The genomic range shown is chromomosome Y (from position ${p1t[1]}) and an unmapped part of the genome at the end.`;
         }
 
         return ` The genomic range is shown from chromosome ${p1t[0]} to chromosome 22 and the X and Y chromosomes, as well as an unmapped part of the genome at the end.`;
