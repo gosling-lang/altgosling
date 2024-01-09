@@ -6,7 +6,7 @@ import type {
     AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid,  AltTrackAppearanceDetailsOverlaid,
     AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields,
     AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '@alt-gosling/schema/alt-gosling-schema';
-import { IsOverlaidTracks, IsChannelDeep, IsChannelValue } from '@alt-gosling/schema/gosling.schema.guard';
+import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from '@alt-gosling/schema/gosling.schema.guard';
 import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
 
 import { attributeExists } from '../util';
@@ -51,7 +51,6 @@ function determineStructure(
 ) {
     // singleview
     if ('tracks' in specPart) {
-
         const altParentValuesCopy = altUpdateParentValues(specPart, altParentValues);
 
         // multiple tracks
@@ -78,10 +77,16 @@ function determineStructure(
                 }
             }
          
-        // if only one track is present, it has to be a single track
+        // if only one track is present, it is either a single track or an overlaid track with the same data
+        // (as this is all performed on the _specProcessed which has already been convertToFlatTracks and spreadByData)
         } else {
-            const track = specPart.tracks[0] as SingleTrack;
-            altSpec.tracks[counter.nTracks] = altSingleTrack(track, altParentValues, counter);
+            if (IsOverlaidTrack(specPart.tracks[0])) {
+                const track = specPart.tracks[0] as OverlaidTrack;
+                altSpec.tracks[counter.nTracks] = altOverlaidTrack(track, altParentValues, counter);
+            } else {
+                const track = specPart.tracks[0] as SingleTrack;
+                altSpec.tracks[counter.nTracks] = altSingleTrack(track, altParentValues, counter);
+            }
             if (counter.nTracks > 0) {
                 counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
             }
@@ -198,6 +203,27 @@ function altSingleTrack(
     
 }
 
+function convertToSingleTrack(
+    specPart: OverlaidTrack,
+    altParentValues: AltParentValues,
+    counter: AltCounter
+): AltTrackSingle {
+    let newTrack = {...specPart, ...specPart._overlay[0]} as any;
+    delete newTrack._overlay;
+    delete newTrack.overlayOnPreviousTrack;
+    newTrack = newTrack as SingleTrack;
+    const altTrack = altSingleTrack(newTrack, altParentValues, counter);
+    return altTrack;
+}
+
+function altOverlaidTrack(
+    specPart: OverlaidTrack,
+    altParentValues: AltParentValues,
+    counter: AltCounter
+) {
+    const singleTrack = convertToSingleTrack(specPart, altParentValues, counter);
+    return singleTrack;
+}
 
 function altOverlaidTracks(
     specPart: OverlaidTracks,
@@ -206,18 +232,20 @@ function altOverlaidTracks(
 ): AltTrackOverlaid {
     let tracks: Track[] = _convertToFlatTracks(specPart);
     tracks = _spreadTracksByData(tracks);
+    return altOverlaidByData(specPart, tracks, altParentValues, counter);
+    // let tracks: Track[] = _convertToFlatTracks(specPart);
+    // tracks = _spreadTracksByData(tracks);
 
-    // test if overlaid track has multiple data sources
-    if (tracks.length > 1) {
-        return altOverlaidByData(specPart, tracks, altParentValues, counter);
-    } else {
-        // if (IsOverlaidTrack(specPart)) {}
-        return altOverlaidByMark(specPart, altParentValues, counter);
-    }
+    // // test if overlaid track has multiple data sources
+    // if (tracks.length > 1) {
+    //     return altOverlaidByData(specPart, tracks, altParentValues, counter);
+    // } else {
+    //     return altOverlaidByMark(specPart, altParentValues, counter);
+    // }
 }
 
 function altOverlaidByMark(
-    track: OverlaidTracks,
+    track: OverlaidTrack,
     altParentValues: AltParentValues,
     counter: AltCounter
 ): AltTrackOverlaidByMark {
@@ -249,7 +277,7 @@ function altOverlaidByMark(
     if (track.mark) {
         marks.push(track.mark);
     }
-    for (const o of track.tracks) {
+    for (const o of track._overlay) {
         const partialOverlaidTrack = o as Partial<OverlaidTrack>;
         if (partialOverlaidTrack.mark) {
             marks.push(partialOverlaidTrack.mark);

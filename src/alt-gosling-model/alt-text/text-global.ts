@@ -1,4 +1,5 @@
 import type { AltGoslingSpec, AltTrack } from '@alt-gosling/schema/alt-gosling-schema';
+import { arrayToString, capDesc } from '../util';
 
 export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: boolean) {
     if (update !== false) {
@@ -11,12 +12,38 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         altGoslingSpec.longDescription = altGoslingSpec.tracks[0].description;
         altGoslingSpec.alt = altGoslingSpec.longDescription.split('.')[0];
     } else if (altGoslingSpec.composition.nTracks === 2) {
+        let alt = '';
         let desc = '';
         desc = desc.concat('Figure with two charts.');
+
+        const chart1 = altGoslingSpec.tracks[0].description.split('.');
+        const chart1Type = chart1[0];
+        const chart1Desc = chart1.slice(1).join('.');
+        
+        const chart2 = altGoslingSpec.tracks[0].description.split('.');
+        const chart2Type = chart2[0];
+        const chart2Desc = chart2.slice(1).join('.');
+
+        desc = desc.concat(` ${capDesc(altGoslingSpec.tracks[0].position.description)} track is a ${chart1Type.toLowerCase()}. ${chart1Desc}`);
+        desc = desc.concat(` ${capDesc(altGoslingSpec.tracks[1].position.description)} track is a ${chart2Type.toLowerCase()}. ${chart2Desc}`);
+
+        alt = alt.concat(` Figure with ${chart1Type.toLowerCase()} on ${capDesc(altGoslingSpec.tracks[0].position.description)} and ${chart2Type.toLowerCase()} on ${capDesc(altGoslingSpec.tracks[1].position.description)}`);
+        
+        altGoslingSpec.alt = alt;
         altGoslingSpec.longDescription = desc;
+
     } else {
         let desc = '';
-        desc = desc.concat('Figure with ' + altGoslingSpec.composition.nTracks + ' individual charts.');
+        
+        const chartTypeList = [];
+        for (const t in Object.keys(altGoslingSpec.tracks)) {
+            const chartType = altGoslingSpec.tracks[t].description.split('.')[0];
+            chartTypeList.push(chartType);
+        }
+
+        desc = desc.concat(`Figure with ${altGoslingSpec.composition.nTracks} individual charts. Briefly, these are a ${arrayToString(chartTypeList).toLowerCase()}.`);
+
+        altGoslingSpec.alt = `Gosling visualization with ${altGoslingSpec.composition.nTracks} individual charts.`;
         altGoslingSpec.longDescription = desc;
     }
 }
@@ -38,12 +65,12 @@ export function addTrackDescription(t: AltTrack, includePosition: boolean) {
         if (includePosition) {
             descPos = descPos.concat(t.position.description);
         }
-        desc = descPos.concat(' ' + t.appearance.description + ' ' + t.data.description);
+        desc = descPos.concat(` ${t.appearance.description} ${t.data.description}`);
     } else {
         if (includePosition) {
             descPos.concat(t.position.description);
         }
-        desc = descPos.concat(' Overlaid track with different data sources. See individual tracks for details.');
+        desc = descPos.concat(` Overlaid track with different data sources. See individual tracks for details.`);
     }
     t.description = desc;
 }

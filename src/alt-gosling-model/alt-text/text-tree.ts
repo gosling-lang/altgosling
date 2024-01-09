@@ -71,8 +71,8 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
             desc = ''.concat('One linear and one circular track ', desc);
         }
     }
-    altGoslingSpec.tracks[0].position.description = 'This track is shown on the ' + firstPlace + '.';
-    altGoslingSpec.tracks[1].position.description = 'This track is shown on the ' + secondPlace + '.';
+    altGoslingSpec.tracks[0].position.description = firstPlace;
+    altGoslingSpec.tracks[1].position.description = secondPlace;
     altGoslingSpec.composition.description = desc;
 }
 
