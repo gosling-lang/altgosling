@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { GoslingComponent, type GoslingRef, type GoslingSpec, type HiGlassSpec, type Theme, type TemplateTrackDef } from 'gosling.js';
-import type { Datum, AltGoslingSpec, PreviewAlt, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, PreviewAlt, DataPanelInformation, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
@@ -26,11 +26,6 @@ interface AltGoslingCompProps {
     };
 }
 
-
-interface DataPanelInformation {
-    altTrack: AltTrack,
-    altDataStatistics: AltDataStatistics
-}
 
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const gosRef = useRef<GoslingRef>(null);
@@ -72,6 +67,9 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             const altSpec = getAlt(specProcessed);
             // Update current alt
             updateAltPanelDisplay(altSpec);
+            // Reset data panels
+            setDataPanelCurrent(undefined);
+            setDataPanelPrevious(undefined);
         }
     }, [specProcessed]);
 
