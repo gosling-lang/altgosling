@@ -113,6 +113,7 @@ export interface AltTrackOverlaidByDataInd {
 
 export interface AltTrackBase {
     alttype: 'single' | 'ov-mark' | 'ov-data';
+    uid: string,
     description: string;
     title?: string;
     position: AltTrackPosition;
@@ -121,7 +122,6 @@ export interface AltTrackBase {
 
 export interface AltTrackSingle extends AltTrackBase {
     alttype: 'single';
-    uid: string;
     charttype?: string;
     appearance: AltTrackAppearance;
     data: AltTrackData;
@@ -129,7 +129,6 @@ export interface AltTrackSingle extends AltTrackBase {
 
 export interface AltTrackOverlaidByMark extends AltTrackBase {
     alttype: 'ov-mark';
-    uid: string;
     charttype?: string[];
     appearance: AltTrackAppearanceOverlaid;
     data: AltTrackData;
@@ -187,13 +186,12 @@ export type AltGoslingSpec = {
     tracks: Array<AltTrack>
 }
 
-
-// export interface AltAttributes {
-//     arrangement: 'parallel' | 'serial' | 'horizontal' | 'vertical';
-//     alignment: 'stack' | 'overlay';
-// }
-
 export interface PreviewAlt {
     id: string;
     data: AltGoslingSpec;
+}
+
+export interface DataPanelInformation {
+    altTrack: AltTrack,
+    altDataStatistics: AltDataStatistics
 }
