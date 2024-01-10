@@ -4,35 +4,37 @@ import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
 import { bar } from './examples/bar';
 import { visualEncoding } from './examples/visualEncoding';
+import { visualEncodingTrack1, visualEncodingOnly2 } from './examples/visualEncodingTrack1';
+import { overlaidByMark, overlaidByMark2 } from './examples/overlaidByMark';
+import { ruleMark, ruleMark2 } from './examples/ruleMark';
+import { give } from './examples/complex';
 
 import Grid from '@mui/material/Grid';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 
 function Demo() {
-    const examples = {'bar': bar, 'visualEncoding': visualEncoding};
+    const examples = {'Bar chart': bar, 'Multiple Visual Encodings': visualEncoding, 'visualEncoding4th': overlaidByMark, 'visualEncoding4thDiffData': overlaidByMark2, 'visual encoding first 2': visualEncodingOnly2, 'Bar chart with lines': ruleMark, 'rule mark 2': ruleMark2, 'complex GIVE CAO et al': give};
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
     const ExampleOptions = () => {
         return (
-            <FormControl>
-                <FormLabel id='example-options'>Select example</FormLabel>
-                <RadioGroup
-                    row
+            <FormControl variant='filled' sx={{ m: 1, minWidth: 150 }}>
+                <InputLabel id='example-options'>Select example</InputLabel>
+                <Select
                     aria-labelledby="example-options-radio-button"
                     defaultValue={Object.keys(examples)[0]}
                     value={selectedExample}
                     name="example-options-radio-button"
                     onChange={(event) => setSelectedExample(event.target.value)}
                 >
-                    {Object.keys(examples).map(e => (
-                        <FormControlLabel value={e} control={<Radio />} label={e} key={'example-'+e}/>
+                    {Object.keys(examples).sort().map(e => (
+                        <MenuItem value={e}>{e}</MenuItem>
                     ))}
-                </RadioGroup>
+                </Select>
             </FormControl>
         );
     };
