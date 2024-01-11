@@ -12,6 +12,8 @@ import Grid from '@mui/material/Grid';
 // then if compiled in goslingcompprops is defined, raise error that this is overridden
 interface AltGoslingCompProps {
     spec?: GoslingSpec;
+    layout?: 'vertical' | 'horizontal';
+    layoutPanels?: 'vertical' | 'horizontal';
     padding?: number;
     margin?: number;
     border?: string;
@@ -60,16 +62,84 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         focusDataPanelRef.current = newFocus;
     };
 
+    // const refContainer = useRef<HTMLDivElement>(null);
+    // const [dimensions, setDimensions] = useState({
+    //     width: 0,
+    //     height: 0,
+    // });
+
+    const [goslingDimensions, setGoslingDimensions] = useState({
+        width: 0,
+        height: 0,
+    });
+    const [containerSizes, setContainerSizes] = useState([0,0,0]);
+
+
+    // useEffect(() => {
+    //     if (refContainer.current) {
+    //         setDimensions({
+    //             width: refContainer.current.offsetWidth,
+    //             height: refContainer.current.offsetHeight,
+    //         });
+    //     }
+    // }, []);
+
+    // Grid sizes range between 1 and 12
+    // If layout is not set, if GoslingComponent is wider than its height, set to vertical, otherwise horizontal
+    // If layoutPanels is not set, set it to horizontal if layout is vertical, otherwise vertical
+    useEffect(() => {
+        const sizes = [12,12,12];
+        let layout = props.layout;
+        let layoutPanels = props.layoutPanels;
+        if (!layout) {
+            if (goslingDimensions.width > goslingDimensions.height) {
+                layout = 'vertical';
+            } else {
+                layout = 'horizontal';
+            }
+        }
+        if (!layoutPanels) {
+            if (layout === 'vertical') {
+                layoutPanels = 'horizontal';
+            } else {
+                layoutPanels = 'vertical';
+            }
+        }
+        if (layout === 'vertical') {
+            sizes[0] = 12;
+            if (layoutPanels == 'vertical') {
+                sizes[1] = 12;
+                sizes[2] = 12;
+            } else {
+                sizes[1] = 6;
+                sizes[2] = 6;
+            }
+        } else {
+            sizes[0] = 6;
+            if (layoutPanels == 'vertical') {
+                sizes[1] = 6;
+                sizes[2] = 6;
+            } else {
+                sizes[1] = 3;
+                sizes[2] = 3;
+            }
+        }
+        setContainerSizes(sizes);
+    }, [goslingDimensions]);
+
 
     useEffect(() => {
         if (specProcessed) {
             // Get AltGoslingSpec
             const altSpec = getAlt(specProcessed);
+            setGoslingDimensions({width: specProcessed._assignedWidth, height: specProcessed._assignedHeight});
             // Update current alt
             updateAltPanelDisplay(altSpec);
             // Reset data panels
             setDataPanelCurrent(undefined);
             setDataPanelPrevious(undefined);
+            // setExpandedAltPanelWrapper(['tree']);
+            // setExpandedDataPanelWrapper(['tree']);
         }
     }, [specProcessed]);
 
@@ -158,7 +228,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     };
 
     const DataPanelComponent = () => {
-                // determine expanded and focussed values 
+        // determine expanded and focussed values 
         let expandedStart = ['tree'];
         if (expandedDataPanelRef.current) {
             expandedStart = expandedDataPanelRef.current;
@@ -189,22 +259,27 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             return <></>;
         }
     };
-    
-    // create the alt-gosling component as a grid with the gosling component, the altpanel and the datapanel
+
     return(
         <>
-            <Grid container rowSpacing={3} columnSpacing={{xs: 3, sm: 12}}>
-                <Grid item xs={12}>
+            <Grid container rowSpacing={3} columnSpacing={{xs: 1, sm: 1}} aria-label='altgosling-component-container'>
+                <Grid item xs={containerSizes[0]}>
+                    <div
+                        aria-label='gosling-component-container' //ref={refContainer}
+                    >
                     <GoslingComponent ref={gosRef} {...props} compiled={(_: GoslingSpec, __: HiGlassSpec, additionalData: any) => {
                         setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec);
                         }}/>
+                    </div>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                    <AltPanelComponent/>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <DataPanelComponent/>
-                </Grid>
+                {/* <Grid item xs={containerSizes[0] == 12 ? 12 : 12 - containerSizes[0]}> */}
+                    <Grid item xs={containerSizes[1]}>
+                        <AltPanelComponent/>
+                    </Grid>
+                    <Grid item xs={containerSizes[2]}>
+                        <DataPanelComponent/>
+                    </Grid>
+                {/* </Grid> */}
             </Grid>
         </>
     );
