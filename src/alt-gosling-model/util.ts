@@ -86,10 +86,10 @@ export function chrNumberOnly(chr: string): string {
 }
 
 /**
- * 
- * @param array 
- * @param value 
- * @returns 
+ * Count the occurence of a string in an array of string
+ * @param array array with string to be searched
+ * @param value string to be matched in the array
+ * @returns number of occurences
  */
 export function countOccurences(array: string[], value: string) {
     return array.filter((v) => (v === value)).length;
