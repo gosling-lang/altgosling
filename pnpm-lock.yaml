@@ -17,6 +17,9 @@ dependencies:
   gosling.js:
     specifier: ^0.13.2
     version: 0.13.2(pixi.js@6.5.10)(react-dom@18.2.0)(react@18.2.0)
+  hex-color-to-color-name:
+    specifier: ^1.0.2
+    version: 1.0.2
   pixi.js:
     specifier: ^6.5.10
     version: 6.5.10
@@ -4254,6 +4257,10 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       function-bind: 1.1.2
+    dev: false
+
+  /hex-color-to-color-name@1.0.2:
+    resolution: {integrity: sha512-YKPBFTSbYIHH8YKcJB4Q5PV+Tr+kvDXpV60BcPMUu5CSZUcc/qOOx7lkr7luk6MSXKd5A82yfPGZTgedIdQ+aA==}
     dev: false
 
   /higlass-register@0.3.0:

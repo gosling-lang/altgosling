@@ -1,7 +1,7 @@
 import type { AltGoslingSpec, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
-
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
 
+import { GetColorName } from 'hex-color-to-color-name';
 
 export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec) {
     addTrackPositionDescriptions(altGoslingSpec);
@@ -186,10 +186,14 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
                 desc = desc.concat(capDesc(track.charttype) + '.');
             } else {
                 if (markToText.get(track.appearance.details.mark)) {
-                    desc = desc.concat('Chart with ' + markToText.get(track.appearance.details.mark) + '.');
+                    desc = desc.concat(`Chart with ${markToText.get(track.appearance.details.mark)}.`);
                 } else {
-                    desc = desc.concat('Unknown chart.')
+                    desc = desc.concat(`Unknown chart.`)
                 }
+            }
+
+            if (track.title) {
+                desc = desc.concat(` Chart is titled '${track.title}'.`)
             }
     
             const encodingDescriptions = addEncodingDescriptions(track);
@@ -328,6 +332,12 @@ function addEncodingDescriptions(track: AltTrackSingle) {
     for (let i = 0; i < track.appearance.details.encodings.encodingValue.length; i++) {
         const e = track.appearance.details.encodings.encodingValue[i];
         if (e.name === 'color') {
+            // if the color is denoted as a hex code, get the name of the color value
+            if (typeof e.details.value === 'string') {
+                if (e.details.value[0] === '#') {
+                    e.details.value = GetColorName(e.details.value.slice(0)).toLowerCase();
+                }
+            }
             descValue = descValue.concat('The color of the ' + markToText.get(mark) + ' is ' + e.details.value + '.');
             descList.push(['color', 'The color of the ' + markToText.get(mark) + ' is ' + e.details.value + '.']);
         }
