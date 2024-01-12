@@ -2,10 +2,10 @@ import React from 'react';
 import gosling from 'gosling.js';
 import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
-import { bar } from './examples/bar';
+import { barChart } from './examples/barChart';
 
 function Demo() {
-    const goslingSpec = bar as gosling.GoslingSpec;
+    const goslingSpec = barChart as gosling.GoslingSpec;
     return (
         <>
             <AltGoslingComponent spec={goslingSpec}/>

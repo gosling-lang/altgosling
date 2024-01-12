@@ -1,7 +1,6 @@
-export const bar = {
-    "title": "Basic Marks: bar",
+export const lineChart = {
+    "title": "Basic Marks: line",
     "subtitle": "Tutorial Examples",
-    "static": true,
     "tracks": [
       {
         "layout": "linear",
@@ -13,14 +12,12 @@ export const bar = {
           "row": "sample",
           "column": "position",
           "value": "peak",
-          "categories": ["sample 1"],
-          "binSize": 5
+          "categories": ["sample 1"]
         },
-        "mark": "bar",
-        "x": {"field": "start", "type": "genomic", "axis": "bottom"},
-        "xe": {"field": "end", "type": "genomic"},
+        "mark": "line",
+        "x": {"field": "position", "type": "genomic", "axis": "bottom"},
         "y": {"field": "peak", "type": "quantitative", "axis": "right"},
-        "size": {"value": 5}
+        "size": {"value": 2}
       }
     ]
   }
