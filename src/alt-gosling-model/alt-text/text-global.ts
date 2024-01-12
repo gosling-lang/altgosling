@@ -1,5 +1,5 @@
 import type { AltGoslingSpec, AltTrack } from '@alt-gosling/schema/alt-gosling-schema';
-import { arrayToString, capDesc } from '../util';
+import { arrayToString, capDesc, countOccurences } from '../util';
 
 export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: boolean) {
     if (update !== false) {
@@ -35,13 +35,31 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
     } else {
         let desc = '';
         
-        const chartTypeList = [];
+        const chartTypeList = [] as string[];
         for (const t in Object.keys(altGoslingSpec.tracks)) {
             const chartType = altGoslingSpec.tracks[t].description.split('.')[0];
             chartTypeList.push(chartType);
         }
 
-        desc = desc.concat(`Figure with ${altGoslingSpec.composition.nTracks} individual charts. Briefly, these are a ${arrayToString(chartTypeList).toLowerCase()}.`);
+
+        let chartTypeListUnique = [...new Set(chartTypeList)].map(i => [i, countOccurences(chartTypeList, i)]);
+        let chartTypeListUniqueText = chartTypeListUnique.map(i => {
+            const count = i[1] as number;
+            let chartType = i[0] as string;
+            chartType = chartType.toLowerCase();
+            if (count == 1) {
+                return `a ${chartType}`;
+            } else {
+                if (chartType.includes('chart')) {
+                    chartType = chartType.replace('chart', 'charts');
+                } else {
+                    chartType = `${chartType}s`;
+                }
+                return `${count} different ${chartType}`;
+            }
+        });
+
+        desc = desc.concat(`Figure with ${altGoslingSpec.composition.nTracks} individual charts. Briefly, these are ${arrayToString(chartTypeListUniqueText).toLowerCase()}.`);
 
         altGoslingSpec.alt = `Gosling visualization with ${altGoslingSpec.composition.nTracks} individual charts.`;
         altGoslingSpec.longDescription = desc;
@@ -51,9 +69,14 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
 export function addTrackDescriptions(altGoslingSpec: AltGoslingSpec) {
     if (Object.keys(altGoslingSpec.tracks).length === 1) {
         addTrackDescription(altGoslingSpec.tracks[0], false);
-    } else {
+    } 
+    if (Object.keys(altGoslingSpec.tracks).length === 2) {
+        addTrackDescription(altGoslingSpec.tracks[0], true);
+        addTrackDescription(altGoslingSpec.tracks[1], true);
+    }
+    else {
         for (const t in Object.keys(altGoslingSpec.tracks)) {
-            addTrackDescription(altGoslingSpec.tracks[t], true);
+            addTrackDescription(altGoslingSpec.tracks[t], false);
         }
     }
 }

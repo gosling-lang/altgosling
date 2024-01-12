@@ -9,7 +9,7 @@ import type {
 import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from '@alt-gosling/schema/gosling.schema.guard';
 import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
 
-import { attributeExists } from '../util';
+import { attributeExists, attributeExistsReturn } from '../util';
 import { determineSpecialCases } from './chart-types';
 // @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
@@ -26,8 +26,18 @@ export function getAltSpec(
 
     const counter = {'nTracks' : 0, 'rowViews' : 0, 'colViews' : 0, 'allPositions': [[0,0]] as number[][], 'totalRows': 0, 'totalCols': 0, 'matrix': {} as number[][]};
     const altParentValues = {} as AltParentValues;
-    altParentValues.arrangement = 'vertical';
-    altParentValues.layout = 'linear';
+
+    if (attributeExists(spec, 'arrangement') && attributeExistsReturn(spec, 'arrangement')) {
+        altParentValues.arrangement = attributeExistsReturn(spec, 'arrangement');
+    } else {
+        altParentValues.arrangement = 'vertical';
+    }
+
+    if (spec.layout) {
+        altParentValues.layout = spec.layout
+    } else {
+        altParentValues.layout = 'linear';
+    }
 
     determineStructure(spec, altSpec, altParentValues, counter);
 
@@ -109,7 +119,6 @@ function determineStructure(
             const altParentValuesCopy = altUpdateParentValues(view, altParentValues);
             determineStructure(view, altSpec, altParentValuesCopy, counter);
         });
-
         if (altParentValues.arrangement === 'vertical' || altParentValues.arrangement === 'parallel') {
             counter.rowViews = currRow;
         } else {
@@ -486,4 +495,5 @@ function getPositionMatrix(counter: AltCounter) {
         matrix[i] = colValsIStructured;
     }
     counter.matrix = matrix;
+    console.log(matrix);
 }

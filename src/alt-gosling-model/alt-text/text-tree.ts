@@ -98,7 +98,7 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
         const rowLengthsUnique = [...new Set(rowLengths)];
    
         if (rowLengthsUnique.length == 1) {
-            desc = desc.concat(' Each row has ' + rowLengthsUnique[0] + ' tracks next to each other');
+            desc = desc.concat(' Each row has ' + rowLengthsUnique[0] + ' tracks next to each other.');
         } else if (rowLengthsUnique.length == 2) {
             const rowsWithFirstLength = [] as number[];
             const rowsWithSecondLength = [] as number[];
@@ -149,17 +149,19 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
                 descTrack = descTrack.concat('row ' + trackPosition.rowNumber + 1);
             }
         }
-        // indication of column is only useful if there is more than 1 row
+        // indication of column is only useful if there is more than 1 column
         if (altGoslingSpec.composition.counter.totalCols > 1) {
-            if (descTrack.length > 1) {
-                descTrack = descTrack.concat(', ');
-            }
-            if (counter.matrix[trackPosition.rowNumber].length > 1) {
-                if (trackPosition.colNumber === 1) {
+            // there can still be rows with only 1 column, so for each track, check if there is more than 1 column
+            if (Object.keys(counter.matrix[trackPosition.colNumber]).length > 1) {
+                // add a comma and space if there is already a row description
+                if (descTrack.length > 1) {
+                    descTrack = descTrack.concat(', ');
+                }
+                if (trackPosition.colNumber === 0) {
                     descTrack = descTrack.concat('left');
-                } else if (trackPosition.colNumber === counter.matrix[trackPosition.rowNumber].length) {
+                } else if (trackPosition.colNumber === Object.keys(counter.matrix[trackPosition.rowNumber]).length - 1) {
                     descTrack = descTrack.concat('right');
-                } else if (trackPosition.colNumber === 2 && counter.matrix[trackPosition.rowNumber].length === 3) {
+                } else if (trackPosition.colNumber === 2 && Object.keys(counter.matrix[trackPosition.rowNumber]).length === 2) {
                     descTrack = descTrack.concat('middle');
                 } else {
                     descTrack = descTrack.concat(positionWords[trackPosition.colNumber] + ' from left');
@@ -183,7 +185,11 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             if (track.charttype) {
                 desc = desc.concat(capDesc(track.charttype) + '.');
             } else {
-                desc = desc.concat('Chart with ' + markToText.get(track.appearance.details.mark) + '.');
+                if (markToText.get(track.appearance.details.mark)) {
+                    desc = desc.concat('Chart with ' + markToText.get(track.appearance.details.mark) + '.');
+                } else {
+                    desc = desc.concat('Unknown chart.')
+                }
             }
     
             const encodingDescriptions = addEncodingDescriptions(track);
