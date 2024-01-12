@@ -4,10 +4,9 @@ import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
 import { bar } from './examples/bar';
 import { visualEncoding } from './examples/visualEncoding';
-import { visualEncodingTrack1, visualEncodingOnly2 } from './examples/visualEncodingTrack1';
-import { overlaidByMark, overlaidByMark2 } from './examples/overlaidByMark';
-import { ruleMark, ruleMark2 } from './examples/ruleMark';
-import { give } from './examples/complex';
+import { visualEncodingTrack1, visualEncodingTrack1And2, visualEncodingTrack4, visualEncodingTrack4WithDataCopied } from './examples/visualEncodingVariations';
+import { ruleMark, ruleMarkOverlaidWithSecondEncoding } from './examples/ruleMark';
+import { give } from './examples/exampleGIVE';
 
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
@@ -17,7 +16,15 @@ import MenuItem from '@mui/material/MenuItem';
 
 
 function Demo() {
-    const examples = {'Bar chart': bar, 'Multiple Visual Encodings': visualEncoding, 'visualEncoding4th': overlaidByMark, 'visualEncoding4thDiffData': overlaidByMark2, 'visual encoding first 2': visualEncodingOnly2, 'Bar chart with lines': ruleMark, 'rule mark 2': ruleMark2, 'complex GIVE CAO et al': give};
+    const examples = {'Bar chart': bar, 
+                      'Multiple Visual Encodings': visualEncoding, 
+                      'Multiple Visual Encoding Track 1 and 2': visualEncodingTrack1And2, 
+                      'Multiple Visual Encoding Track 4': visualEncodingTrack4, 
+                      'Multiple Visual Encoding Track 4 Test': visualEncodingTrack4WithDataCopied, 
+                      'Bar chart with lines': ruleMark, 
+                      'Bar chart with points': ruleMarkOverlaidWithSecondEncoding, 
+                      'GIVE - CAO et al.': give
+                    };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
     const ExampleOptions = () => {

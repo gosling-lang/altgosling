@@ -1,6 +1,7 @@
 export const bar = {
     "title": "Basic Marks: bar",
     "subtitle": "Tutorial Examples",
+    // "responsiveSize": true,
     "tracks": [
       {
         "layout": "linear",
