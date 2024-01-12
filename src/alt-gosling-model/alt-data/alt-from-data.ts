@@ -100,16 +100,17 @@ export function altUpdateSpecWithData(
             if (track.uid === id) {
                 // get genomic field headers for that track
                 fields = track.data.details.fields;
+
+                // retrieve data statistics
+                const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
+
+                // fill in data
+                track.data.details.dataStatistics = altDataStatistics;
+
+                // update description
+                addTrackDataDescriptionsTrack(track);
+                addTrackDescription(track, includePosition);
             }
-            // retrieve data statistics
-            const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
-
-            // fill in data
-            track.data.details.dataStatistics = altDataStatistics;
-
-            // update description
-            addTrackDataDescriptionsTrack(track);
-            addTrackDescription(track, includePosition);
         }
     }
     addGlobalDescription(altGoslingSpec, false);
