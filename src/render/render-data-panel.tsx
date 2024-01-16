@@ -67,8 +67,9 @@ export function renderDataPanel(
     if (previousAltDataStatistics) {
         // check if the ids are the same
         if (previousAltDataStatistics.id == altDataStatistics.id) {
-            if (altDataStatistics.genomicMin && altDataStatistics.genomicMax)
-            desc = `${positionDescription} Genomic range has been changed. ${getRangeText(altDataStatistics.genomicMin, altDataStatistics.genomicMax)}`;
+            if (altDataStatistics.genomicMin !== undefined && altDataStatistics.genomicMax !== undefined) {
+                desc = `${positionDescription} Genomic range has been changed. ${getRangeText(altDataStatistics.genomicMin, altDataStatistics.genomicMax)}`;
+            }
         } else {
             desc = `${positionDescription}`;
         }
