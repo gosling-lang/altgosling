@@ -297,7 +297,8 @@ function addEncodingDescriptions(track: AltTrackSingle) {
     }
 
     // nominal encodings
-    const nominalEncodingsI = track.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
+    let nominalEncodingsI = track.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
+    nominalEncodingsI = nominalEncodingsI.filter(e => e !== 'text');
 
     if (nominalEncodingsI.length > 1) {
         if (nominalEncodingsI.includes('row')) {
