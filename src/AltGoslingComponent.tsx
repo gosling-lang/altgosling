@@ -7,6 +7,7 @@ import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
 
 import Grid from '@mui/material/Grid';
+// import Button from '@mui/material/Button';
 
 // todo: add goslingcompprops as 1 attribute and add others for altgoslingprops e.g. padding and size
 // then if compiled in goslingcompprops is defined, raise error that this is overridden
@@ -32,7 +33,7 @@ interface AltGoslingCompProps {
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const gosRef = useRef<GoslingRef>(null);
 
-    const [specProcessed, setSpecProcessed] = useState<any>();
+    const [specProcessed, setSpecProcessed] = useState<GoslingSpec>();
 
     // Keep the array of all alt panels since rerender
     const AltPanels = useRef<PreviewAlt[]>([]);
@@ -128,7 +129,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             }
         }
         setContainerSizes(sizes);
-    }, [goslingDimensions]);
+    }, [goslingDimensions, props.layout, props.layoutPanels]);
 
 
     useEffect(() => {
@@ -172,8 +173,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 
             //rawData
             currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
-                // console.log('New rawData', data)
-                setRawData(data)
+                // console.log('New rawData', data);
+                setRawData(data);
             });
         }
 
@@ -210,7 +211,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                }
            }
         }
-   }, [rawData])
+   }, [rawData]);
    
 
 
@@ -274,6 +275,11 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         }
     };
 
+    // debug purposes
+    // function handleChange() {
+    //     console.log('Button clicked!');
+    // }
+
     return(
         <>
             <Grid container rowSpacing={3} columnSpacing={{xs: 1, sm: 1}} aria-label='altgosling-component-container'>
@@ -294,6 +300,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                         <DataPanelComponent/>
                     </Grid>
                 {/* </Grid> */}
+                {/* <Button onClick={handleChange}>Click me!</Button> */}
             </Grid>
         </>
     );

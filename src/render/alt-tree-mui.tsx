@@ -66,7 +66,7 @@ const structureToTree = (structure: AltNode, expandedStart: string[], setExpande
      */
     useEffect(() => {
         setExpandedAltPanelWrapper(expanded);
-    }, [expanded])
+    }, [expanded]);
 
     /**
      * Any time focus is updated, call setFocusAltPanelWrapper, which will update the state of the parent component

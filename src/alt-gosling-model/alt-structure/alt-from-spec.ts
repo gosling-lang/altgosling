@@ -34,7 +34,7 @@ export function getAltSpec(
     }
 
     if (spec.layout) {
-        altParentValues.layout = spec.layout
+        altParentValues.layout = spec.layout;
     } else {
         altParentValues.layout = 'linear';
     }

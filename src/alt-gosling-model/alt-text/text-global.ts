@@ -42,8 +42,8 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         }
 
 
-        let chartTypeListUnique = [...new Set(chartTypeList)].map(i => [i, countOccurences(chartTypeList, i)]);
-        let chartTypeListUniqueText = chartTypeListUnique.map(i => {
+        const chartTypeListUnique = [...new Set(chartTypeList)].map(i => [i, countOccurences(chartTypeList, i)]);
+        const chartTypeListUniqueText = chartTypeListUnique.map(i => {
             const count = i[1] as number;
             let chartType = i[0] as string;
             chartType = chartType.toLowerCase();
@@ -69,7 +69,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
 export function addTrackDescriptions(altGoslingSpec: AltGoslingSpec) {
     if (Object.keys(altGoslingSpec.tracks).length === 1) {
         addTrackDescription(altGoslingSpec.tracks[0], false);
-    } 
+    }
     if (Object.keys(altGoslingSpec.tracks).length === 2) {
         addTrackDescription(altGoslingSpec.tracks[0], true);
         addTrackDescription(altGoslingSpec.tracks[1], true);

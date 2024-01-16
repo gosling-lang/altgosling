@@ -188,12 +188,12 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
                 if (markToText.get(track.appearance.details.mark)) {
                     desc = desc.concat(`Chart with ${markToText.get(track.appearance.details.mark)}.`);
                 } else {
-                    desc = desc.concat(`Unknown chart.`)
+                    desc = desc.concat(`Unknown chart.`);
                 }
             }
 
             if (track.title) {
-                desc = desc.concat(` Chart is titled '${track.title}'.`)
+                desc = desc.concat(` Chart is titled '${track.title}'.`);
             }
     
             const encodingDescriptions = addEncodingDescriptions(track);
