@@ -27,7 +27,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         desc = desc.concat(` ${capDesc(altGoslingSpec.tracks[0].position.description)} track is a ${chart1Type.toLowerCase()}. ${chart1Desc}`);
         desc = desc.concat(` ${capDesc(altGoslingSpec.tracks[1].position.description)} track is a ${chart2Type.toLowerCase()}. ${chart2Desc}`);
 
-        alt = alt.concat(` Figure with ${chart1Type.toLowerCase()} on ${capDesc(altGoslingSpec.tracks[0].position.description)} and ${chart2Type.toLowerCase()} on ${capDesc(altGoslingSpec.tracks[1].position.description)}`);
+        alt = alt.concat(` Figure with ${chart1Type.toLowerCase()} on ${altGoslingSpec.tracks[0].position.description} and ${chart2Type.toLowerCase()} on ${altGoslingSpec.tracks[1].position.description}`);
         
         altGoslingSpec.alt = alt;
         altGoslingSpec.longDescription = desc;
@@ -85,14 +85,14 @@ export function addTrackDescription(t: AltTrack, includePosition: boolean) {
     let desc = '';
     let descPos = '';
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
-        if (includePosition) {
-            descPos = descPos.concat(t.position.description);
-        }
+        // if (includePosition) {
+        //     descPos = descPos.concat(t.position.description);
+        // }
         desc = descPos.concat(` ${t.appearance.description} ${t.data.description}`);
     } else {
-        if (includePosition) {
-            descPos.concat(t.position.description);
-        }
+        // if (includePosition) {
+        //     descPos.concat(t.position.description);
+        // }
         desc = descPos.concat(` Overlaid track with different data sources. See individual tracks for details.`);
     }
     t.description = desc;
