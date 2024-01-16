@@ -56,19 +56,25 @@ export function renderDataPanel(
     // }
     let desc;
 
+    // if there is only 1 track, there is no need to mention this
+    let positionDescription;
+    if (track.position.description == 'This is the only track.') {
+        positionDescription = ``;
+    } else {
+        positionDescription = `Showing track on the ${track.position.description}.`;
+    }
+
     if (previousAltDataStatistics) {
         // check if the ids are the same
         if (previousAltDataStatistics.id == altDataStatistics.id) {
             if (altDataStatistics.genomicMin && altDataStatistics.genomicMax)
-            desc = `Genomic range has been changed, now showing ${getRangeText(altDataStatistics.genomicMin, altDataStatistics.genomicMax)}.`;
+            desc = `${positionDescription} Genomic range has been changed. ${getRangeText(altDataStatistics.genomicMin, altDataStatistics.genomicMax)}`;
         } else {
-            desc = `Showing track ${altDataStatistics.id}`;
+            desc = `${positionDescription}`;
         }
     } else {
-        desc = `Showing track ${altDataStatistics.id}`;
+        desc = `${positionDescription}`;
     }
-
-    // console.log('desc data panel', desc)
 
     const dataNode = dataNodeStats(altDataStatistics, track.uid);
 
