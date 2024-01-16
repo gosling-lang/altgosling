@@ -39,6 +39,9 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     // Set selected alt panel as state to be able to trigger a rerender when desired
     const [selectedAltPanel, setSelectedAltPanel] = useState<number>(-1);
 
+    // save the state for rawData each time it is captured
+    const [rawData, setRawData] = useState<{id: string, data: Datum[]}>();
+
     // Save current and previous datapanels as states to trigger rerender every time they are updated
     const [dataPanelCurrent, setDataPanelCurrent] = useState<DataPanelInformation>();
     const [dataPanelPrevious, setDataPanelPrevious] = useState<DataPanelInformation>();
@@ -169,27 +172,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 
             //rawData
             currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
-                // update altpanel
-                const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data);
-                updateAltPanelDisplay(updatedAlt);
-                
-                // update datapanel, match uid of updated data to individual track
-                let t;
-                for (const i in updatedAlt.tracks) {
-                    if (updatedAlt.tracks[i].alttype == 'ov-data') {
-                        t = updatedAlt.tracks[i] as AltTrackOverlaidByData;
-                        if (data.id in t.uids) {
-                            // updateDataPanelDisplay(t, t.data.details.dataStatistics)
-                        }
-                    } else {
-                        t = updatedAlt.tracks[i] as AltTrackSingle | AltTrackOverlaidByMark;
-                        if (data.id == t.uid) {
-                            if (t.data.details.dataStatistics){
-                                updateDataPanelDisplay(t, t.data.details.dataStatistics);
-                            }
-                        }
-                    }
-                }
+                // console.log('New rawData', data)
+                setRawData(data)
             });
         }
 
@@ -198,6 +182,36 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         };
     }, [gosRef.current]);
 
+
+    // every time that rawData is updated, update the panels
+    // put in a useEffect hook to make sure that panels are updated correctly
+    useEffect(() => {
+        // update altpanel
+        const data = rawData;
+        if (data) {
+           const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data);
+           updateAltPanelDisplay(updatedAlt);
+           
+           // update datapanel, match uid of updated data to individual track
+           let t;
+           for (const i in updatedAlt.tracks) {
+               if (updatedAlt.tracks[i].alttype == 'ov-data') {
+                   t = updatedAlt.tracks[i] as AltTrackOverlaidByData;
+                   if (data.id in t.uids) {
+                       // updateDataPanelDisplay(t, t.data.details.dataStatistics)
+                   }
+               } else {
+                   t = updatedAlt.tracks[i] as AltTrackSingle | AltTrackOverlaidByMark;
+                   if (data.id == t.uid) {
+                       if (t.data.details.dataStatistics){
+                           updateDataPanelDisplay(t, t.data.details.dataStatistics);
+                       }
+                   }
+               }
+           }
+        }
+   }, [rawData])
+   
 
 
     const AltPanelComponent = () => {
