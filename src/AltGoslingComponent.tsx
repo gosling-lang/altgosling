@@ -9,12 +9,12 @@ import { renderAltTree, renderDataPanel } from './render';
 import Grid from '@mui/material/Grid';
 // import Button from '@mui/material/Button';
 
-// todo: add goslingcompprops as 1 attribute and add others for altgoslingprops e.g. padding and size
-// then if compiled in goslingcompprops is defined, raise error that this is overridden
-interface AltGoslingCompProps {
+
+// eventually import this from gosling
+interface GoslingCompProps {
     spec?: GoslingSpec;
-    layout?: 'vertical' | 'horizontal';
-    layoutPanels?: 'vertical' | 'horizontal';
+    // @ts-expect-error
+    compiled?: CompiledCallbackFn;
     padding?: number;
     margin?: number;
     border?: string;
@@ -22,15 +22,28 @@ interface AltGoslingCompProps {
     className?: string;
     theme?: Theme;
     templates?: TemplateTrackDef[];
-    // @ts-expect-error `gosling.UrlToFetchOptions` does not exist I think
-    urlToFetchOptions?: gosling.UrlToFetchOptions;
+    // @ts-expect-error
+    urlToFetchOptions?: UrlToFetchOptions;
     experimental?: {
         reactive?: boolean;
     };
 }
 
+interface AltGoslingCompProps extends GoslingCompProps {
+    layout?: 'vertical' | 'horizontal';
+    layoutPanels?: 'vertical' | 'horizontal';
+}
+
 
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
+    if (props.compiled) {
+        try {
+            throw new Error("The compiled calledback function is used by Alt-Gosling, and cannot be used.");
+          } catch (e) {
+            console.error(`${(e as Error).name}: ${(e as Error).message}`);
+          }
+    }
+    
     const gosRef = useRef<GoslingRef>(null);
 
     const [specProcessed, setSpecProcessed] = useState<GoslingSpec>();
@@ -279,7 +292,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     // function handleChange() {
     //     console.log('Button clicked!');
     // }
-
+    
     return(
         <>
             <Grid container rowSpacing={3} columnSpacing={{xs: 1, sm: 1}} aria-label='altgosling-component-container'>
