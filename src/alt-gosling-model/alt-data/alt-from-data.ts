@@ -44,38 +44,46 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
         }
     
         if (dataFields.categoryField !== undefined) {
+            const categoryField = dataFields.categoryField as string;
+            const categoryValues = flatTileData.map(d => d[categoryField]);
+            const categories = [... new Set(categoryValues)] as unknown as string[];
+            altDataStatistics.categories = categories;
+
             const genomicField = dataFields.genomicField as string;
             const valueField = dataFields.valueField as string;
-            const categoryField = dataFields.categoryField as string;
-
-            try {
-                const categoryValues = flatTileData.map(d => d[categoryField]);
-                const categories = [... new Set(categoryValues)] as unknown as string[];
-
-                const categoryMinMaxWG: { [key: string]: (number | number[])[] } = {};
-
-                const highestCategory = [] as string[];
-
-                for (const category of categories) {
-                    const dataCat = flatTileData.filter(d => d[categoryField] === category);
-                    const valueValuesCat = (dataCat.map(d => d[valueField]) as unknown as number[]).filter(d => !isNaN(d));
-                    const valueMinCat = Math.min(...valueValuesCat);
-                    const valueMaxCat = Math.max(...valueValuesCat);
-
-                    const valueMinCatGenomic = (dataCat.filter(d => d[valueField] == valueMinCat).map(d => d[genomicField]) as unknown as number[]);
-                    const valueMaxCatGenomic = (dataCat.filter(d => d[valueField] == valueMaxCat).map(d => d[genomicField]) as unknown as number[]);
-
-                    categoryMinMaxWG[category] = [valueMinCat, valueMinCatGenomic, valueMaxCat, valueMaxCatGenomic];
-
-                    if (valueMaxCat === altDataStatistics.valueMax) {
-                        highestCategory.push(category);
+            
+            if (genomicField && valueField) {
+                try {
+                    const categoryValues = flatTileData.map(d => d[categoryField]);
+                    const categories = [... new Set(categoryValues)] as unknown as string[];
+    
+                    const categoryMinMaxWG: { [key: string]: (number | number[])[] } = {};
+    
+                    const highestCategory = [] as string[];
+    
+                    for (const category of categories) {
+                        const dataCat = flatTileData.filter(d => d[categoryField] === category);
+                        const valueValuesCat = (dataCat.map(d => d[valueField]) as unknown as number[]).filter(d => !isNaN(d));
+                        const valueMinCat = Math.min(...valueValuesCat);
+                        const valueMaxCat = Math.max(...valueValuesCat);
+    
+                        const valueMinCatGenomic = (dataCat.filter(d => d[valueField] == valueMinCat).map(d => d[genomicField]) as unknown as number[]);
+                        const valueMaxCatGenomic = (dataCat.filter(d => d[valueField] == valueMaxCat).map(d => d[genomicField]) as unknown as number[]);
+    
+                        categoryMinMaxWG[category] = [valueMinCat, valueMinCatGenomic, valueMaxCat, valueMaxCatGenomic];
+    
+                        if (valueMaxCat === altDataStatistics.valueMax) {
+                            highestCategory.push(category);
+                        }
                     }
+                    
+                    altDataStatistics.categoryMinMaxWG = categoryMinMaxWG;
+                    if (highestCategory.length > 0) {
+                        altDataStatistics.highestCategory = highestCategory;
+                    }
+                } catch (e) {
+                    console.log(e);
                 }
-                altDataStatistics.categories = categories;
-                altDataStatistics.categoryMinMaxWG = categoryMinMaxWG;
-                altDataStatistics.highestCategory = highestCategory;
-            } catch (e) {
-                console.log(e);
             }
         }
         return(altDataStatistics);
