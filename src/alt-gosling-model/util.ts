@@ -8,17 +8,17 @@ export function attributeExists(object: any, attribute: any): boolean {
     return(attribute in object);
 }
 
-// /**
-//  * Returns the attribute in the object.
-//  * The function of this function is to override the TS errors thrown if attribute is not always present in object
-//  * This function should be used with care
-//  * @param object 
-//  * @param attribute 
-//  * @returns value of attribute
-//  */
-// export function attributeExistsReturn(object: any, attribute: any) {
-//     return(object[attribute]);
-// };
+/**
+ * Returns the attribute in the object.
+ * The function of this function is to override the TS errors thrown if attribute is not always present in object
+ * This function should be used with care
+ * @param object 
+ * @param attribute 
+ * @returns value of attribute
+ */
+export function attributeExistsReturn(object: any, attribute: any) {
+    return(object[attribute]);
+};
 
 // export function attributeExistsDefaultString(field: any, defaultValue: string) {
 //     if(field !== 'unknown')
@@ -63,7 +63,7 @@ export function capDesc(desc: string): string {
 /**
  * Mapping from mark name to a natural language description of said mark
  */
-export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles']]);
+export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles'], ['text', 'text']]);
 
 /**
  * Mapping of channel name to a natural language description of said channel
@@ -83,4 +83,14 @@ export function chrNumberOnly(chr: string): string {
     } else {
         return chr;
     }
+}
+
+/**
+ * Count the occurence of a string in an array of string
+ * @param array array with string to be searched
+ * @param value string to be matched in the array
+ * @returns number of occurences
+ */
+export function countOccurences(array: string[], value: string) {
+    return array.filter((v) => (v === value)).length;
 }
