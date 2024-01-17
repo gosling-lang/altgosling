@@ -18,7 +18,7 @@ export function attributeExists(object: any, attribute: any): boolean {
  */
 export function attributeExistsReturn(object: any, attribute: any) {
     return(object[attribute]);
-};
+}
 
 // export function attributeExistsDefaultString(field: any, defaultValue: string) {
 //     if(field !== 'unknown')

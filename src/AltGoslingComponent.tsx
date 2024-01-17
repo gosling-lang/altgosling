@@ -7,13 +7,14 @@ import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
 
 import Grid from '@mui/material/Grid';
+// import Button from '@mui/material/Button';
 
-// todo: add goslingcompprops as 1 attribute and add others for altgoslingprops e.g. padding and size
-// then if compiled in goslingcompprops is defined, raise error that this is overridden
-interface AltGoslingCompProps {
+
+// eventually import this from gosling
+interface GoslingCompProps {
     spec?: GoslingSpec;
-    layout?: 'vertical' | 'horizontal';
-    layoutPanels?: 'vertical' | 'horizontal';
+    // @ts-expect-error
+    compiled?: CompiledCallbackFn;
     padding?: number;
     margin?: number;
     border?: string;
@@ -21,23 +22,39 @@ interface AltGoslingCompProps {
     className?: string;
     theme?: Theme;
     templates?: TemplateTrackDef[];
-    // @ts-expect-error `gosling.UrlToFetchOptions` does not exist I think
-    urlToFetchOptions?: gosling.UrlToFetchOptions;
+    // @ts-expect-error
+    urlToFetchOptions?: UrlToFetchOptions;
     experimental?: {
         reactive?: boolean;
     };
 }
 
+interface AltGoslingCompProps extends GoslingCompProps {
+    layout?: 'vertical' | 'horizontal';
+    layoutPanels?: 'vertical' | 'horizontal';
+}
+
 
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
+    if (props.compiled) {
+        try {
+            throw new Error("The compiled calledback function is used by Alt-Gosling, and cannot be used.");
+          } catch (e) {
+            console.error(`${(e as Error).name}: ${(e as Error).message}`);
+          }
+    }
+    
     const gosRef = useRef<GoslingRef>(null);
 
-    const [specProcessed, setSpecProcessed] = useState<any>();
+    const [specProcessed, setSpecProcessed] = useState<GoslingSpec>();
 
     // Keep the array of all alt panels since rerender
     const AltPanels = useRef<PreviewAlt[]>([]);
     // Set selected alt panel as state to be able to trigger a rerender when desired
     const [selectedAltPanel, setSelectedAltPanel] = useState<number>(-1);
+
+    // save the state for rawData each time it is captured
+    const [rawData, setRawData] = useState<{id: string, data: Datum[]}>();
 
     // Save current and previous datapanels as states to trigger rerender every time they are updated
     const [dataPanelCurrent, setDataPanelCurrent] = useState<DataPanelInformation>();
@@ -125,7 +142,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             }
         }
         setContainerSizes(sizes);
-    }, [goslingDimensions]);
+    }, [goslingDimensions, props.layout, props.layoutPanels]);
 
 
     useEffect(() => {
@@ -169,27 +186,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 
             //rawData
             currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
-                // update altpanel
-                const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data);
-                updateAltPanelDisplay(updatedAlt);
-                
-                // update datapanel, match uid of updated data to individual track
-                let t;
-                for (const i in updatedAlt.tracks) {
-                    if (updatedAlt.tracks[i].alttype == 'ov-data') {
-                        t = updatedAlt.tracks[i] as AltTrackOverlaidByData;
-                        if (data.id in t.uids) {
-                            // updateDataPanelDisplay(t, t.data.details.dataStatistics)
-                        }
-                    } else {
-                        t = updatedAlt.tracks[i] as AltTrackSingle | AltTrackOverlaidByMark;
-                        if (data.id == t.uid) {
-                            if (t.data.details.dataStatistics){
-                                updateDataPanelDisplay(t, t.data.details.dataStatistics);
-                            }
-                        }
-                    }
-                }
+                // console.log('New rawData', data);
+                setRawData(data);
             });
         }
 
@@ -198,6 +196,36 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         };
     }, [gosRef.current]);
 
+
+    // every time that rawData is updated, update the panels
+    // put in a useEffect hook to make sure that panels are updated correctly
+    useEffect(() => {
+        // update altpanel
+        const data = rawData;
+        if (data) {
+           const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data);
+           updateAltPanelDisplay(updatedAlt);
+           
+           // update datapanel, match uid of updated data to individual track
+           let t;
+           for (const i in updatedAlt.tracks) {
+               if (updatedAlt.tracks[i].alttype == 'ov-data') {
+                   t = updatedAlt.tracks[i] as AltTrackOverlaidByData;
+                   if (data.id in t.uids) {
+                       // updateDataPanelDisplay(t, t.data.details.dataStatistics)
+                   }
+               } else {
+                   t = updatedAlt.tracks[i] as AltTrackSingle | AltTrackOverlaidByMark;
+                   if (data.id == t.uid) {
+                       if (t.data.details.dataStatistics){
+                           updateDataPanelDisplay(t, t.data.details.dataStatistics);
+                       }
+                   }
+               }
+           }
+        }
+   }, [rawData]);
+   
 
 
     const AltPanelComponent = () => {
@@ -260,6 +288,11 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         }
     };
 
+    // debug purposes
+    // function handleChange() {
+    //     console.log('Button clicked!');
+    // }
+    
     return(
         <>
             <Grid container rowSpacing={3} columnSpacing={{xs: 1, sm: 1}} aria-label='altgosling-component-container'>
@@ -280,6 +313,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                         <DataPanelComponent/>
                     </Grid>
                 {/* </Grid> */}
+                {/* <Button onClick={handleChange}>Click me!</Button> */}
             </Grid>
         </>
     );

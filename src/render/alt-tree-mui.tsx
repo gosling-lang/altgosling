@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { Datum } from '@alt-gosling/schema/gosling.schema';
 import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
-import { arrayToString, booleanToString } from './util';
+import { arrayToString } from './util';
 import { createDataTable } from './data-table';
 
 import { TreeView } from '@mui/x-tree-view/TreeView';
@@ -66,7 +66,7 @@ const structureToTree = (structure: AltNode, expandedStart: string[], setExpande
      */
     useEffect(() => {
         setExpandedAltPanelWrapper(expanded);
-    }, [expanded])
+    }, [expanded]);
 
     /**
      * Any time focus is updated, call setFocusAltPanelWrapper, which will update the state of the parent component
@@ -261,7 +261,7 @@ function appearanceNode(t: AltTrack, uid: string): AltNode {
                 new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
                     markNode(t, uid),
                     new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, false, 'value', t.appearance.details.layout),
-                    new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', booleanToString(t.appearance.details.overlaid)),
+                    new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
                     ...encodingNode(t, uid)
                 ]),
             ])

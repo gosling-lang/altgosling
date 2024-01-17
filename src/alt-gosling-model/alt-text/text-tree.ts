@@ -188,12 +188,12 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
                 if (markToText.get(track.appearance.details.mark)) {
                     desc = desc.concat(`Chart with ${markToText.get(track.appearance.details.mark)}.`);
                 } else {
-                    desc = desc.concat(`Unknown chart.`)
+                    desc = desc.concat(`Unknown chart.`);
                 }
             }
 
             if (track.title) {
-                desc = desc.concat(` Chart is titled '${track.title}'.`)
+                desc = desc.concat(` Chart is titled '${track.title}'.`);
             }
     
             const encodingDescriptions = addEncodingDescriptions(track);
@@ -297,7 +297,8 @@ function addEncodingDescriptions(track: AltTrackSingle) {
     }
 
     // nominal encodings
-    const nominalEncodingsI = track.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
+    let nominalEncodingsI = track.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
+    nominalEncodingsI = nominalEncodingsI.filter(e => e !== 'text');
 
     if (nominalEncodingsI.length > 1) {
         if (nominalEncodingsI.includes('row')) {

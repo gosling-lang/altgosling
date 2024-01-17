@@ -105,10 +105,17 @@ export function addTrackDataDescriptionsTrack(track: AltTrack) {
             if (track.data.details.dataStatistics?.categories) {
 
                 // number of categories
-                desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories.`);
+                desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
+
+                if (track.data.details.dataStatistics?.categories.length < 7) {
+                    desc = desc.concat(`: ${arrayToString(track.data.details.dataStatistics?.categories)}.`);
+                } else {
+                    desc = desc.concat(`.`);
+                }
 
                 // which category has the highest expression peak
                 if (track.data.details.dataStatistics?.highestCategory) {
+                    console.log('highest cat', track.data.details.dataStatistics?.highestCategory)
                     if (track.data.details.dataStatistics?.highestCategory.length === 1) {
                         desc = desc.concat(` The highest value is observed in sample ${track.data.details.dataStatistics?.highestCategory[0]}.`);
                     } else {
