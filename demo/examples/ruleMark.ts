@@ -109,3 +109,42 @@ export const ruleMark = {
       }
     ]
   }
+
+
+
+
+export const ruleMarkOverlaidWithSecondEncodingSame = {
+  "title": "Rule Mark",
+  "subtitle": "Annotate visualization with horizontal and vertical lines",
+  "style": {"dashed": [3, 3]},
+  "views": [
+    {
+      "alignment": "overlay",
+      "data": {
+            "url": "https://server.gosling-lang.org/api/v1/tileset_info/?d=cistrome-multivec",
+            "type": "multivec",
+            "row": "sample",
+            "column": "position",
+            "value": "peak",
+            "categories": ["sample 1"],
+            "binSize": 4
+          },
+        "x": {"field": "start", "type": "genomic"},
+        "y": {"field": "peak", "type": "quantitative", "domain": [0, 0.003]},
+        "color": "red",
+      "tracks": [
+        {
+          "mark": "bar",
+          "xe": {"field": "end", "type": "genomic"},
+          "color": {"value": "lightgray"}
+        },
+        {
+          "mark": "point",
+          "color": {"value": "red"}
+        }
+      ],
+      "width": 500,
+      "height": 200
+    }
+  ]
+}

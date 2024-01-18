@@ -1,4 +1,4 @@
-import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation } from './gosling.schema';
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, DataTransform } from './gosling.schema';
 
 /**
  * Values in the form of JSON.
@@ -81,6 +81,7 @@ export interface AltTrackDataFields {
 export interface AltTrackDataDetails {
     data: DataDeep;
     fields: AltTrackDataFields;
+    transforms?: DataTransform[];
     dataStatistics?: AltDataStatistics;
 }
 

@@ -1,4 +1,4 @@
-import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, OverlaidTrack, OverlaidTracks } from '@alt-gosling/schema/gosling.schema';
+import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, Encoding, OverlaidTrack, OverlaidTracks, DataTransform } from '@alt-gosling/schema/gosling.schema';
 import type {
     AltGoslingSpec, AltTrack, AltTrackSingle,
     AltTrackOverlaid, AltTrackOverlaidByMark, AltTrackOverlaidByData,
@@ -13,6 +13,7 @@ import { attributeExists, attributeExistsReturn } from '../util';
 import { determineSpecialCases } from './chart-types';
 // @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
+import { spec } from 'node:test/reporters';
 
 
 export function getAltSpec(
@@ -65,6 +66,7 @@ function determineStructure(
 
         // multiple tracks
         if (specPart.tracks.length > 1) {
+            console.log('multiple tracks');
 
             // check if overlaid
             if (IsOverlaidTracks(specPart)) {
@@ -90,7 +92,9 @@ function determineStructure(
         // if only one track is present, it is either a single track or an overlaid track with the same data
         // (as this is all performed on the _specProcessed which has already been convertToFlatTracks and spreadByData)
         } else {
+            console.log('only 1 track');
             if (IsOverlaidTrack(specPart.tracks[0])) {
+                console.log('is overlaid track');
                 const track = specPart.tracks[0] as OverlaidTrack;
                 altSpec.tracks[counter.nTracks] = altOverlaidTrack(track, altParentValues, counter);
             } else {
@@ -170,6 +174,7 @@ function altSingleTrack(
     } else {
         // figure out how to get the uid.
         uid = '';
+        console.warn('ID not found?')
     }
     
     
@@ -189,6 +194,11 @@ function altSingleTrack(
     // add genomic_field, value_field, category_field for data retrieval
     const dataFields = determineFields(track.data, appearanceDetails.encodings);
     const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
+
+    // data transforms
+    if (track.dataTransform) {
+        dataDetails.transforms = track.dataTransform;
+    }
    
     // add temporary empty descriptions
     const position: AltTrackPosition = {description: '', details: positionDetails};
@@ -216,12 +226,35 @@ function convertToSingleTrack(
     specPart: OverlaidTrack,
     altParentValues: AltParentValues,
     counter: AltCounter
-): AltTrackSingle {
+) {
     let newTrack = {...specPart, ...specPart._overlay[0]} as any;
     delete newTrack._overlay;
     delete newTrack.overlayOnPreviousTrack;
     newTrack = newTrack as SingleTrack;
     const altTrack = altSingleTrack(newTrack, altParentValues, counter);
+    return [altTrack, specPart._overlay];
+}
+
+type altOverlayPart = {
+    mark?: Mark,
+    dataTransform?: DataTransform,
+} & any;
+
+function convertToSingleTrack2(
+    specPart: OverlaidTrack,
+    altOverlay: altOverlayPart,
+    altParentValues: AltParentValues,
+    counter: AltCounter
+) {
+    // console.log('h', specPart)
+    // console.log('h', altOverlay)
+    let newTrack = {...specPart, ...altOverlay} as any;
+    delete newTrack._overlay;
+    delete newTrack.overlayOnPreviousTrack;
+    newTrack = newTrack as SingleTrack;
+    // console.log('new track', newTrack)
+    const altTrack = altSingleTrack(newTrack, altParentValues, counter);
+    // console.log('new alttrack', altTrack)
     return altTrack;
 }
 
@@ -230,9 +263,288 @@ function altOverlaidTrack(
     altParentValues: AltParentValues,
     counter: AltCounter
 ) {
-    const singleTrack = convertToSingleTrack(specPart, altParentValues, counter);
+    // const [singleTrack, _overlay] = convertToSingleTrack(specPart, altParentValues, counter);
+
+    let altOverlay = [] as altOverlayPart[];
+
+    
+    for (let i = 0; i < specPart._overlay.length; i++) {
+        // console.log('here', i, specPart._overlay[i])
+        altOverlay.push({} as altOverlayPart);
+    }
+   
+    for (let i = 0; i < specPart._overlay.length; i++) {
+        if (specPart._overlay[i].mark) {
+            altOverlay[i].mark = specPart._overlay[i].mark;
+        } else {
+            if (specPart.mark) {
+                altOverlay[i].mark = specPart.mark;
+            }
+        }
+
+        SUPPORTED_CHANNELS.forEach(k => {
+            if (k === 'text') {
+                return
+            }
+
+            if (specPart._overlay[i][k]) {
+                altOverlay[i][k] = specPart._overlay[i][k];
+            } else {
+                if (specPart[k]) {
+                    altOverlay[i][k] = specPart[k];
+                }
+            }
+        });
+
+        if (specPart._overlay[i].dataTransform) {
+            altOverlay[i].dataTransform = specPart._overlay[i].dataTransform;
+        } else {
+            if (specPart.dataTransform) {
+                altOverlay[i].dataTransform = specPart.dataTransform;
+            }
+        }
+    }
+
+    
+    let includeInTop = {} as any;
+    let excludeInTop = {} as any;
+
+    // if no undefined and only 1 unique item, include in top
+    if (altOverlay.filter(e => e.mark === undefined).length === 0 && [...new Set(altOverlay.map(e => e.mark))].length === 1) {
+        includeInTop.mark = altOverlay[0].mark;
+        altOverlay.map(e => delete e.mark);
+    } else {
+        excludeInTop.mark = true;
+    }
+
+
+    SUPPORTED_CHANNELS.forEach(k => {
+        if (k === 'text') {
+            return
+        }
+        if (altOverlay.filter(e => e[k] === undefined).length === 0 && [...new Set(altOverlay.map(e => e[k]))].length === 1) {
+            includeInTop[k] = altOverlay[0][k];
+            altOverlay.map(e => delete e[k]);
+        } else {
+            excludeInTop[k] = true;
+        }
+    });
+
+    if (altOverlay.filter(e => e.dataTransform === undefined).length === 0 && [...new Set(altOverlay.map(e => e.dataTransform))].length === 1) {
+        includeInTop.dataTransform = altOverlay[0].dataTransform;
+        altOverlay.map(e => delete e.dataTransform);
+    } else {
+        excludeInTop.dataTransform = true;
+    }
+
+
+    if (excludeInTop.mark) {
+        delete specPart.mark;
+    } 
+
+    if (includeInTop.mark) {
+        specPart.mark = includeInTop.mark;
+    }
+
+    if (excludeInTop.dataTransform) {
+        delete specPart.dataTransform;
+    }
+
+    if (includeInTop.dataTransform) {
+        specPart.dataTransform = includeInTop.dataTransform;
+    }
+
+    SUPPORTED_CHANNELS.forEach(k => {
+        if (k === 'text') {
+            return
+        }
+        if (excludeInTop[k]) {
+            delete specPart[k];
+        }
+
+        if (includeInTop[k]) {
+            specPart[k] = includeInTop[k];
+        }
+    });
+
+
+    console.log(specPart);
+    console.log(altOverlay)
+    const singleTracks = [] as AltTrackSingle[];
+     // const [singleTrack, _overlay] = convertToSingleTrack(specPart, altParentValues, counter);
+    for (let i = 0; i < specPart._overlay.length; i++) {
+        singleTracks.push(convertToSingleTrack2(specPart, altOverlay[i], altParentValues, counter));
+    }
+    
+
+    [specPart, altOverlay, singleTracks]
+    console.log(singleTracks)
+
+    
+
+
+
+    
+    let singleTrack = singleTracks[1]
+
+
+    // console.log(theMarks);
+    // console.log(undefined in ['bar', 'point', undefined])
+
+    // let skdjfslk = new Set(['bar', 'point', undefined]);
+    // console.log(skdjfslk)
+    
+    // SUPPORTED_CHANNELS.forEach(k => {
+    //     if (k === 'text') {
+    //         return
+    //     }
+
+    //     let theChannel = altOverlay.map(e => e[k]);
+        
+    // });
+    
+    // for (let i = 0; i < specPart._overlay.length; i++) {
+        
+    //     // if (specPart._overlay[i].mark) {
+    //     //     altOverlay[i].mark = specPart._overlay[i].mark;
+    //     // } else {
+    //     //     if (specPart.mark) {
+    //     //         altOverlay[i].mark = specPart.mark;
+    //     //     }
+    //     // }
+
+    //     // SUPPORTED_CHANNELS.forEach(k => {
+    //     //     if (k === 'text') {
+    //     //         return
+    //     //     }
+
+    //     //     if (specPart._overlay[i][k]) {
+    //     //         altOverlay[i][k] = specPart._overlay[i][k];
+    //     //     } else {
+    //     //         if (specPart[k]) {
+    //     //             altOverlay[i][k] = specPart[k];
+    //     //         }
+    //     //     }
+    //     // });
+
+    //     // if (specPart._overlay[i].dataTransform) {
+    //     //     altOverlay[i].dataTransform = specPart._overlay[i].dataTransform;
+    //     // } else {
+    //     //     if (specPart.dataTransform) {
+    //     //         altOverlay[i].dataTransform = specPart.dataTransform;
+    //     //     }
+    //     // }
+    // }
+
+
+
+
+
+    // if (specPart.mark) {
+    //     for (let i = 0; i < specPart._overlay.length; i++) {
+
+
+
+    //         if (specPart._overlay[i].mark) {
+    //             altOverlay[i].mark = specPart._overlay[i].mark;
+    //         } else {
+    //             altOverlay[i].mark = ;
+    //         }
+    //     }
+    // }
+
+    // SUPPORTED_CHANNELS.forEach(k => {
+    //     if
+
+    //     if (k === 'text') {
+    //         return
+    //     }
+    //     const c = specPart[k];
+    //     if (c) {
+    //         for (let i = 0; i < specPart._overlay.length; i++) {
+    //             if (specPart._overlay[i][k]) {
+    //                 altOverlay[i][k] = specPart._overlay[i][k];
+    //             } else {
+    //                 altOverlay[i][k] = c;
+    //             }
+    //         }
+    //     }
+    // });
+
+
+    
+    // let markAllSame = true;
+    // for (let i = 1; i < specPart._overlay.length; i++) {
+    //     if (specPart._overlay[0].mark && specPart._overlay[i].mark) {
+
+    //     }
+    //     // console.log(i, specPart._overlay[i])
+    //     // determineDifference(specPart._overlay[0], specPart._overlay[i]);
+    // }
+    
+
+    // everything: 
+    // - mark
+    // - encodings
+    // - data transforms
+    // first check that everything in the top is not overwritten in the bottom ones
+
+    // first put everything that is the same in all overlays in the top one
+    
+    // then delete everything that is in the top one from the bottom one
+    
+    // for (let i = 0; i < specPart._overlay.length; i++) {
+    //     console.log(i, specPart._overlay[i])
+    //     // determineDifference(specPart._overlay[0], specPart._overlay[i]);
+    // }
+    // for (const t of specPart._overlay) {
+    //     specPart._overlay[0];
+    // }
+    // // console.log('overlay', _overlay);
+    
+    // console.log(typeof(_overlay))
+    // for (let i = 1; i < Object.keys(_overlay).length; i++) {
+    //     // const j = Object.keys(_overlay)[i];
+
+    //     // determineDifference(_overlay[j], _overlay[0])
+    //     console.log('ov', i)
+    // }
+
+    
+
     return singleTrack;
 }
+
+// first put everything that is the same in all overlays in the top one
+// then
+
+
+
+// function determineDifference(
+//     overlay1: Partial<Omit<SingleTrack, "title" | "subtitle" | "width" | "height" | "layout">>, 
+//     overlay2: Partial<Omit<SingleTrack, "title" | "subtitle" | "width" | "height" | "layout">>
+// ) {
+//     const difference = {} as any;
+
+//     if (overlay1.dataTransform && overlay2.dataTransform) {
+//         if (overlay1.dataTransform !== overlay2.dataTransform) {
+//             difference.dataTransform = [overlay1.dataTransform, overlay2.dataTransform]
+//         }
+//     }
+//     if (overlay1.mark && overlay2.mark) {
+//         if (overlay1.mark !== overlay2.mark) {
+//             difference.dataTransform = [overlay1.mark, overlay2.mark]
+//         }
+//     }
+
+//     SUPPORTED_CHANNELS.forEach(k => {
+//         const c1 = overlay1[k];
+//         const c2 = overlay2[k];
+//     });
+
+// }
+
+
 
 function altOverlaidTracks(
     specPart: OverlaidTracks,
@@ -495,5 +807,4 @@ function getPositionMatrix(counter: AltCounter) {
         matrix[i] = colValsIStructured;
     }
     counter.matrix = matrix;
-    console.log(matrix);
 }
