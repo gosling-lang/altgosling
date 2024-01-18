@@ -64,12 +64,14 @@ export type AltTrackAppearanceDetails = {
 export type AltTrackAppearanceDetailsOverlaid = {
     overlaid: true;
     layout: Layout;
-    mark: Mark[];
+    mark?: Mark,
+    markByTrack: Mark[];
     encodings: AltEncodingSeparated;
-    encodingsByMark: AltEncodingSeparated[];
+    encodingsByTrack: AltEncodingSeparated[];
     encodingsDescList: string[][];
     orientation?: Orientation;
     assembly?: Assembly;
+    altOverlay: AltOverlayPart[]
 }
 
 export interface AltTrackDataFields {
@@ -107,7 +109,7 @@ export interface AltTrackData {
 
 export interface AltTrackOverlaidByDataInd {
     description: string;
-    charttype?: string;
+    charttype: string;
     appearance: AltTrackAppearance;
     data: AltTrackData;
 }
@@ -123,14 +125,14 @@ export interface AltTrackBase {
 
 export interface AltTrackSingle extends AltTrackBase {
     alttype: 'single';
-    charttype?: string;
+    charttype: string;
     appearance: AltTrackAppearance;
     data: AltTrackData;
 }
 
 export interface AltTrackOverlaidByMark extends AltTrackBase {
     alttype: 'ov-mark';
-    charttype?: string[];
+    charttype: string[];
     appearance: AltTrackAppearanceOverlaid;
     data: AltTrackData;
 }
@@ -196,3 +198,8 @@ export interface DataPanelInformation {
     altTrack: AltTrack,
     altDataStatistics: AltDataStatistics
 }
+
+export type AltOverlayPart = {
+    mark?: Mark,
+    dataTransform?: DataTransform,
+} & any;

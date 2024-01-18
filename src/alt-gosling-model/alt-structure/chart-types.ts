@@ -1,6 +1,7 @@
 import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
+import { markToText } from './../util';
 
-export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, markIndex?: number): string | undefined {
+export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, markIndex?: number): string {
     let _mark;
     if (Array.isArray(altTrack.appearance.details.mark)) {
         _mark = altTrack.appearance.details.mark[markIndex as number];
@@ -29,5 +30,9 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _nominalEncodings.includes('color')) {
         return 'ideogram';
     }
-    return;
+    if (markToText.get(_mark)) {
+        return `chart with ${markToText.get(_mark)}.`;
+    } 
+    
+    return `unknown chart`;
 }

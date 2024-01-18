@@ -246,7 +246,7 @@ function chartTypeNode(t: AltTrack, uid: string): AltNode {
         charttype = t.charttype;
     } else if (t.alttype === 'ov-mark') {
         if (t.charttype) {
-            charttype = arrayToString(t.charttype);
+            // charttype = arrayToString(t.charttype);
         }
     }
     return(new AltNode('Type', 'T-'+uid+'-det-type', false, false, 'value', charttype));
@@ -275,7 +275,7 @@ function appearanceNode(t: AltTrack, uid: string): AltNode {
 function markNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): AltNode {
     let mark;
     if (t.alttype === 'ov-mark') {
-        mark = arrayToString(t.appearance.details.mark);
+        // mark = arrayToString(t.appearance.details.mark);
     } else {
         mark = t.appearance.details.mark;
     }
