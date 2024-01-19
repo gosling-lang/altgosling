@@ -221,18 +221,18 @@ function altSingleTrack(
     
 }
 
-function convertToSingleTrackOld(
-    specPart: OverlaidTrack,
-    altParentValues: AltParentValues,
-    counter: AltCounter
-) {
-    let newTrack = {...specPart, ...specPart._overlay[0]} as any;
-    delete newTrack._overlay;
-    delete newTrack.overlayOnPreviousTrack;
-    newTrack = newTrack as SingleTrack;
-    const altTrack = altSingleTrack(newTrack, altParentValues, counter);
-    return [altTrack, specPart._overlay];
-}
+// function convertToSingleTrackOld(
+//     specPart: OverlaidTrack,
+//     altParentValues: AltParentValues,
+//     counter: AltCounter
+// ) {
+//     let newTrack = {...specPart, ...specPart._overlay[0]} as any;
+//     delete newTrack._overlay;
+//     delete newTrack.overlayOnPreviousTrack;
+//     newTrack = newTrack as SingleTrack;
+//     const altTrack = altSingleTrack(newTrack, altParentValues, counter);
+//     return [altTrack, specPart._overlay];
+// }
 
 
 function convertToSingleTrack(
@@ -467,84 +467,84 @@ function altOverlaidTracks(
     // }
 }
 
-function altOverlaidByMark(
-    track: OverlaidTrack,
-    altParentValues: AltParentValues,
-    counter: AltCounter
-): AltTrackOverlaidByMark {
-    const altTrack = {} as AltTrackOverlaidByMark;
-    altTrack.alttype = 'ov-mark';
+// function altOverlaidByMark(
+//     track: OverlaidTrack,
+//     altParentValues: AltParentValues,
+//     counter: AltCounter
+// ): AltTrackOverlaidByMark {
+//     const altTrack = {} as AltTrackOverlaidByMark;
+//     altTrack.alttype = 'ov-mark';
 
-    // uid
-    let uid;
-    if (track.id !== 'unknown') {
-        uid = track.id as string;
-    } else {
-        // figure out how to get the uid.
-        uid = '';
-    }
+//     // uid
+//     let uid;
+//     if (track.id !== 'unknown') {
+//         uid = track.id as string;
+//     } else {
+//         // figure out how to get the uid.
+//         uid = '';
+//     }
 
-    // position
-    const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
+//     // position
+//     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
-    // appearance (anything from mark to layout to encodings)
-    const appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
+//     // appearance (anything from mark to layout to encodings)
+//     const appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
     
-    appearanceDetails.assembly = track.assembly;
-    appearanceDetails.layout = altParentValues.layout;
-    appearanceDetails.overlaid = true;
-    appearanceDetails.encodings = getSeparatedEncodings(track);
+//     appearanceDetails.assembly = track.assembly;
+//     appearanceDetails.layout = altParentValues.layout;
+//     appearanceDetails.overlaid = true;
+//     appearanceDetails.encodings = getSeparatedEncodings(track);
     
-    const marks = [] as Mark[];
-    const encodingsByMark = [] as AltEncodingSeparated[];
-    if (track.mark) {
-        marks.push(track.mark);
-    }
-    for (const o of track._overlay) {
-        const partialOverlaidTrack = o as Partial<OverlaidTrack>;
-        if (partialOverlaidTrack.mark) {
-            marks.push(partialOverlaidTrack.mark);
-        }
-        encodingsByMark.push(getSeparatedEncodings(partialOverlaidTrack));
+//     const marks = [] as Mark[];
+//     const encodingsByMark = [] as AltEncodingSeparated[];
+//     if (track.mark) {
+//         marks.push(track.mark);
+//     }
+//     for (const o of track._overlay) {
+//         const partialOverlaidTrack = o as Partial<OverlaidTrack>;
+//         if (partialOverlaidTrack.mark) {
+//             marks.push(partialOverlaidTrack.mark);
+//         }
+//         encodingsByMark.push(getSeparatedEncodings(partialOverlaidTrack));
         
-    }
-    appearanceDetails.mark = marks;
-    appearanceDetails.encodingsByMark = encodingsByMark;
+//     }
+//     appearanceDetails.mark = marks;
+//     appearanceDetails.encodingsByMark = encodingsByMark;
     
-    // data
-    if (track.data) {
-        const dataFields = determineFields(track.data, appearanceDetails.encodings);
-        const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
-        const data: AltTrackData = {description: '', details: dataDetails};
-        altTrack.data = data;
-    }
+//     // data
+//     if (track.data) {
+//         const dataFields = determineFields(track.data, appearanceDetails.encodings);
+//         const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
+//         const data: AltTrackData = {description: '', details: dataDetails};
+//         altTrack.data = data;
+//     }
 
-    // add temporary empty descriptions
-    const position: AltTrackPosition = {description: '', details: positionDetails};
-    const appearance: AltTrackAppearanceOverlaid = {description: '', details: appearanceDetails};
+//     // add temporary empty descriptions
+//     const position: AltTrackPosition = {description: '', details: positionDetails};
+//     const appearance: AltTrackAppearanceOverlaid = {description: '', details: appearanceDetails};
    
-    // add to altTrack
-    altTrack.uid = uid;
-    altTrack.position = position;
-    altTrack.appearance = appearance;
-    altTrack.title = track.title;
+//     // add to altTrack
+//     altTrack.uid = uid;
+//     altTrack.position = position;
+//     altTrack.appearance = appearance;
+//     altTrack.title = track.title;
    
     
-    // determine type if possible
-    const charttypes = [] as string[];
-    for (let i = 0; i < marks.length; i++) {
-        const charttype = determineSpecialCases(altTrack, i);
-        if (charttype) {
-            charttypes.push(charttype);
-        }
-    }
-    altTrack.charttype = charttypes;
+//     // determine type if possible
+//     const charttypes = [] as string[];
+//     for (let i = 0; i < marks.length; i++) {
+//         const charttype = determineSpecialCases(altTrack, i);
+//         if (charttype) {
+//             charttypes.push(charttype);
+//         }
+//     }
+//     altTrack.charttype = charttypes;
 
-    // empty description, to be filled in.
-    altTrack.description = '';
+//     // empty description, to be filled in.
+//     altTrack.description = '';
 
-    return altTrack;
-}
+//     return altTrack;
+// }
 
 function altOverlaidByData(
     specPart: OverlaidTracks,
@@ -554,6 +554,9 @@ function altOverlaidByData(
 ): AltTrackOverlaidByData {
     const altTrack = {} as AltTrackOverlaidByData;
     altTrack.alttype = 'ov-data';
+
+    console.log('overlaid by data', specPart)
+    console.log('tracks', tracks)
 
     // position
     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
@@ -579,12 +582,13 @@ function altOverlaidByData(
     
     altTrack.title = specPart.title;
 
-    altTrack.appearance = {details: {layout: 'linear'}}; // only linear is supported at this time
+    altTrack.appearance = {description: '', details: {layout: 'linear'}}; // only linear is supported at this time
 
     altTrack.tracks = altTrackInd;
     altTrack.uids = uids;
     altTrack.description = '';
 
+    console.log('alttrackoverlaid', altTrack)
     return altTrack;
 }
 
@@ -596,6 +600,18 @@ function altOverlaidByDataSingleTrack(
     counter: AltCounter
 ): AltTrackOverlaidByDataInd {
     const altTrack = {} as AltTrackOverlaidByDataInd;
+    altTrack.alttype = 'ov-data-ind';
+
+    // uid
+    let uid;
+    if (track.id !== 'unknown') {
+        uid = track.id as string;
+    } else {
+        // figure out how to get the uid.
+        uid = '';
+    }
+
+    altTrack.uid = uid;
 
     // appearance (anything from mark to layout to encodings)
     const appearanceDetails = {} as AltTrackAppearanceDetails;

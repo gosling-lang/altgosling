@@ -11,6 +11,8 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     const _genomicEncodings = altTrack.appearance.details.encodings.encodingDeepGenomic.map(o => o.name);
     const _quantitativeEncodings = altTrack.appearance.details.encodings.encodingDeepQuantitative.map(o => o.name);
     const _nominalEncodings = altTrack.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
+    const _valueEncodings = altTrack.appearance.details.encodings.encodingValue.map(o => o.name);
+    const _allEncodings = [..._genomicEncodings, ..._quantitativeEncodings, ..._nominalEncodings, ..._valueEncodings];
 
     if (_mark === 'point' && _quantitativeEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
         return 'scatter plot';
@@ -29,6 +31,15 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     }
     if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _nominalEncodings.includes('color')) {
         return 'ideogram';
+    }
+    if (_mark === 'rule' && _allEncodings.includes('x') && _allEncodings.includes('y')) {
+        return 'lines';
+    }
+    if (_mark === 'rule' && _allEncodings.includes('x')) {
+        return 'vertical lines';
+    }
+    if (_mark === 'rule' && _allEncodings.includes('y')) {
+        return 'horizontal lines';
     }
     if (markToText.get(_mark)) {
         return `chart with ${markToText.get(_mark)}.`;

@@ -11,7 +11,7 @@ import { ideogram } from './examples/ideogram';
 // multiple visual encodings
 import { visualEncoding } from './examples/visualEncoding';
 import { visualEncodingTrack1, visualEncodingTrack1And2, visualEncodingTrack4, visualEncodingTrack4WithDataCopied } from './examples/visualEncodingVariations';
-import { ruleMark, ruleMarkOverlaidWithSecondEncoding, ruleMarkOverlaidWithSecondEncodingSame } from './examples/ruleMark';
+import { ruleMark, ruleMark2, ruleMarkOverlaidWithSecondEncoding, ruleMarkOverlaidWithSecondEncodingSame } from './examples/ruleMark';
 
 // complex examples
 import { give } from './examples/exampleGIVE';
@@ -36,6 +36,7 @@ function Demo() {
                       'Multiple Visual Encoding Track 4': visualEncodingTrack4, 
                       'Multiple Visual Encoding Track 4 Test': visualEncodingTrack4WithDataCopied, 
                       'Bar chart with lines': ruleMark, 
+                      'Bar chart with lines2': ruleMark2, 
                       'Bar chart with points': ruleMarkOverlaidWithSecondEncoding, 
                       'Bar chart with points2': ruleMarkOverlaidWithSecondEncodingSame,
                       'GIVE - CAO et al.': give,

@@ -1,5 +1,5 @@
 import { Assembly, GenomicPosition } from '@alt-gosling/schema/gosling.schema';
-import type { AltGoslingSpec, AltTrack } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { arrayToString, chrNumberOnly } from '../util';
 
@@ -74,59 +74,69 @@ export function getRangeText(p1: number, p2: number, assembly?: Assembly): strin
 
 export function addTrackDataDescriptionsTrack(track: AltTrack) {
     if (track.alttype === 'single' || track.alttype === 'ov-mark') {
-        if (track.data.details.dataStatistics) {
-            let desc = '';
-            const assembly = track.appearance.details.assembly;
-            // genomic and expression ranges
-            if (track.data.details.dataStatistics?.genomicMin !== undefined &&  track.data.details.dataStatistics?.genomicMax !== undefined) {
-                // get text for min and max
-                const rangeText = getRangeText(track.data.details.dataStatistics.genomicMin, track.data.details.dataStatistics.genomicMax, assembly);
-                const genmin = getOnePositionText(track.data.details.dataStatistics?.genomicMin, assembly);
-                const genmax = getOnePositionText(track.data.details.dataStatistics?.genomicMax , assembly);
-                track.data.details.dataStatistics.genomicDescList = [['Minimum', genmin], ['Maximum', genmax]];
-                desc = desc.concat(rangeText);
-            }
-            if (track.data.details.dataStatistics?.valueMin !== undefined && track.data.details.dataStatistics?.valueMax !== undefined) {
-                const valmin = track.data.details.dataStatistics?.valueMin;
-                const valmax = track.data.details.dataStatistics?.valueMax;
-                desc = desc.concat(` The expression values range from ${valmin} to ${valmax}.`);
-    
-                // where on the genome are the minimum and maximum expression
-                if (track.data.details.dataStatistics?.valueMaxGenomic && track.data.details.dataStatistics?.valueMinGenomic) {
-                    const valmingen = addMinMaxDescription(track.data.details.dataStatistics?.valueMinGenomic, 'minimum', assembly);
-                    const valmaxgen = addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum', assembly);
-                    desc = desc.concat(valmaxgen, valmingen);
-                    track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}. ${valmingen}`], ['Maximum', `${valmax}. ${valmaxgen}`]];
-                } else {
-                    track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}`], ['Maximum', `${valmax}`]];
-                }
-            }
-            // add category data information
-            if (track.data.details.dataStatistics?.categories) {
-
-                // number of categories
-                desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
-
-                if (track.data.details.dataStatistics?.categories.length < 7) {
-                    desc = desc.concat(`: ${arrayToString(track.data.details.dataStatistics?.categories)}.`);
-                } else {
-                    desc = desc.concat(`.`);
-                }
-
-                // which category has the highest expression peak
-                if (track.data.details.dataStatistics?.highestCategory) {
-                    console.log('highest cat', track.data.details.dataStatistics?.highestCategory)
-                    if (track.data.details.dataStatistics?.highestCategory.length === 1) {
-                        desc = desc.concat(` The highest value is observed in sample ${track.data.details.dataStatistics?.highestCategory[0]}.`);
-                    } else {
-                        desc = desc.concat(` The highest value is observed in samples ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
-                    }
-                }
-                // See if genomic positions are the same for the min and max values of each category
-            }
-            // track.data.details.dataStatistics.genomicMaxDescription = ''
-            track.data.description = desc;
+        addTrackDataDescriptionsTrackInd(track);
+    } 
+    if (track.alttype === 'ov-data') {
+        for (let i = 0; i < Object.keys(track.tracks).length; i++) {
+            const overlaidDataTrack = track.tracks[i];
+            addTrackDataDescriptionsTrackInd(overlaidDataTrack);
         }
+    }
+}
+
+export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd) {
+    if (track.data.details.dataStatistics) {
+        let desc = '';
+        const assembly = track.appearance.details.assembly;
+        // genomic and expression ranges
+        if (track.data.details.dataStatistics?.genomicMin !== undefined &&  track.data.details.dataStatistics?.genomicMax !== undefined) {
+            // get text for min and max
+            const rangeText = getRangeText(track.data.details.dataStatistics.genomicMin, track.data.details.dataStatistics.genomicMax, assembly);
+            const genmin = getOnePositionText(track.data.details.dataStatistics?.genomicMin, assembly);
+            const genmax = getOnePositionText(track.data.details.dataStatistics?.genomicMax , assembly);
+            track.data.details.dataStatistics.genomicDescList = [['Minimum', genmin], ['Maximum', genmax]];
+            desc = desc.concat(rangeText);
+        }
+        if (track.data.details.dataStatistics?.valueMin !== undefined && track.data.details.dataStatistics?.valueMax !== undefined) {
+            const valmin = track.data.details.dataStatistics?.valueMin;
+            const valmax = track.data.details.dataStatistics?.valueMax;
+            desc = desc.concat(` The expression values range from ${valmin} to ${valmax}.`);
+
+            // where on the genome are the minimum and maximum expression
+            if (track.data.details.dataStatistics?.valueMaxGenomic && track.data.details.dataStatistics?.valueMinGenomic) {
+                const valmingen = addMinMaxDescription(track.data.details.dataStatistics?.valueMinGenomic, 'minimum', assembly);
+                const valmaxgen = addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum', assembly);
+                desc = desc.concat(valmaxgen, valmingen);
+                track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}. ${valmingen}`], ['Maximum', `${valmax}. ${valmaxgen}`]];
+            } else {
+                track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}`], ['Maximum', `${valmax}`]];
+            }
+        }
+        // add category data information
+        if (track.data.details.dataStatistics?.categories) {
+
+            // number of categories
+            desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
+
+            if (track.data.details.dataStatistics?.categories.length < 7) {
+                desc = desc.concat(`: ${arrayToString(track.data.details.dataStatistics?.categories)}.`);
+            } else {
+                desc = desc.concat(`.`);
+            }
+
+            // which category has the highest expression peak
+            if (track.data.details.dataStatistics?.highestCategory) {
+                console.log('highest cat', track.data.details.dataStatistics?.highestCategory)
+                if (track.data.details.dataStatistics?.highestCategory.length === 1) {
+                    desc = desc.concat(` The highest value is observed in sample ${track.data.details.dataStatistics?.highestCategory[0]}.`);
+                } else {
+                    desc = desc.concat(` The highest value is observed in samples ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
+                }
+            }
+            // See if genomic positions are the same for the min and max values of each category
+        }
+        // track.data.details.dataStatistics.genomicMaxDescription = ''
+        track.data.description = desc;
     }
 }
 

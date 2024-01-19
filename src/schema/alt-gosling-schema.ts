@@ -107,41 +107,53 @@ export interface AltTrackData {
     details: AltTrackDataDetails;
 }
 
-export interface AltTrackOverlaidByDataInd {
-    description: string;
-    charttype: string;
-    appearance: AltTrackAppearance;
-    data: AltTrackData;
-}
+// export interface AltTrackOverlaidByDataInd {
+//         uid: string,
+//         description: string;
+//         charttype: string;
+//         appearance: AltTrackAppearance;
+//         data: AltTrackData;
+//     }
 
 export interface AltTrackBase {
-    alttype: 'single' | 'ov-mark' | 'ov-data';
-    uid: string,
+    alttype: 'single' | 'ov-mark' | 'ov-data' | 'ov-data-ind';
     description: string;
     title?: string;
-    position: AltTrackPosition;
 }
 
 
 export interface AltTrackSingle extends AltTrackBase {
     alttype: 'single';
+    uid: string,
     charttype: string;
     appearance: AltTrackAppearance;
     data: AltTrackData;
+    position: AltTrackPosition;
 }
 
 export interface AltTrackOverlaidByMark extends AltTrackBase {
     alttype: 'ov-mark';
+    uid: string,
     charttype: string[];
     appearance: AltTrackAppearanceOverlaid;
+    data: AltTrackData;
+    position: AltTrackPosition;
+}
+
+export interface AltTrackOverlaidByDataInd extends AltTrackBase {
+    alttype: 'ov-data-ind'
+    uid: string,
+    charttype: string;
+    appearance: AltTrackAppearance;
     data: AltTrackData;
 }
 
 export interface AltTrackOverlaidByData extends AltTrackBase {
     alttype: 'ov-data';
     uids: string[];
-    appearance: {details: {layout: Layout}};
+    appearance: {description: string, details: {layout: Layout}};
     tracks: AltTrackOverlaidByDataInd[];
+    position: AltTrackPosition;
 }
 
 export type AltTrackOverlaid = AltTrackOverlaidByMark | AltTrackOverlaidByData;

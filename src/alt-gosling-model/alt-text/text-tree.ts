@@ -1,4 +1,4 @@
-import type { AltEncodingSeparated, AltGoslingSpec, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltEncodingSeparated, AltGoslingSpec, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
 
 import { GetColorName } from 'hex-color-to-color-name';
@@ -10,7 +10,7 @@ export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec) {
 
 function addTrackPositionDescriptions(altGoslingSpec: AltGoslingSpec) {
     if (altGoslingSpec.composition.nTracks == 1) {
-        altGoslingSpec.tracks[0].position.description = 'This is the only track.';
+        altGoslingSpec.tracks[0].position.description = 'There is only one view.';
         if (altGoslingSpec.tracks[0].alttype === 'single') {
             altGoslingSpec.composition.description = 'There is one (' + altGoslingSpec.tracks[0].appearance.details.layout + ') track.';
         } else {
@@ -209,17 +209,45 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
 
             track.appearance.description = desc;
             track.appearance.details.encodingsDescList = encodingDescriptions.descList;
-        } else {
-            // fill in later
+        } else if (track.alttype === 'ov-data') {
+            let desc = '';
+
+            const chartTypeList = track.tracks.map(t => t.charttype);
+            desc = desc.concat(capDesc(arrayToString(chartTypeList)));
+
+            if (track.title) {
+                desc = desc.concat(` Chart is titled '${track.title}'.`);
+            }
+
+            desc = desc.concat(` This is an overlaid track with multiple data sources. See individual tracks for more information.`)
+            track.appearance.description = desc;
+
+            for (let i = 0; i < Object.keys(track.tracks).length; i++) {
+                const overlaidDataTrack = track.tracks[i];
+                let descTrack = 'Overlaid track. ';
+                descTrack = descTrack.concat(capDesc(overlaidDataTrack.charttype));
+
+            if (overlaidDataTrack.title) {
+                descTrack = descTrack.concat(` Chart is titled '${track.title}'.`);
+            }
+
+            const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack);
+
+            descTrack = descTrack.concat(' ' + encodingDescriptions.desc);
+        
+            overlaidDataTrack.appearance.description = desc;
+            overlaidDataTrack.appearance.details.encodingsDescList = encodingDescriptions.descList;
+            }
         }
     }
 }
 
-function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark) {
+function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd) {
     let mark;
     let marks;
     let markText;
-    if (track.alttype === 'single' || (track.alttype === 'ov-mark' && track.appearance.details.mark)) {
+    
+    if (track.alttype === 'single' || (track.alttype === 'ov-mark' && track.appearance.details.mark) || track.alttype === 'ov-data-ind') {
         mark = track.appearance.details.mark as string;
         markText = markToText.get(mark) as string;
         const {descGenomic, descQuantitative, descNominal, descValue, descList} = addEncodingDescriptionsAll(markText, track.appearance.details.encodings);

@@ -68,7 +68,7 @@ export function capDesc(desc: string): string {
 /**
  * Mapping from mark name to a natural language description of said mark
  */
-export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles'], ['text', 'text']]);
+export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles'], ['text', 'text'], ['rule', 'lines']]);
 
 /**
  * Mapping of channel name to a natural language description of said channel
