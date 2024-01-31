@@ -130,9 +130,9 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 if (track.data.details.dataStatistics?.highestCategory) {
                     // console.log('highest cat', track.data.details.dataStatistics?.highestCategory)
                     if (track.data.details.dataStatistics?.highestCategory.length === 1) {
-                        desc = desc.concat(` The highest value is observed in sample ${track.data.details.dataStatistics?.highestCategory[0]}.`);
+                        desc = desc.concat(` The highest value is observed in category ${track.data.details.dataStatistics?.highestCategory[0]}.`);
                     } else {
-                        desc = desc.concat(` The highest value is observed in samples ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
+                        desc = desc.concat(` The highest value is observed in categories ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
                     }
                 }
                 // See if genomic positions are the same for the min and max values of each category
