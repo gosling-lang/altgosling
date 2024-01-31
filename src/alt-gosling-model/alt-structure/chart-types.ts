@@ -33,16 +33,16 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
         return 'ideogram';
     }
     if (_mark === 'rule' && _allEncodings.includes('x') && _allEncodings.includes('y')) {
-        return 'lines';
+        return 'chart with lines';
     }
     if (_mark === 'rule' && _allEncodings.includes('x')) {
-        return 'vertical lines';
+        return 'chart with vertical lines';
     }
     if (_mark === 'rule' && _allEncodings.includes('y')) {
-        return 'horizontal lines';
+        return 'chart with horizontal lines';
     }
     if (markToText.get(_mark)) {
-        return `chart with ${markToText.get(_mark)}.`;
+        return `chart with ${markToText.get(_mark)}`;
     } 
     
     return `unknown chart`;

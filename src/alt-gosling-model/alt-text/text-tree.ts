@@ -182,7 +182,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
         if (track.alttype === 'single') {
             let desc = '';
 
-            desc = desc.concat(capDesc(track.charttype));
+            desc = desc.concat(`${capDesc(track.charttype)}.`);
 
             if (track.title) {
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
