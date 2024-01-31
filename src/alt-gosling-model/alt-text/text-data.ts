@@ -114,26 +114,29 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
         }
         // add category data information
         if (track.data.details.dataStatistics?.categories) {
-
-            // number of categories
-            desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
-
-            if (track.data.details.dataStatistics?.categories.length < 7) {
-                desc = desc.concat(`: ${arrayToString(track.data.details.dataStatistics?.categories)}.`);
+            if (track.data.details.dataStatistics?.categories.length === 1) {
+                desc = desc.concat(` The category shown is called '${track.data.details.dataStatistics?.categories[0]}'.`);
             } else {
-                desc = desc.concat(`.`);
-            }
+                // number of categories
+                desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
 
-            // which category has the highest expression peak
-            if (track.data.details.dataStatistics?.highestCategory) {
-                console.log('highest cat', track.data.details.dataStatistics?.highestCategory)
-                if (track.data.details.dataStatistics?.highestCategory.length === 1) {
-                    desc = desc.concat(` The highest value is observed in sample ${track.data.details.dataStatistics?.highestCategory[0]}.`);
+                if (track.data.details.dataStatistics?.categories.length < 7) {
+                    desc = desc.concat(`: ${arrayToString(track.data.details.dataStatistics?.categories)}.`);
                 } else {
-                    desc = desc.concat(` The highest value is observed in samples ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
+                    desc = desc.concat(`.`);
                 }
+
+                // which category has the highest expression peak
+                if (track.data.details.dataStatistics?.highestCategory) {
+                    // console.log('highest cat', track.data.details.dataStatistics?.highestCategory)
+                    if (track.data.details.dataStatistics?.highestCategory.length === 1) {
+                        desc = desc.concat(` The highest value is observed in sample ${track.data.details.dataStatistics?.highestCategory[0]}.`);
+                    } else {
+                        desc = desc.concat(` The highest value is observed in samples ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
+                    }
+                }
+                // See if genomic positions are the same for the min and max values of each category
             }
-            // See if genomic positions are the same for the min and max values of each category
         }
         // track.data.details.dataStatistics.genomicMaxDescription = ''
         track.data.description = desc;
