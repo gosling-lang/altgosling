@@ -1,7 +1,5 @@
 export const barChart = {
-    "title": "Basic Marks: bar",
-    "subtitle": "Tutorial Examples",
-    // "responsiveSize": true,
+    "title": "Tonsil ChIP-seq in Th1 cells",
     "tracks": [
       {
         "layout": "linear",

@@ -120,6 +120,25 @@ export function altUpdateSpecWithData(
                 addTrackDescription(track, includePosition);
             }
         }
+        if (track.alttype == 'ov-data') {
+            for (let i = 0; i < Object.keys(track.tracks).length; i++) {
+                const overlaidDataTrack = track.tracks[i];
+                if (overlaidDataTrack.uid === id) {
+                    // get genomic field headers for that track
+                fields = overlaidDataTrack.data.details.fields;
+
+                // retrieve data statistics
+                const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
+
+                // fill in data
+                overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
+
+                // update description
+                addTrackDataDescriptionsTrack(track);
+                addTrackDescription(track, includePosition);
+                }
+            }
+        }
     }
     addGlobalDescription(altGoslingSpec, false);
     return(altGoslingSpec);

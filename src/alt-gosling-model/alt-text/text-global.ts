@@ -20,7 +20,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         const chart1Type = chart1[0];
         const chart1Desc = chart1.slice(1).join('.');
         
-        const chart2 = altGoslingSpec.tracks[0].description.split('.');
+        const chart2 = altGoslingSpec.tracks[1].description.split('.');
         const chart2Type = chart2[0];
         const chart2Desc = chart2.slice(1).join('.');
 

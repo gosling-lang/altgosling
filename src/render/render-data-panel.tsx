@@ -58,7 +58,7 @@ export function renderDataPanel(
 
     // if there is only 1 track, there is no need to mention this
     let positionDescription;
-    if (track.position.description == 'This is the only track.') {
+    if (track.position.description === 'There is only one view.') {
         positionDescription = ``;
     } else {
         positionDescription = `Showing track on the ${track.position.description}.`;

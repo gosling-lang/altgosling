@@ -6,16 +6,18 @@ import { AltGoslingComponent } from '../src/AltGoslingComponent';
 import { barChart, barChartStatic } from './examples/barChart';
 import { lineChart } from './examples/lineChart';
 import { pointChart } from './examples/pointChart';
-import { ideogram } from './examples/ideogram';
+import { ideogram, ideogramWithArea } from './examples/ideogram';
+import { compare2 } from './examples/tonsil';
 
 // multiple visual encodings
 import { visualEncoding } from './examples/visualEncoding';
 import { visualEncodingTrack1, visualEncodingTrack1And2, visualEncodingTrack4, visualEncodingTrack4WithDataCopied } from './examples/visualEncodingVariations';
-import { ruleMark, ruleMarkOverlaidWithSecondEncoding } from './examples/ruleMark';
+import { ruleMark, ruleMark2, ruleMarkOverlaidWithSecondEncoding, ruleMarkOverlaidWithSecondEncodingSame } from './examples/ruleMark';
 
 // complex examples
 import { give } from './examples/exampleGIVE';
 import { geneAnnotation } from './examples/geneAnnotation';
+import { transform } from './examples/transform';
 
 // MUI elements
 import Grid from '@mui/material/Grid';
@@ -23,21 +25,28 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { brush } from './examples/brush';
 
 
 function Demo() {
     const examples = {'Bar chart': barChart, 
                       'Line chart': lineChart,
-                      'Point chart': pointChart,
-                      'Ideogram': ideogram,
-                      'Multiple Visual Encodings': visualEncoding, 
-                      'Multiple Visual Encoding Track 1 and 2': visualEncodingTrack1And2, 
-                      'Multiple Visual Encoding Track 4': visualEncodingTrack4, 
-                      'Multiple Visual Encoding Track 4 Test': visualEncodingTrack4WithDataCopied, 
+                    //   'Point chart': pointChart,
+                      // 'Ideogram': ideogram,
+                    'Ideogram': ideogramWithArea,
+                    'Linked views': brush,
+                    //   'Multiple Visual Encodings': visualEncoding, 
+                      'Tonsil ChIP-seq comparison': compare2,
+                    //   'Multiple Visual Encoding Track 1 and 2': visualEncodingTrack1And2, 
+                    //   'Multiple Visual Encoding Track 4': visualEncodingTrack4, 
+                    //   'Multiple Visual Encoding Track 4 Test': visualEncodingTrack4WithDataCopied, 
                       'Bar chart with lines': ruleMark, 
+                    //   'Bar chart with lines2': ruleMark2, 
                       'Bar chart with points': ruleMarkOverlaidWithSecondEncoding, 
-                      'GIVE - CAO et al.': give,
-                      'Gene annotations': geneAnnotation
+                    //   'Bar chart with points2': ruleMarkOverlaidWithSecondEncodingSame,
+                    //   'GIVE - CAO et al.': give,
+                      'Gene annotations': geneAnnotation,
+                    //   'transform': transform
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 

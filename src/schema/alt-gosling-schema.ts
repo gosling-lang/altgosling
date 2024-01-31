@@ -1,4 +1,4 @@
-import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation } from './gosling.schema';
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Encoding, X, Y, Assembly, Layout, Orientation, DataTransform } from './gosling.schema';
 
 /**
  * Values in the form of JSON.
@@ -51,6 +51,16 @@ export type AltTrackPositionDetails = {
     colNumber: number;
 }
 
+export type AltLinked = {
+    channel: string;
+    linkingId: string
+}
+
+export type AltLinkedTrack = {
+    trackNumber: number; 
+    positionDesc: string
+}
+
 export type AltTrackAppearanceDetails = {
     overlaid: false;
     layout: Layout;
@@ -59,17 +69,23 @@ export type AltTrackAppearanceDetails = {
     encodingsDescList: string[][];
     orientation?: Orientation;
     assembly?: Assembly;
+    linkingId?: string;
+    linked?: AltLinked[];
 }
 
 export type AltTrackAppearanceDetailsOverlaid = {
     overlaid: true;
     layout: Layout;
-    mark: Mark[];
+    mark?: Mark,
+    markByTrack: Mark[];
     encodings: AltEncodingSeparated;
-    encodingsByMark: AltEncodingSeparated[];
+    encodingsByTrack: AltEncodingSeparated[];
     encodingsDescList: string[][];
     orientation?: Orientation;
     assembly?: Assembly;
+    linkingId?: string;
+    linked?: AltLinked[];
+    altOverlay: AltOverlayPart[]
 }
 
 export interface AltTrackDataFields {
@@ -81,6 +97,7 @@ export interface AltTrackDataFields {
 export interface AltTrackDataDetails {
     data: DataDeep;
     fields: AltTrackDataFields;
+    transforms?: DataTransform[];
     dataStatistics?: AltDataStatistics;
 }
 
@@ -104,41 +121,53 @@ export interface AltTrackData {
     details: AltTrackDataDetails;
 }
 
-export interface AltTrackOverlaidByDataInd {
-    description: string;
-    charttype?: string;
-    appearance: AltTrackAppearance;
-    data: AltTrackData;
-}
+// export interface AltTrackOverlaidByDataInd {
+//         uid: string,
+//         description: string;
+//         charttype: string;
+//         appearance: AltTrackAppearance;
+//         data: AltTrackData;
+//     }
 
 export interface AltTrackBase {
-    alttype: 'single' | 'ov-mark' | 'ov-data';
-    uid: string,
+    alttype: 'single' | 'ov-mark' | 'ov-data' | 'ov-data-ind';
     description: string;
     title?: string;
-    position: AltTrackPosition;
 }
 
 
 export interface AltTrackSingle extends AltTrackBase {
     alttype: 'single';
-    charttype?: string;
+    uid: string,
+    charttype: string;
     appearance: AltTrackAppearance;
     data: AltTrackData;
+    position: AltTrackPosition;
 }
 
 export interface AltTrackOverlaidByMark extends AltTrackBase {
     alttype: 'ov-mark';
-    charttype?: string[];
+    uid: string,
+    charttype: string[];
     appearance: AltTrackAppearanceOverlaid;
+    data: AltTrackData;
+    position: AltTrackPosition;
+}
+
+export interface AltTrackOverlaidByDataInd extends AltTrackBase {
+    alttype: 'ov-data-ind'
+    uid: string,
+    charttype: string;
+    appearance: AltTrackAppearance;
     data: AltTrackData;
 }
 
 export interface AltTrackOverlaidByData extends AltTrackBase {
     alttype: 'ov-data';
     uids: string[];
-    appearance: {details: {layout: Layout}};
+    appearance: {description: string, details: {layout: Layout}};
     tracks: AltTrackOverlaidByDataInd[];
+    position: AltTrackPosition;
 }
 
 export type AltTrackOverlaid = AltTrackOverlaidByMark | AltTrackOverlaidByData;
@@ -195,3 +224,8 @@ export interface DataPanelInformation {
     altTrack: AltTrack,
     altDataStatistics: AltDataStatistics
 }
+
+export type AltOverlayPart = {
+    mark?: Mark,
+    dataTransform?: DataTransform,
+} & any;

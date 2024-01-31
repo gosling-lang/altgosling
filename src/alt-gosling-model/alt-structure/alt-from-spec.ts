@@ -1,11 +1,11 @@
-import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, OverlaidTrack, OverlaidTracks } from '@alt-gosling/schema/gosling.schema';
+import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, Encoding, ChannelTypes, OverlaidTrack, OverlaidTracks, DataTransform } from '@alt-gosling/schema/gosling.schema';
 import type {
     AltGoslingSpec, AltTrack, AltTrackSingle,
     AltTrackOverlaid, AltTrackOverlaidByMark, AltTrackOverlaidByData,
     AltSpecComposition, AltCounter, AltParentValues, AltTrackPosition, AltTrackPositionDetails,
-    AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid,  AltTrackAppearanceDetailsOverlaid,
+    AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid, AltOverlayPart, AltLinked, AltLinkedTrack,
     AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields,
-    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle } from '@alt-gosling/schema/alt-gosling-schema';
+    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle, AltTrackAppearanceDetailsOverlaid } from '@alt-gosling/schema/alt-gosling-schema';
 import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from '@alt-gosling/schema/gosling.schema.guard';
 import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
 
@@ -13,11 +13,13 @@ import { attributeExists, attributeExistsReturn } from '../util';
 import { determineSpecialCases } from './chart-types';
 // @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
+import { spec } from 'node:test/reporters';
 
 
 export function getAltSpec(
     spec: GoslingSpec
 ): AltGoslingSpec {
+    console.log('spec', spec)
     const altSpec = {} as AltGoslingSpec;
     altSpec.tracks = {} as (AltTrack)[];
 
@@ -43,6 +45,8 @@ export function getAltSpec(
 
     getPositionMatrix(counter);
 
+    // getLinking(altSpec);
+
     const composition: AltSpecComposition = { description: '', nTracks: counter.nTracks, parentValues: altParentValues, counter: counter };
     altSpec.composition = composition;
 
@@ -65,6 +69,7 @@ function determineStructure(
 
         // multiple tracks
         if (specPart.tracks.length > 1) {
+            console.log('multiple tracks');
 
             // check if overlaid
             if (IsOverlaidTracks(specPart)) {
@@ -90,7 +95,9 @@ function determineStructure(
         // if only one track is present, it is either a single track or an overlaid track with the same data
         // (as this is all performed on the _specProcessed which has already been convertToFlatTracks and spreadByData)
         } else {
+            console.log('only 1 track');
             if (IsOverlaidTrack(specPart.tracks[0])) {
+                console.log('is overlaid track');
                 const track = specPart.tracks[0] as OverlaidTrack;
                 altSpec.tracks[counter.nTracks] = altOverlaidTrack(track, altParentValues, counter);
             } else {
@@ -170,6 +177,7 @@ function altSingleTrack(
     } else {
         // figure out how to get the uid.
         uid = '';
+        console.warn('ID not found?')
     }
     
     
@@ -184,11 +192,17 @@ function altSingleTrack(
     appearanceDetails.overlaid = false;
     appearanceDetails.mark = track.mark;
     appearanceDetails.encodings = getSeparatedEncodings(track);
+    appearanceDetails.linkingId = track.linkingId;
 
     // data
     // add genomic_field, value_field, category_field for data retrieval
     const dataFields = determineFields(track.data, appearanceDetails.encodings);
     const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
+
+    // data transforms
+    if (track.dataTransform) {
+        dataDetails.transforms = track.dataTransform;
+    }
    
     // add temporary empty descriptions
     const position: AltTrackPosition = {description: '', details: positionDetails};
@@ -212,17 +226,154 @@ function altSingleTrack(
     
 }
 
+// function convertToSingleTrackOld(
+//     specPart: OverlaidTrack,
+//     altParentValues: AltParentValues,
+//     counter: AltCounter
+// ) {
+//     let newTrack = {...specPart, ...specPart._overlay[0]} as any;
+//     delete newTrack._overlay;
+//     delete newTrack.overlayOnPreviousTrack;
+//     newTrack = newTrack as SingleTrack;
+//     const altTrack = altSingleTrack(newTrack, altParentValues, counter);
+//     return [altTrack, specPart._overlay];
+// }
+
+
 function convertToSingleTrack(
     specPart: OverlaidTrack,
+    altOverlay: AltOverlayPart,
     altParentValues: AltParentValues,
     counter: AltCounter
-): AltTrackSingle {
-    let newTrack = {...specPart, ...specPart._overlay[0]} as any;
+) {
+    // console.log('h', specPart)
+    // console.log('h', altOverlay)
+    let newTrack = {...specPart, ...altOverlay} as any;
     delete newTrack._overlay;
     delete newTrack.overlayOnPreviousTrack;
     newTrack = newTrack as SingleTrack;
+    // console.log('new track', newTrack)
     const altTrack = altSingleTrack(newTrack, altParentValues, counter);
+    // console.log('new alttrack', altTrack)
     return altTrack;
+}
+
+function altOverlaidTrackGetStructure(
+    specPart: OverlaidTrack,
+    altParentValues: AltParentValues,
+    counter: AltCounter
+): [OverlaidTrack, AltOverlayPart[], AltTrackSingle[]] {
+    let altOverlay = [] as AltOverlayPart[];
+
+    // collect the mark, channels and data transform of each overlay
+    for (let i = 0; i < specPart._overlay.length; i++) {
+        altOverlay.push({} as AltOverlayPart);
+
+        if (specPart._overlay[i].mark) {
+            altOverlay[i].mark = specPart._overlay[i].mark;
+        } else {
+            if (specPart.mark) {
+                altOverlay[i].mark = specPart.mark;
+            }
+        }
+
+        SUPPORTED_CHANNELS.forEach(k => {
+            if (k === 'text') {
+                return
+            }
+
+            if (specPart._overlay[i][k]) {
+                altOverlay[i][k] = specPart._overlay[i][k];
+            } else {
+                if (specPart[k]) {
+                    altOverlay[i][k] = specPart[k];
+                }
+            }
+        });
+
+        if (specPart._overlay[i].dataTransform) {
+            altOverlay[i].dataTransform = specPart._overlay[i].dataTransform;
+        } else {
+            if (specPart.dataTransform) {
+                altOverlay[i].dataTransform = specPart.dataTransform;
+            }
+        }
+    }
+
+    // determine which to include and exclude in top
+    let includeInTop = {} as any;
+    let excludeInTop = {} as any;
+
+    // if no undefined and only 1 unique item, include in top
+    if (altOverlay.filter(e => e.mark === undefined).length === 0 && [...new Set(altOverlay.map(e => e.mark))].length === 1) {
+        includeInTop.mark = altOverlay[0].mark;
+        altOverlay.map(e => delete e.mark);
+    } else {
+        excludeInTop.mark = true;
+    }
+
+
+    SUPPORTED_CHANNELS.forEach(k => {
+        if (k === 'text') {
+            return
+        }
+        if (altOverlay.filter(e => e[k] === undefined).length === 0 && [...new Set(altOverlay.map(e => e[k]))].length === 1) {
+            includeInTop[k] = altOverlay[0][k];
+            altOverlay.map(e => delete e[k]);
+        } else {
+            excludeInTop[k] = true;
+        }
+    });
+
+    if (altOverlay.filter(e => e.dataTransform === undefined).length === 0 && [...new Set(altOverlay.map(e => e.dataTransform))].length === 1) {
+        includeInTop.dataTransform = altOverlay[0].dataTransform;
+        altOverlay.map(e => delete e.dataTransform);
+    } else {
+        excludeInTop.dataTransform = true;
+    }
+
+
+    if (excludeInTop.mark) {
+        delete specPart.mark;
+    } 
+
+    if (includeInTop.mark) {
+        specPart.mark = includeInTop.mark;
+    }
+
+    if (excludeInTop.dataTransform) {
+        delete specPart.dataTransform;
+    }
+
+    if (includeInTop.dataTransform) {
+        specPart.dataTransform = includeInTop.dataTransform;
+    }
+
+    SUPPORTED_CHANNELS.forEach(k => {
+        if (k === 'text') {
+            return
+        }
+        if (excludeInTop[k]) {
+            delete specPart[k];
+        }
+
+        if (includeInTop[k]) {
+            specPart[k] = includeInTop[k];
+        }
+    });
+
+
+    // get the single track representation from each overlay
+    console.log('specpart', specPart);
+    console.log('altoverlay', altOverlay)
+    const singleTracks = [] as AltTrackSingle[];
+     // const [singleTrack, _overlay] = convertToSingleTrack(specPart, altParentValues, counter);
+    for (let i = 0; i < specPart._overlay.length; i++) {
+        singleTracks.push(convertToSingleTrack(specPart, altOverlay[i], altParentValues, counter));
+    }
+
+    console.log('singletracks', singleTracks)
+    return [specPart, altOverlay, singleTracks]
 }
 
 function altOverlaidTrack(
@@ -230,9 +381,136 @@ function altOverlaidTrack(
     altParentValues: AltParentValues,
     counter: AltCounter
 ) {
-    const singleTrack = convertToSingleTrack(specPart, altParentValues, counter);
-    return singleTrack;
+    // uid
+    let uid;
+    if (specPart.id !== 'unknown') {
+        uid = specPart.id as string;
+    } else {
+        // figure out how to get the uid.
+        uid = '';
+        console.warn('ID not found?')
+    }
+    
+    // position
+    const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
+
+    // check if overlaid just because there is a brush
+    console.log('specpart', specPart)
+    let brush = [];
+    let nonBrush = [];
+    for (const overlay of specPart._overlay) {
+        if (overlay.mark) {
+            if (overlay.mark === 'brush') {
+                brush.push(overlay);
+            } else {
+                nonBrush.push(overlay);
+            }
+        } else {
+            nonBrush.push(overlay);
+        }
+    }
+    let linked = [] as AltLinked[];
+    if (brush.length > 0) {
+        console.log('yes', brush)
+        for (const b of brush) {
+            let linkingId;
+            let channel;
+            if (b.x) {
+                channel = 'x';
+                if (IsChannelDeep(b.x)) {
+                    linkingId = b.x.linkingId;
+                }
+            }
+            if (b.y) {
+                channel = 'y';
+                if (IsChannelDeep(b.y)) {
+                    linkingId = b.y.linkingId;
+                }
+            }
+            linkingId = 'temp'; // temporary as specProcessed doesn't catch linkingIds
+            if (channel !== undefined && linkingId !== undefined) {
+                linked.push({channel: channel, linkingId: linkingId});
+            }
+        }
+        if (nonBrush.length === 1) {
+            // then it's just a SingleTrack with a brush
+            // we create the SingleTrack to get the AltSingleTrack
+            let altTrack = convertToSingleTrack(specPart, nonBrush[0], altParentValues, counter)
+            
+            altTrack.appearance.details.linked = linked;
+            return altTrack;
+
+        } else {
+            // then it's still an OverlaidTrack, but also with a brush
+            // remove the brush, add it later
+            specPart._overlay = nonBrush;
+        }
+    }
+   
+    let [specPartNew, altOverlay, singleTracks] = altOverlaidTrackGetStructure(specPart, altParentValues, counter);
+
+    // appearance (anything from mark to layout to encodings)
+    const appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
+    appearanceDetails.assembly = singleTracks[0].appearance.details.assembly;
+    appearanceDetails.layout = singleTracks[0].appearance.details.layout;
+    appearanceDetails.overlaid = true;
+    
+    if (specPartNew.mark) {
+        appearanceDetails.mark = specPartNew.mark;
+        const specPartNewWithAllEncodings = {...specPartNew} as OverlaidTrack;
+        for (let i = 0; i < altOverlay.length; i++) {
+            SUPPORTED_CHANNELS.forEach(k => {
+                if (k === 'text') {
+                    return
+                }
+                if (!specPartNewWithAllEncodings[k]) {
+                    if (altOverlay[i][k]) {
+                        specPartNewWithAllEncodings[k] = altOverlay[i][k];
+                    } 
+                }
+            });
+        }
+        appearanceDetails.encodings = getSeparatedEncodings(specPartNewWithAllEncodings);
+    } else {
+        appearanceDetails.markByTrack = singleTracks.map(t => t.appearance.details.mark);
+        appearanceDetails.encodings = getSeparatedEncodings(specPartNew);
+        appearanceDetails.encodingsByTrack = altOverlay.map(t => getSeparatedEncodings(t));
+        // appearanceDetails.encodingsByTrack = singleTracks.map(t => t.appearance.details.encodings);
+    }
+
+    if (brush.length > 0) {
+        appearanceDetails.linked = linked;
+    }
+    
+    const altTrack = {} as AltTrackOverlaidByMark;
+    altTrack.alttype = 'ov-mark';
+
+    // data
+    const dataDetails = singleTracks[0].data.details;
+   
+    // add temporary empty descriptions
+    const position: AltTrackPosition = {description: '', details: positionDetails};
+    const appearance: AltTrackAppearanceOverlaid = {description: '', details: appearanceDetails};
+    const data: AltTrackData = {description: '', details: dataDetails};
+    
+    // add to altTrack
+    altTrack.uid = uid;
+    altTrack.position = position;
+    altTrack.appearance = appearance;
+    altTrack.title = specPart.title;
+    altTrack.data = data;
+    
+    // determine type if possible
+    altTrack.charttype = singleTracks.map(t => t.charttype);
+
+    // empty description, to be filled in.
+    altTrack.description = '';
+
+    return altTrack;
 }
+
+
+
 
 function altOverlaidTracks(
     specPart: OverlaidTracks,
@@ -253,84 +531,84 @@ function altOverlaidTracks(
     // }
 }
 
-function altOverlaidByMark(
-    track: OverlaidTrack,
-    altParentValues: AltParentValues,
-    counter: AltCounter
-): AltTrackOverlaidByMark {
-    const altTrack = {} as AltTrackOverlaidByMark;
-    altTrack.alttype = 'ov-mark';
+// function altOverlaidByMark(
+//     track: OverlaidTrack,
+//     altParentValues: AltParentValues,
+//     counter: AltCounter
+// ): AltTrackOverlaidByMark {
+//     const altTrack = {} as AltTrackOverlaidByMark;
+//     altTrack.alttype = 'ov-mark';
 
-    // uid
-    let uid;
-    if (track.id !== 'unknown') {
-        uid = track.id as string;
-    } else {
-        // figure out how to get the uid.
-        uid = '';
-    }
+//     // uid
+//     let uid;
+//     if (track.id !== 'unknown') {
+//         uid = track.id as string;
+//     } else {
+//         // figure out how to get the uid.
+//         uid = '';
+//     }
 
-    // position
-    const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
+//     // position
+//     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
-    // appearance (anything from mark to layout to encodings)
-    const appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
+//     // appearance (anything from mark to layout to encodings)
+//     const appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
     
-    appearanceDetails.assembly = track.assembly;
-    appearanceDetails.layout = altParentValues.layout;
-    appearanceDetails.overlaid = true;
-    appearanceDetails.encodings = getSeparatedEncodings(track);
+//     appearanceDetails.assembly = track.assembly;
+//     appearanceDetails.layout = altParentValues.layout;
+//     appearanceDetails.overlaid = true;
+//     appearanceDetails.encodings = getSeparatedEncodings(track);
     
-    const marks = [] as Mark[];
-    const encodingsByMark = [] as AltEncodingSeparated[];
-    if (track.mark) {
-        marks.push(track.mark);
-    }
-    for (const o of track._overlay) {
-        const partialOverlaidTrack = o as Partial<OverlaidTrack>;
-        if (partialOverlaidTrack.mark) {
-            marks.push(partialOverlaidTrack.mark);
-        }
-        encodingsByMark.push(getSeparatedEncodings(partialOverlaidTrack));
+//     const marks = [] as Mark[];
+//     const encodingsByMark = [] as AltEncodingSeparated[];
+//     if (track.mark) {
+//         marks.push(track.mark);
+//     }
+//     for (const o of track._overlay) {
+//         const partialOverlaidTrack = o as Partial<OverlaidTrack>;
+//         if (partialOverlaidTrack.mark) {
+//             marks.push(partialOverlaidTrack.mark);
+//         }
+//         encodingsByMark.push(getSeparatedEncodings(partialOverlaidTrack));
         
-    }
-    appearanceDetails.mark = marks;
-    appearanceDetails.encodingsByMark = encodingsByMark;
+//     }
+//     appearanceDetails.mark = marks;
+//     appearanceDetails.encodingsByMark = encodingsByMark;
     
-    // data
-    if (track.data) {
-        const dataFields = determineFields(track.data, appearanceDetails.encodings);
-        const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
-        const data: AltTrackData = {description: '', details: dataDetails};
-        altTrack.data = data;
-    }
+//     // data
+//     if (track.data) {
+//         const dataFields = determineFields(track.data, appearanceDetails.encodings);
+//         const dataDetails: AltTrackDataDetails = {data: track.data, fields: dataFields};
+//         const data: AltTrackData = {description: '', details: dataDetails};
+//         altTrack.data = data;
+//     }
 
-    // add temporary empty descriptions
-    const position: AltTrackPosition = {description: '', details: positionDetails};
-    const appearance: AltTrackAppearanceOverlaid = {description: '', details: appearanceDetails};
+//     // add temporary empty descriptions
+//     const position: AltTrackPosition = {description: '', details: positionDetails};
+//     const appearance: AltTrackAppearanceOverlaid = {description: '', details: appearanceDetails};
    
-    // add to altTrack
-    altTrack.uid = uid;
-    altTrack.position = position;
-    altTrack.appearance = appearance;
-    altTrack.title = track.title;
+//     // add to altTrack
+//     altTrack.uid = uid;
+//     altTrack.position = position;
+//     altTrack.appearance = appearance;
+//     altTrack.title = track.title;
    
     
-    // determine type if possible
-    const charttypes = [] as string[];
-    for (let i = 0; i < marks.length; i++) {
-        const charttype = determineSpecialCases(altTrack, i);
-        if (charttype) {
-            charttypes.push(charttype);
-        }
-    }
-    altTrack.charttype = charttypes;
+//     // determine type if possible
+//     const charttypes = [] as string[];
+//     for (let i = 0; i < marks.length; i++) {
+//         const charttype = determineSpecialCases(altTrack, i);
+//         if (charttype) {
+//             charttypes.push(charttype);
+//         }
+//     }
+//     altTrack.charttype = charttypes;
 
-    // empty description, to be filled in.
-    altTrack.description = '';
+//     // empty description, to be filled in.
+//     altTrack.description = '';
 
-    return altTrack;
-}
+//     return altTrack;
+// }
 
 function altOverlaidByData(
     specPart: OverlaidTracks,
@@ -340,6 +618,9 @@ function altOverlaidByData(
 ): AltTrackOverlaidByData {
     const altTrack = {} as AltTrackOverlaidByData;
     altTrack.alttype = 'ov-data';
+
+    console.log('overlaid by data', specPart)
+    console.log('tracks', tracks)
 
     // position
     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
@@ -365,12 +646,13 @@ function altOverlaidByData(
     
     altTrack.title = specPart.title;
 
-    altTrack.appearance = {details: {layout: 'linear'}}; // only linear is supported at this time
+    altTrack.appearance = {description: '', details: {layout: 'linear'}}; // only linear is supported at this time
 
     altTrack.tracks = altTrackInd;
     altTrack.uids = uids;
     altTrack.description = '';
 
+    console.log('alttrackoverlaid', altTrack)
     return altTrack;
 }
 
@@ -382,6 +664,18 @@ function altOverlaidByDataSingleTrack(
     counter: AltCounter
 ): AltTrackOverlaidByDataInd {
     const altTrack = {} as AltTrackOverlaidByDataInd;
+    altTrack.alttype = 'ov-data-ind';
+
+    // uid
+    let uid;
+    if (track.id !== 'unknown') {
+        uid = track.id as string;
+    } else {
+        // figure out how to get the uid.
+        uid = '';
+    }
+
+    altTrack.uid = uid;
 
     // appearance (anything from mark to layout to encodings)
     const appearanceDetails = {} as AltTrackAppearanceDetails;
@@ -495,5 +789,60 @@ function getPositionMatrix(counter: AltCounter) {
         matrix[i] = colValsIStructured;
     }
     counter.matrix = matrix;
-    console.log(matrix);
 }
+
+
+// function getLinking(altSpec: AltGoslingSpec) {
+//     let linkingMapping = [] as {linkingId: string; brushTrack: AltLinkedTrack, linkedTracks: AltLinkedTrack[]; channel: string}[];
+//     let allLinkChilds = [] as {linkingId: string; trackNumber: number; positionDesc: string}[];
+//     let allLinkParents = [] as {linked: AltLinked; trackNumber: number; positionDesc: string}[];
+    
+//     for (const i in altSpec.tracks) {
+//         const track = altSpec.tracks[i]
+//         if (track.alttype === 'single' || track.alttype === 'ov-mark') {
+//             if (track.appearance.details.linkingId) {
+//                 allLinkChilds.push({linkingId: track.appearance.details.linkingId, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//             }
+//             if (track.appearance.details.linked && track.appearance.details.linked.length > 0) {
+//                 for (const linkedInner of track.appearance.details.linked) {
+//                     allLinkParents.push({linked: linkedInner, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//                 }
+//             }
+//         } else {
+//             for (const t of track.tracks) {
+//                 if (t.appearance.details.linkingId) {
+//                     allLinkChilds.push({linkingId: t.appearance.details.linkingId, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//                 }
+//                 if (t.appearance.details.linked && t.appearance.details.linked.length > 0) {
+//                     for (const linkedInner of t.appearance.details.linked) {
+//                         allLinkParents.push({linked: linkedInner, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     console.log('all parents', allLinkParents)
+//     for (const lParent of allLinkParents) {
+//         linkingMapping.push({
+//             linkingId: lParent.linked.linkingId,
+//             brushTrack: {
+//                 trackNumber: lParent.trackNumber,
+//                 positionDesc: lParent.positionDesc
+//             },
+//             linkedTracks: [],
+//             channel: lParent.linked.channel
+//         })
+//     }
+//     for (const lChild of allLinkChilds) {
+//         for (const lMap of linkingMapping) {
+//             if (lChild.linkingId === lMap.linkingId) {
+//                 lMap.linkedTracks.push({
+//                     trackNumber: lChild.trackNumber,
+//                     positionDesc: lChild.positionDesc
+//                 })
+//             }
+//         }
+//     }
+//     return linkingMapping;
+// }
