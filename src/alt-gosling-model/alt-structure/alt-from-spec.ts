@@ -45,7 +45,7 @@ export function getAltSpec(
 
     getPositionMatrix(counter);
 
-    getLinking(altSpec);
+    // getLinking(altSpec);
 
     const composition: AltSpecComposition = { description: '', nTracks: counter.nTracks, parentValues: altParentValues, counter: counter };
     altSpec.composition = composition;
@@ -427,6 +427,7 @@ function altOverlaidTrack(
                     linkingId = b.y.linkingId;
                 }
             }
+            linkingId = 'temp'; // temporary as specProcessed doesn't catch linkingIds
             if (channel !== undefined && linkingId !== undefined) {
                 linked.push({channel: channel, linkingId: linkingId});
             }
@@ -791,65 +792,57 @@ function getPositionMatrix(counter: AltCounter) {
 }
 
 
-function getLinking(altSpec: AltGoslingSpec) {
-    // let linking = [{
-    //     linkingId: smth
-    //     brushTrack: [0, 'top track']
-    //     linkedTrack: [1, 'bottom track']
-    //     shown on channel: 'x'
-    // }, {
-    // }[]
-    let linkingMapping = [] as {linkingId: string; brushTrack: AltLinkedTrack, linkedTracks: AltLinkedTrack[]; channel: string}[];
-    let allLinkChilds = [] as {linkingId: string; trackNumber: number; positionDesc: string}[];
-    let allLinkParents = [] as {linked: AltLinked; trackNumber: number; positionDesc: string}[];
+// function getLinking(altSpec: AltGoslingSpec) {
+//     let linkingMapping = [] as {linkingId: string; brushTrack: AltLinkedTrack, linkedTracks: AltLinkedTrack[]; channel: string}[];
+//     let allLinkChilds = [] as {linkingId: string; trackNumber: number; positionDesc: string}[];
+//     let allLinkParents = [] as {linked: AltLinked; trackNumber: number; positionDesc: string}[];
     
-    for (const i in altSpec.tracks) {
-        const track = altSpec.tracks[i]
-        if (track.alttype === 'single' || track.alttype === 'ov-mark') {
-            if (track.appearance.details.linkingId) {
-                allLinkChilds.push({linkingId: track.appearance.details.linkingId, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
-            }
-            if (track.appearance.details.linked && track.appearance.details.linked.length > 0) {
-                for (const linkedInner of track.appearance.details.linked) {
-                    allLinkParents.push({linked: linkedInner, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
-                }
-            }
-        } else {
-            for (const t of track.tracks) {
-                if (t.appearance.details.linkingId) {
-                    allLinkChilds.push({linkingId: t.appearance.details.linkingId, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
-                }
-                if (t.appearance.details.linked && t.appearance.details.linked.length > 0) {
-                    for (const linkedInner of t.appearance.details.linked) {
-                        allLinkParents.push({linked: linkedInner, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
-                    }
-                }
-            }
-        }
-    }
+//     for (const i in altSpec.tracks) {
+//         const track = altSpec.tracks[i]
+//         if (track.alttype === 'single' || track.alttype === 'ov-mark') {
+//             if (track.appearance.details.linkingId) {
+//                 allLinkChilds.push({linkingId: track.appearance.details.linkingId, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//             }
+//             if (track.appearance.details.linked && track.appearance.details.linked.length > 0) {
+//                 for (const linkedInner of track.appearance.details.linked) {
+//                     allLinkParents.push({linked: linkedInner, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//                 }
+//             }
+//         } else {
+//             for (const t of track.tracks) {
+//                 if (t.appearance.details.linkingId) {
+//                     allLinkChilds.push({linkingId: t.appearance.details.linkingId, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//                 }
+//                 if (t.appearance.details.linked && t.appearance.details.linked.length > 0) {
+//                     for (const linkedInner of t.appearance.details.linked) {
+//                         allLinkParents.push({linked: linkedInner, trackNumber: track.position.details.trackNumber, positionDesc: track.position.description});
+//                     }
+//                 }
+//             }
+//         }
+//     }
 
-    console.log('all parents', allLinkParents)
-    for (const lParent of allLinkParents) {
-        linkingMapping.push({
-            linkingId: lParent.linked.linkingId,
-            brushTrack: {
-                trackNumber: lParent.trackNumber,
-                positionDesc: lParent.positionDesc
-            },
-            linkedTracks: [],
-            channel: lParent.linked.channel
-        })
-    }
-    for (const lChild of allLinkChilds) {
-        for (const lMap of linkingMapping) {
-            if (lChild.linkingId === lMap.linkingId) {
-                lMap.linkedTracks.push({
-                    trackNumber: lChild.trackNumber,
-                    positionDesc: lChild.positionDesc
-                })
-            }
-        }
-    }
-    console.log('map link', linkingMapping)
-
-}
+//     console.log('all parents', allLinkParents)
+//     for (const lParent of allLinkParents) {
+//         linkingMapping.push({
+//             linkingId: lParent.linked.linkingId,
+//             brushTrack: {
+//                 trackNumber: lParent.trackNumber,
+//                 positionDesc: lParent.positionDesc
+//             },
+//             linkedTracks: [],
+//             channel: lParent.linked.channel
+//         })
+//     }
+//     for (const lChild of allLinkChilds) {
+//         for (const lMap of linkingMapping) {
+//             if (lChild.linkingId === lMap.linkingId) {
+//                 lMap.linkedTracks.push({
+//                     trackNumber: lChild.trackNumber,
+//                     positionDesc: lChild.positionDesc
+//                 })
+//             }
+//         }
+//     }
+//     return linkingMapping;
+// }

@@ -190,7 +190,16 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
     
             const encodingDescriptions = addEncodingDescriptions(track);
 
-            desc = desc.concat(' ' + encodingDescriptions.desc);
+            desc = desc.concat(` ${encodingDescriptions.desc}`);
+
+            if (track.appearance.details.linked && track.appearance.details.linked.length > 0) {
+                let linkChannels = track.appearance.details.linked.map(l => l.channel);
+                if (linkChannels.length === 1) {
+                    desc = desc.concat(` The ${linkChannels[0]}-axis has a brush, linking to the other chart.`)
+                } else {
+                    desc = desc.concat(` The x and y-axes have brushes, linking to the other charts.`)
+                }
+            }
         
             track.appearance.description = desc;
             track.appearance.details.encodingsDescList = encodingDescriptions.descList;
@@ -206,6 +215,15 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             const encodingDescriptions = addEncodingDescriptions(track);
 
             desc = desc.concat(' ' + encodingDescriptions.desc);
+
+            if (track.appearance.details.linked && track.appearance.details.linked.length > 0) {
+                let linkChannels = track.appearance.details.linked.map(l => l.channel);
+                if (linkChannels.length === 1) {
+                    desc = desc.concat(` The ${linkChannels[0]}-axis has a brush, linking to one of the other charts.`)
+                } else {
+                    desc = desc.concat(` The x and y-axes have brushes, linking to one of the other charts.`)
+                }
+            }
 
             track.appearance.description = desc;
             track.appearance.details.encodingsDescList = encodingDescriptions.descList;
@@ -251,7 +269,7 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
         mark = track.appearance.details.mark as string;
         markText = markToText.get(mark) as string;
         const {descGenomic, descQuantitative, descNominal, descValue, descList} = addEncodingDescriptionsAll(markText, track.appearance.details.encodings);
-        const desc = ' '.concat(descGenomic, descQuantitative, descNominal, descValue);
+        const desc = [descGenomic, descQuantitative, descNominal, descValue].join(' ');
         return {desc: desc, descList: descList};
     } else {
         marks = track.appearance.details.markByTrack as string[];
