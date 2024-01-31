@@ -1,4 +1,4 @@
-import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, DataTransform } from './gosling.schema';
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Encoding, X, Y, Assembly, Layout, Orientation, DataTransform } from './gosling.schema';
 
 /**
  * Values in the form of JSON.
@@ -51,6 +51,16 @@ export type AltTrackPositionDetails = {
     colNumber: number;
 }
 
+export type AltLinked = {
+    channel: string;
+    linkingId: string
+}
+
+export type AltLinkedTrack = {
+    trackNumber: number; 
+    positionDesc: string
+}
+
 export type AltTrackAppearanceDetails = {
     overlaid: false;
     layout: Layout;
@@ -59,6 +69,8 @@ export type AltTrackAppearanceDetails = {
     encodingsDescList: string[][];
     orientation?: Orientation;
     assembly?: Assembly;
+    linkingId?: string;
+    linked?: AltLinked[];
 }
 
 export type AltTrackAppearanceDetailsOverlaid = {
@@ -71,6 +83,8 @@ export type AltTrackAppearanceDetailsOverlaid = {
     encodingsDescList: string[][];
     orientation?: Orientation;
     assembly?: Assembly;
+    linkingId?: string;
+    linked?: AltLinked[];
     altOverlay: AltOverlayPart[]
 }
 
