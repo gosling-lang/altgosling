@@ -52,7 +52,7 @@ export function arrayToString(arr: (string | number | undefined)[]): string {
         return arr[0] as string;
     }
 
-    return arr.slice(0, -1).join(', ') + ' and ' + arr.slice(-1);
+    return `${arr.slice(0, -1).join(', ')} and ${arr.slice(-1)}`;
 }
 
 /**
@@ -68,7 +68,7 @@ export function capDesc(desc: string): string {
 /**
  * Mapping from mark name to a natural language description of said mark
  */
-export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles'], ['text', 'text'], ['rule', 'lines']]);
+export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles'], ['text', 'text'], ['rule', 'lines'], ['brush', 'with linked view']]);
 
 /**
  * Mapping of channel name to a natural language description of said channel
