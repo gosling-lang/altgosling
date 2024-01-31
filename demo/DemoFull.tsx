@@ -25,6 +25,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { brush } from './examples/brush';
 
 
 function Demo() {
@@ -33,6 +34,7 @@ function Demo() {
                     //   'Point chart': pointChart,
                       // 'Ideogram': ideogram,
                     'Ideogram': ideogramWithArea,
+                    'Linked views': brush,
                     //   'Multiple Visual Encodings': visualEncoding, 
                       'Tonsil ChIP-seq comparison': compare2,
                     //   'Multiple Visual Encoding Track 1 and 2': visualEncodingTrack1And2, 
