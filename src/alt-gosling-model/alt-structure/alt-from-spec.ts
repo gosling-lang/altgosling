@@ -18,7 +18,7 @@ import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
 export function getAltSpec(
     spec: GoslingSpec
 ): AltGoslingSpec {
-    console.log('spec', spec)
+    // console.log('spec', spec)
     const altSpec = {} as AltGoslingSpec;
     altSpec.tracks = {} as (AltTrack)[];
 
@@ -53,7 +53,6 @@ export function getAltSpec(
     determineStructure(spec, altSpec, altParentValues, counter);
 
     getPositionMatrix(counter);
-    console.log(counter)
 
     // getLinking(altSpec);
 
@@ -76,11 +75,9 @@ function determineStructure(
     // singleview
     if ('tracks' in specPart) {
         const altParentValuesCopy = altUpdateParentValues(specPart, altParentValues);
-        console.log('altparent', altParentValuesCopy)
 
         // multiple tracks
         if (specPart.tracks.length > 1) {
-            console.log('multiple tracks');
 
             // check if overlaid
             if (IsOverlaidTracks(specPart)) {
@@ -279,15 +276,11 @@ function convertToSingleTrack(
     altParentValues: AltParentValues,
     counter: AltCounter
 ) {
-    // console.log('h', specPart)
-    // console.log('h', altOverlay)
     let newTrack = {...specPart, ...altOverlay} as any;
     delete newTrack._overlay;
     delete newTrack.overlayOnPreviousTrack;
     newTrack = newTrack as SingleTrack;
-    // console.log('new track', newTrack)
     const altTrack = altSingleTrack(newTrack, altParentValues, counter);
-    // console.log('new alttrack', altTrack)
     return altTrack;
 }
 
@@ -397,15 +390,12 @@ function altOverlaidTrackGetStructure(
 
 
     // get the single track representation from each overlay
-    console.log('specpart', specPart);
-    console.log('altoverlay', altOverlay)
     const singleTracks = [] as AltTrackSingle[];
      // const [singleTrack, _overlay] = convertToSingleTrack(specPart, altParentValues, counter);
     for (let i = 0; i < specPart._overlay.length; i++) {
         singleTracks.push(convertToSingleTrack(specPart, altOverlay[i], altParentValues, counter));
     }
 
-    console.log('singletracks', singleTracks)
     return [specPart, altOverlay, singleTracks]
 }
 
@@ -428,7 +418,6 @@ function altOverlaidTrack(
     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
     // check if overlaid just because there is a brush
-    console.log('specpart', specPart)
     let brush = [];
     let nonBrush = [];
     for (const overlay of specPart._overlay) {
@@ -444,7 +433,6 @@ function altOverlaidTrack(
     }
     let linked = [] as AltLinked[];
     if (brush.length > 0) {
-        console.log('yes', brush)
         for (const b of brush) {
             let linkingId;
             let channel;
@@ -652,9 +640,6 @@ function altOverlaidByData(
     const altTrack = {} as AltTrackOverlaidByData;
     altTrack.alttype = 'ov-data';
 
-    console.log('overlaid by data', specPart)
-    console.log('tracks', tracks)
-
     // position
     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
@@ -685,7 +670,6 @@ function altOverlaidByData(
     altTrack.uids = uids;
     altTrack.description = '';
 
-    console.log('alttrackoverlaid', altTrack)
     return altTrack;
 }
 
