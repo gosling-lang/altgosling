@@ -8,6 +8,7 @@ import { lineChart } from './examples/lineChart';
 import { pointChart } from './examples/pointChart';
 import { ideogram, ideogramWithArea } from './examples/ideogram';
 import { compare2 } from './examples/tonsil';
+import { circularHalves } from './examples/circularHalves';
 
 // multiple visual encodings
 import { visualEncoding } from './examples/visualEncoding';
@@ -46,6 +47,7 @@ function Demo() {
                     //   'Bar chart with points2': ruleMarkOverlaidWithSecondEncodingSame,
                     //   'GIVE - CAO et al.': give,
                       'Gene annotations': geneAnnotation,
+                      'Circular halves': circularHalves
                     //   'transform': transform
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);

@@ -17,7 +17,7 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.genomicMin  = Math.min(...genomicValues);
                 altDataStatistics.genomicMax = Math.max(...genomicValues);
             } catch (e) {
-                console.log(e);
+                console.warn(e);
             }
         }
 
@@ -28,7 +28,7 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.valueMin = Math.min(...valueValues);
                 altDataStatistics.valueMax = Math.max(...valueValues);
             } catch (e) {
-                console.log(e);
+                console.warn(e);
             }
         }
 
@@ -39,7 +39,7 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 altDataStatistics.valueMinGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMin).map(d => d[genomicField]) as unknown as number[]);
                 altDataStatistics.valueMaxGenomic = (flatTileData.filter(d => d[valueField] == altDataStatistics.valueMax).map(d => d[genomicField]) as unknown as number[]);
             } catch (e) {
-                console.log(e);
+                console.warn(e);
             }
         }
     
@@ -82,7 +82,7 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                         altDataStatistics.highestCategory = highestCategory;
                     }
                 } catch (e) {
-                    console.log(e);
+                    console.warn(e);
                 }
             }
         }

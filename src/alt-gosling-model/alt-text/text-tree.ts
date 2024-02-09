@@ -28,48 +28,47 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
     let firstPlace = '';
     let secondPlace = '';
     let desc = '';
+    
+    let nCircular = 0;
+    if (altGoslingSpec.tracks[0].appearance.details.layout === 'circular') {
+        nCircular += 1;
+    }
+    if (altGoslingSpec.tracks[1].appearance.details.layout === 'circular') {
+        nCircular += 1;
+    }
 
-    if (altGoslingSpec.tracks[0].appearance.details.layout === 'circular' && altGoslingSpec.tracks[1].appearance.details.layout === 'circular') {
-        
-        switch(altGoslingSpec.composition.parentValues.arrangement) {
-            case 'serial':
-                firstPlace = 'left half of ring';
-                secondPlace = 'right half of ring';
-                desc = 'Two circular tracks form one ring, with both the half of the ring.';
-                break;
-            case 'parallel':
-                firstPlace = 'outer ring';
-                secondPlace = 'inner ring';
-                desc = 'Two circular tracks form two rings, one around the other.';
-                break;
-            case 'horizontal':
-                firstPlace = 'left';
-                secondPlace = 'right';
-                desc = 'Two circular tracks are shown next to each other.';
-                break;
-            default:
-                firstPlace = 'top';
-                secondPlace = 'bottom';
-                desc = 'Two circular tracks are shown below each other.';
+    if (nCircular == 2) {
+        if (JSON.stringify(altGoslingSpec.composition.counter.serialCircular).indexOf(JSON.stringify([0,1])) !== -1 ) {
+            firstPlace = 'left half of ring';
+            secondPlace = 'right half of ring';
+            desc = 'Two circular tracks form one ring, with both the half of the ring.';
+        } else if (JSON.stringify(altGoslingSpec.composition.counter.parallelCircular).indexOf(JSON.stringify([0,1])) !== -1 ) {
+            firstPlace = 'outer ring';
+            secondPlace = 'inner ring';
+            desc = 'Two circular tracks form two rings, one around the other.';
         }
-    } else {
-        const bothLinear = altGoslingSpec.tracks[0].appearance.details.layout === altGoslingSpec.tracks[1].appearance.details.layout;
-        switch(altGoslingSpec.composition.parentValues.arrangement) {
-            case 'serial' || 'horizontal':
-                firstPlace = 'left';
-                secondPlace = 'right';
-                desc = ' are shown next to each other.';
-                break;
-            default:
-                firstPlace = 'top';
-                secondPlace = 'bottom';
-                desc = 'are shown below each other.';
+        else if (altGoslingSpec.composition.counter.totalRows < 2) {
+            firstPlace = 'left';
+            secondPlace = 'right';
+            desc = 'Two circular tracks are shown next to each other.';
         }
-        if (bothLinear) {
-            desc = ''.concat('Two linear tracks ', desc);
-        } else {
-            desc = ''.concat('One linear and one circular track ', desc);
+        else {
+            firstPlace = 'top';
+            secondPlace = 'bottom';
+            desc = 'Two circular tracks are shown below each other.';
         }
+    }
+   else {
+        if (altGoslingSpec.composition.counter.totalRows < 2) {
+            firstPlace = 'left';
+            secondPlace = 'right';
+            desc = ' are shown next to each other.';
+        }
+        else {
+            firstPlace = 'top';
+            secondPlace = 'bottom';
+            desc = 'are shown below each other.';
+        }           
     }
     altGoslingSpec.tracks[0].position.description = firstPlace;
     altGoslingSpec.tracks[1].position.description = secondPlace;

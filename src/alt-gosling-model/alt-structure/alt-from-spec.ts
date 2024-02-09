@@ -13,24 +13,33 @@ import { attributeExists, attributeExistsReturn } from '../util';
 import { determineSpecialCases } from './chart-types';
 // @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
-import { spec } from 'node:test/reporters';
 
 
 export function getAltSpec(
     spec: GoslingSpec
 ): AltGoslingSpec {
-    console.log('spec', spec)
+    // console.log('spec', spec)
     const altSpec = {} as AltGoslingSpec;
     altSpec.tracks = {} as (AltTrack)[];
 
     altSpec.title =  spec.title;
     altSpec.subtitle =  spec.subtitle;
 
-    const counter = {'nTracks' : 0, 'rowViews' : 0, 'colViews' : 0, 'allPositions': [[0,0]] as number[][], 'totalRows': 0, 'totalCols': 0, 'matrix': {} as number[][]};
+    const counter = {
+        'nTracks' : 0, 'rowViews' : 0, 'colViews' : 0, 
+        'allPositions': [[0,0]] as number[][], 'totalRows': 0, 'totalCols': 0, 'matrix': {} as number[][], 
+        'serialView': -1, 'parallelView': -1, 'serialCircular': [] as number[][], 'parallelCircular': [] as number[][]};
     const altParentValues = {} as AltParentValues;
 
     if (attributeExists(spec, 'arrangement') && attributeExistsReturn(spec, 'arrangement')) {
         altParentValues.arrangement = attributeExistsReturn(spec, 'arrangement');
+        if (altParentValues.arrangement === 'serial') {
+            counter.serialView += 1;
+            counter.serialCircular.push(new Array());
+        } else if (altParentValues.arrangement === 'parallel') {
+            counter.parallelView += 1;
+            counter.parallelCircular.push(new Array());
+        }
     } else {
         altParentValues.arrangement = 'vertical';
     }
@@ -69,7 +78,6 @@ function determineStructure(
 
         // multiple tracks
         if (specPart.tracks.length > 1) {
-            console.log('multiple tracks');
 
             // check if overlaid
             if (IsOverlaidTracks(specPart)) {
@@ -78,8 +86,8 @@ function determineStructure(
                 if (counter.nTracks > 0) {
                     counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
                 }
+                checkCircular(altSpec, altParentValues, counter);
                 counter.nTracks ++;
-
             } else {
                 // otherwise treat every track as a single track
                 for (const i in specPart.tracks) {
@@ -88,6 +96,7 @@ function determineStructure(
                     if (counter.nTracks > 0) {
                         counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
                     }
+                    checkCircular(altSpec, altParentValues, counter);
                     counter.nTracks ++;
                 }
             }
@@ -95,9 +104,7 @@ function determineStructure(
         // if only one track is present, it is either a single track or an overlaid track with the same data
         // (as this is all performed on the _specProcessed which has already been convertToFlatTracks and spreadByData)
         } else {
-            console.log('only 1 track');
             if (IsOverlaidTrack(specPart.tracks[0])) {
-                console.log('is overlaid track');
                 const track = specPart.tracks[0] as OverlaidTrack;
                 altSpec.tracks[counter.nTracks] = altOverlaidTrack(track, altParentValues, counter);
             } else {
@@ -107,6 +114,7 @@ function determineStructure(
             if (counter.nTracks > 0) {
                 counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
             }
+            checkCircular(altSpec, altParentValues, counter);
             counter.nTracks ++;
         }
     }
@@ -124,6 +132,14 @@ function determineStructure(
                 }
             }
             const altParentValuesCopy = altUpdateParentValues(view, altParentValues);
+            if (altParentValuesCopy.arrangement === 'serial' && altParentValues.arrangement !== 'serial') {
+                counter.serialView += 1;
+                counter.serialCircular.push(new Array());
+            }
+            if (altParentValuesCopy.arrangement === 'parallel' && altParentValues.arrangement !== 'parallel') {
+                counter.parallelView += 1;
+                counter.parallelCircular.push(new Array());
+            }
             determineStructure(view, altSpec, altParentValuesCopy, counter);
         });
         if (altParentValues.arrangement === 'vertical' || altParentValues.arrangement === 'parallel') {
@@ -147,6 +163,20 @@ function altUpdateParentValues(
         altParentValuesCopy.layout = specPart.layout;
     }
     return altParentValuesCopy;
+}
+
+function checkCircular(
+    altSpec: AltGoslingSpec,
+    altParentValues: AltParentValues,
+    counter: AltCounter
+) {
+    if (altSpec.tracks[counter.nTracks].appearance.details.layout == 'circular') {
+        if (altParentValues.arrangement === 'serial') {
+            counter.serialCircular[counter.serialView].push(counter.nTracks);
+        } else if (altParentValues.arrangement === 'parallel') {
+            counter.parallelCircular[counter.parallelView].push(counter.nTracks);
+        }
+    }
 }
 
 // function altTrackBase(
@@ -246,15 +276,11 @@ function convertToSingleTrack(
     altParentValues: AltParentValues,
     counter: AltCounter
 ) {
-    // console.log('h', specPart)
-    // console.log('h', altOverlay)
     let newTrack = {...specPart, ...altOverlay} as any;
     delete newTrack._overlay;
     delete newTrack.overlayOnPreviousTrack;
     newTrack = newTrack as SingleTrack;
-    // console.log('new track', newTrack)
     const altTrack = altSingleTrack(newTrack, altParentValues, counter);
-    // console.log('new alttrack', altTrack)
     return altTrack;
 }
 
@@ -364,15 +390,12 @@ function altOverlaidTrackGetStructure(
 
 
     // get the single track representation from each overlay
-    console.log('specpart', specPart);
-    console.log('altoverlay', altOverlay)
     const singleTracks = [] as AltTrackSingle[];
      // const [singleTrack, _overlay] = convertToSingleTrack(specPart, altParentValues, counter);
     for (let i = 0; i < specPart._overlay.length; i++) {
         singleTracks.push(convertToSingleTrack(specPart, altOverlay[i], altParentValues, counter));
     }
 
-    console.log('singletracks', singleTracks)
     return [specPart, altOverlay, singleTracks]
 }
 
@@ -395,7 +418,6 @@ function altOverlaidTrack(
     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
     // check if overlaid just because there is a brush
-    console.log('specpart', specPart)
     let brush = [];
     let nonBrush = [];
     for (const overlay of specPart._overlay) {
@@ -411,7 +433,6 @@ function altOverlaidTrack(
     }
     let linked = [] as AltLinked[];
     if (brush.length > 0) {
-        console.log('yes', brush)
         for (const b of brush) {
             let linkingId;
             let channel;
@@ -619,9 +640,6 @@ function altOverlaidByData(
     const altTrack = {} as AltTrackOverlaidByData;
     altTrack.alttype = 'ov-data';
 
-    console.log('overlaid by data', specPart)
-    console.log('tracks', tracks)
-
     // position
     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
@@ -652,7 +670,6 @@ function altOverlaidByData(
     altTrack.uids = uids;
     altTrack.description = '';
 
-    console.log('alttrackoverlaid', altTrack)
     return altTrack;
 }
 
