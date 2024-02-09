@@ -109,11 +109,11 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         let layout = props.layout;
         let layoutPanels = props.layoutPanels;
         if (!layout) {
-            if (goslingDimensions.width > goslingDimensions.height) {
+            // if (goslingDimensions.width > goslingDimensions.height) {
                 layout = 'vertical';
-            } else {
-                layout = 'horizontal';
-            }
+            // } else {
+            //     layout = 'horizontal';
+            // }
         }
         if (!layoutPanels) {
             if (layout === 'vertical') {

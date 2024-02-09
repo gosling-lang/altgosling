@@ -16,6 +16,10 @@ export type AltCounter = {
     totalRows: number;
     totalCols: number;
     matrix: number[][];
+    serialView: number;
+    serialCircular: number[][];
+    parallelView: number;
+    parallelCircular: number[][];
 }
 
 export type AltParentValues = {
