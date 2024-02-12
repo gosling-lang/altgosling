@@ -205,7 +205,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
         } else if (track.alttype === 'ov-mark') {
             let desc = '';
 
-            desc = desc.concat(capDesc(arrayToString(track.charttype)));
+            desc = desc.concat(`${capDesc(arrayToString(track.charttype))}.`);
 
             if (track.title) {
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
@@ -230,7 +230,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             let desc = '';
 
             const chartTypeList = track.tracks.map(t => t.charttype);
-            desc = desc.concat(capDesc(arrayToString(chartTypeList)));
+            desc = desc.concat(`${capDesc(arrayToString(chartTypeList))}.`);
 
             if (track.title) {
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
@@ -241,19 +241,15 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
 
             for (let i = 0; i < Object.keys(track.tracks).length; i++) {
                 const overlaidDataTrack = track.tracks[i];
-                let descTrack = 'Overlaid track. ';
-                descTrack = descTrack.concat(capDesc(overlaidDataTrack.charttype));
+                let descTrack = '';
+                descTrack = descTrack.concat(`${capDesc(overlaidDataTrack.charttype)}.`);
 
-            if (overlaidDataTrack.title) {
-                descTrack = descTrack.concat(` Chart is titled '${track.title}'.`);
-            }
+                const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack);
 
-            const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack);
-
-            descTrack = descTrack.concat(' ' + encodingDescriptions.desc);
-        
-            overlaidDataTrack.appearance.description = desc;
-            overlaidDataTrack.appearance.details.encodingsDescList = encodingDescriptions.descList;
+                descTrack = descTrack.concat(' ' + encodingDescriptions.desc);
+            
+                overlaidDataTrack.appearance.description = descTrack;
+                overlaidDataTrack.appearance.details.encodingsDescList = encodingDescriptions.descList;
             }
         }
     }
