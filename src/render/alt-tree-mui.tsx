@@ -299,7 +299,7 @@ function appearanceNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): A
                 new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
                     markNode(t, uid),
                     new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, false, 'value', t.appearance.details.layout),
-                    new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
+                    // new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
                     ...encodingNode(t, uid)
                 ]),
             ])
