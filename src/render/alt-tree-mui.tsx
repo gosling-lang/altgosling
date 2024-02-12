@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { Datum } from '@alt-gosling/schema/gosling.schema';
-import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByData, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { arrayToString } from './util';
 import { createDataTable } from './data-table';
@@ -204,57 +204,107 @@ function trackNode(altSpec: AltGoslingSpec): Array<AltNode> {
 
 
 function trackNodeSingle(t: AltTrack): Array<AltNode> {
-
-    const structureList = [
-        new AltNode('Description', 'T-1-desc', true, true, 'value', t.description),
-        new AltNode('Details', 'T-1-det', true, true, 'altnodelist', [
-            new AltNode('Title', 'T-1-det-title', false, true, 'value', t.title),
-            chartTypeNode(t, '1'),
-            appearanceNode(t, '1'),
-            dataNode(t, '1')
-        ]),
-    ];
+    let structureList;
+    if (t.alttype === 'single' || t.alttype === 'ov-mark') {
+        structureList = [
+            new AltNode('Description', 'T-1-desc', true, true, 'value', t.description),
+            new AltNode('Details', 'T-1-det', true, true, 'altnodelist', [
+                new AltNode('Title', 'T-1-det-title', false, true, 'value', t.title),
+                chartTypeNode(t, '1'),
+                appearanceNode(t, '1'),
+                dataNode(t, '1')
+            ]),
+        ];
+    } else {
+        let structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-1-T-' + i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-1-T-'+i)))
+        structureList = [
+            new AltNode('Tracks', 'T-1-T', true, true, 'altnodelist', [
+                ...structureIndList
+            ])];
+    }
     return(structureList);
 }
 
 
 function trackNodeMulti(t: AltTrack): AltNode {
     const uid = t.position.details.trackNumber as any as string;
+    let structure;
 
-    const structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
-        new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
-        new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
-            new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
-            new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
-                new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
-                new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, 'value', (t.position.details.trackNumber + 1).toString()),
+    if (t.alttype === 'single' || t.alttype === 'ov-mark') {
+        structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
+            new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
+            new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
+                new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
+                new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
+                    new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
+                    new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, 'value', (t.position.details.trackNumber + 1).toString()),
+                ]),
+                chartTypeNode(t, uid),
+                appearanceNode(t, uid),
+                dataNode(t, uid),
             ]),
-            chartTypeNode(t, uid),
-            appearanceNode(t, uid),
-            dataNode(t, uid),
-        ]),
-    ]);
-    return(structure);
-    
+        ]);
+    } else {
+        let structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-'+uid+'-T-'+i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-'+uid+'-T-'+i)))
+        structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
+            new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
+            new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
+                new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
+                new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
+                    new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
+                    new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, 'value', (t.position.details.trackNumber + 1).toString()),
+                ]),
+                new AltNode('Tracks', 'T-'+uid+'-T', true, true, 'altnodelist', [
+                    ...structureIndList
+                ]),
+            ]),
+        ]);
+    }
+    return(structure); 
 }
 
 
-function chartTypeNode(t: AltTrack, uid: string): AltNode {
+function trackNodeOvData(ti: AltTrackOverlaidByDataInd, uid: string) {
+    const structure = [
+        new AltNode('Description', uid+'-desc', true, true, 'value', ti.description),
+        new AltNode('Details', uid+'-det', true, true, 'altnodelist', [
+            chartTypeNode(ti, uid),
+            appearanceNode(ti, uid),
+            dataNode(ti, uid)
+        ])
+    ]
+    return structure;
+}
+
+
+function chartTypeNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode {
     let charttype;
 
-    if (t.alttype === 'single') {
+    if (t.alttype === 'single' || t.alttype === 'ov-data-ind') {
         charttype = t.charttype;
     } else if (t.alttype === 'ov-mark') {
         if (t.charttype) {
-            // charttype = arrayToString(t.charttype);
+            charttype = arrayToString(t.charttype);
         }
     }
     return(new AltNode('Type', 'T-'+uid+'-det-type', false, false, 'value', charttype));
 }
 
 
-function appearanceNode(t: AltTrack, uid: string): AltNode {
+function appearanceNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode {
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
+        return(
+            new AltNode('Appearance', 'T-'+uid+'-det-app', false, true, 'altnodelist', [
+                new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
+                new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
+                    markNode(t, uid),
+                    new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, false, 'value', t.appearance.details.layout),
+                    new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
+                    ...encodingNode(t, uid)
+                ]),
+            ])
+        );
+    } else if (t.alttype === 'ov-data-ind') {
         return(
             new AltNode('Appearance', 'T-'+uid+'-det-app', false, true, 'altnodelist', [
                 new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
@@ -272,28 +322,36 @@ function appearanceNode(t: AltTrack, uid: string): AltNode {
 }
 
 
-function markNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): AltNode {
+function markNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode {
     let mark;
-    if (t.alttype === 'ov-mark') {
-        // mark = arrayToString(t.appearance.details.mark);
-    } else {
+    if (t.alttype === 'single' || t.alttype === 'ov-data-ind') {
         mark = t.appearance.details.mark;
+    }
+    if (t.alttype === 'ov-mark') {
+        mark = arrayToString([t.appearance.details.mark, ...t.appearance.details.markByTrack]);
+    } else {
+        return emptyNode();
     }
     return(new AltNode('Mark', 'T-'+uid+'-det-pos-app-mark', false, false, 'value', mark));
 }
 
 
 //   {t.appearance.details.encodingsDescList.map((enc, i) => createTreeItemNode('T-'+uid+'-details-pos-details-enc'+enc[0]+i, enc[0], enc[1], true))}
-function encodingNode(t: AltTrackSingle | AltTrackOverlaidByMark, uid: string): Array<AltNode> {
-    const nodeList = t.appearance.details.encodingsDescList.map((enc, i) => {
-        return new AltNode(enc[0], 'T-'+uid+'-det-pos-enc'+enc[0]+i, false, true, 'value', enc[1]);
-    });
-    return nodeList;
+function encodingNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): Array<AltNode> {
+    if (t.alttype === 'single' || t.alttype === 'ov-mark' || t.alttype === 'ov-data-ind') {
+        const nodeList = t.appearance.details.encodingsDescList.map((enc, i) => {
+            return new AltNode(enc[0], 'T-'+uid+'-det-pos-enc'+enc[0]+i, false, true, 'value', enc[1]);
+        });
+        return nodeList;
+    }
+    else {
+        return [emptyNode()];
+    }
 }
 
 
-function dataNode(t: AltTrack, uid: string): AltNode {
-    if ((t.alttype === 'single' || t.alttype === 'ov-mark') && t.data.details.dataStatistics) {
+function dataNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode {
+    if ((t.alttype === 'single' || t.alttype === 'ov-mark' || t.alttype === 'ov-data-ind') && t.data.details.dataStatistics) {
         return (new AltNode('Data', 'T-'+uid+'-det-data', true, true, 'altnodelist', [
             new AltNode('Description', 'T-'+uid+'-det-data-desc', true, true, 'value', t.data.description),
             dataNodeStats(t.data.details.dataStatistics, uid),
