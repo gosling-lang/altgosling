@@ -1,4 +1,4 @@
-export const compare2 = {
+export const compareTwoSamples = {
     "title": "Comparing ChIP-seq Tonsil in Th1 and ILC1",
     "layout": "linear",
     "arrangement": "vertical",
