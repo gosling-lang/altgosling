@@ -30,24 +30,14 @@ import MenuItem from '@mui/material/MenuItem';
 function Demo() {
     const examples = {'Bar chart': barChart, 
                       'Line chart': lineChart,
-                    //   'Point chart': pointChart,
-                      // 'Ideogram': ideogram,
-                    'Ideogram': ideogramWithArea,
-                    'Linked views': brush,
-                    //   'Multiple Visual Encodings': visualEncoding, 
+                      'Ideogram': ideogramWithArea,
+                      'Linked views': brush,
                       'Tonsil ChIP-seq comparison': compareTwoSamples,
-                    //   'Multiple Visual Encoding Track 1 and 2': visualEncodingTrack1And2, 
-                      // 'Multiple Visual Encoding Track 4': visualEncodingTrack4, 
-                    //   'Multiple Visual Encoding Track 4 Test': visualEncodingTrack4WithDataCopied, 
                       'Bar chart with lines': ruleMark, 
-                    //   'Bar chart with lines2': ruleMark2, 
-                      // 'Bar chart with points': ruleMarkOverlaidWithSecondEncoding, 
-                    //   'Bar chart with points2': ruleMarkOverlaidWithSecondEncodingSame,
-                    'Double marks': doubleMarks,
-                    //   'GIVE - CAO et al.': give,
+                      'Double marks': doubleMarks,
                       'Gene annotations': geneAnnotation,
                       'Circular halves': circularHalves,
-                      'Circular heatmap': heatmap,
+                      'Heatmap': heatmap,
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
