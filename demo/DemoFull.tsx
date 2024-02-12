@@ -4,8 +4,6 @@ import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
 // simple examples
 import { barChart } from './examples/barChart';
-import { lineChart } from './examples/lineChart';
-import { pointChart } from './examples/pointChart';
 import { ideogramWithArea } from './examples/ideogram';
 import { compareTwoSamples } from './examples/tonsil';
 import { circularHalves } from './examples/circularHalves';
@@ -29,7 +27,6 @@ import MenuItem from '@mui/material/MenuItem';
 
 function Demo() {
     const examples = {'Bar chart': barChart, 
-                      'Line chart': lineChart,
                       'Ideogram': ideogramWithArea,
                       'Linked views': brush,
                       'Tonsil ChIP-seq comparison': compareTwoSamples,

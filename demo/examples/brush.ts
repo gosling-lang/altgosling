@@ -1,6 +1,6 @@
 export const brush = {
     "title": "Visual Linking",
-    "subtitle": "Change the position and range of brushes to update the detail view on the bottom",
+    "subtitle": "Change the position and range of the brush to update the detail view on the bottom",
     "arrangement": "vertical",
     "centerRadius": 0.4,
     "views": [
