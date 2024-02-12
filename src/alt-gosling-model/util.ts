@@ -73,7 +73,7 @@ export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar
 /**
  * Mapping of channel name to a natural language description of said channel
  */
-export const channelToText = new Map([['y', 'height'], ['color', 'color'], ['strokeWidth', 'stroke width'], ['opacity', 'opacity'], ['text', 'text']]);
+export const channelToText = new Map([['y', 'height'], ['color', 'color'], ['strokeWidth', 'stroke width'], ['opacity', 'opacity'], ['text', 'text'], ['size', 'size']]);
 
 /**
  * Function to remove the suffix 'chr' from a string if present
