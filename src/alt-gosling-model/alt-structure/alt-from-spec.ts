@@ -645,7 +645,18 @@ function altOverlaidByData(
 
     const uids = [] as string[];
     const altTrackInd = [] as AltTrackOverlaidByDataInd[];
-    for (const t of tracks) {
+    for (let t of tracks) {
+        if (IsOverlaidTrack(t)) {
+            let newTrack;
+            if (IsOverlaidTrack(t._overlay[0])) {
+                newTrack = {...t, ...t._overlay[0]._overlay[0]} as any;
+            } else {
+                newTrack = {...t, ...t._overlay[0]} as any;
+            }
+            delete newTrack._overlay;
+            delete newTrack.overlayOnPreviousTrack;
+            t = newTrack as SingleTrack;
+        }
         const track = t as SingleTrack;
         // uid
         let uid;

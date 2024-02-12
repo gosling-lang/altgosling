@@ -9,6 +9,7 @@ import { pointChart } from './examples/pointChart';
 import { ideogram, ideogramWithArea } from './examples/ideogram';
 import { compare2 } from './examples/tonsil';
 import { circularHalves } from './examples/circularHalves';
+import { heatmap } from './examples/heatmap';
 
 // multiple visual encodings
 import { visualEncoding } from './examples/visualEncoding';
@@ -43,11 +44,12 @@ function Demo() {
                     //   'Multiple Visual Encoding Track 4 Test': visualEncodingTrack4WithDataCopied, 
                       'Bar chart with lines': ruleMark, 
                     //   'Bar chart with lines2': ruleMark2, 
-                      'Bar chart with points': ruleMarkOverlaidWithSecondEncoding, 
+                      // 'Bar chart with points': ruleMarkOverlaidWithSecondEncoding, 
                     //   'Bar chart with points2': ruleMarkOverlaidWithSecondEncodingSame,
                     //   'GIVE - CAO et al.': give,
                       'Gene annotations': geneAnnotation,
-                      'Circular halves': circularHalves
+                      'Circular halves': circularHalves,
+                      'Circular heatmap': heatmap
                     //   'transform': transform
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);

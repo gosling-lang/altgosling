@@ -205,7 +205,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
         } else if (track.alttype === 'ov-mark') {
             let desc = '';
 
-            desc = desc.concat(capDesc(arrayToString(track.charttype)));
+            desc = desc.concat(`${capDesc(arrayToString(track.charttype))}.`);
 
             if (track.title) {
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
@@ -227,33 +227,17 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             track.appearance.description = desc;
             track.appearance.details.encodingsDescList = encodingDescriptions.descList;
         } else if (track.alttype === 'ov-data') {
-            let desc = '';
-
-            const chartTypeList = track.tracks.map(t => t.charttype);
-            desc = desc.concat(capDesc(arrayToString(chartTypeList)));
-
-            if (track.title) {
-                desc = desc.concat(` Chart is titled '${track.title}'.`);
-            }
-
-            desc = desc.concat(` This is an overlaid track with multiple data sources. See individual tracks for more information.`)
-            track.appearance.description = desc;
-
             for (let i = 0; i < Object.keys(track.tracks).length; i++) {
                 const overlaidDataTrack = track.tracks[i];
-                let descTrack = 'Overlaid track. ';
-                descTrack = descTrack.concat(capDesc(overlaidDataTrack.charttype));
+                let descTrack = '';
+                descTrack = descTrack.concat(`${capDesc(overlaidDataTrack.charttype)}.`);
 
-            if (overlaidDataTrack.title) {
-                descTrack = descTrack.concat(` Chart is titled '${track.title}'.`);
-            }
+                const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack);
 
-            const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack);
-
-            descTrack = descTrack.concat(' ' + encodingDescriptions.desc);
-        
-            overlaidDataTrack.appearance.description = desc;
-            overlaidDataTrack.appearance.details.encodingsDescList = encodingDescriptions.descList;
+                descTrack = descTrack.concat(' ' + encodingDescriptions.desc);
+            
+                overlaidDataTrack.appearance.description = descTrack;
+                overlaidDataTrack.appearance.details.encodingsDescList = encodingDescriptions.descList;
             }
         }
     }
@@ -368,9 +352,9 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
     const quantitativeEncodingsI = encodings.encodingDeepQuantitative.map(o => o.name);
 
     if (quantitativeEncodingsI.length > 1) {
-        descQuantitative = descQuantitative.concat(`The expression values are shown with ${markText} on the ${arrayToString(quantitativeEncodingsI)} + '-axes.`);
+        descQuantitative = descQuantitative.concat(`The expression values are shown with ${markText} on the ${arrayToString(quantitativeEncodingsI)}-axes.`);
         for (const q of quantitativeEncodingsI) {
-            descList.push([q, `The ${q} of the ${markText} shows the expression values.`]);
+            descList.push([q, `The ${channelToText.get(q)} of the ${markText} shows the expression values.`]);
         }
     } else if (quantitativeEncodingsI.length === 1) {
         if (quantitativeEncodingsI.includes('y')) {
@@ -382,7 +366,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             descList.push(['color', `The color of the ${markText} shows the expression values.`]);
         }
         else {
-            descQuantitative = descQuantitative.concat(`The height of the expression values is shown with the ${quantitativeEncodingsI[0]} + '-axis.`);
+            descQuantitative = descQuantitative.concat(`The height of the expression values is shown with the ${quantitativeEncodingsI[0]}-axis.`);
             descList.push([channelToText.get(quantitativeEncodingsI[0]) as string, `The ${channelToText.get(quantitativeEncodingsI[0])} of the ${markText} shows the expression values.`]);
         }
     }
@@ -398,14 +382,14 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             descNominal = descNominal.concat(` The categories are also shown with the ${arrayToString(nominalEncodingsINames)} of the ${markText}.`);
             descList.push(['row', `The chart is stratified by rows for the categories.`]);
             for (const q of nominalEncodingsINames) {
-                descList.push([channelToText.get(q) as string, `The ${q} of the ${markText} show the different categories.`]);
+                descList.push([channelToText.get(q) as string, `The ${channelToText.get(q)} of the ${markText} show the different categories.`]);
             }
         }
         else {
             const nominalEncodingsINames = nominalEncodingsI.map(e => channelToText.get(e)) as string[];
             descNominal = descNominal.concat(`The categories are shown with the ${arrayToString(nominalEncodingsINames)} of the ${markText}.`);
             for (const q of nominalEncodingsI) {
-                descList.push([channelToText.get(q) as string, `The ${q} of the ${markText} show the different categories.`]);
+                descList.push([channelToText.get(q) as string, `The ${channelToText.get(q)} of the ${markText} show the different categories.`]);
             }
         }
     }

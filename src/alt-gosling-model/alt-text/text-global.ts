@@ -6,11 +6,25 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         addTrackDescriptions(altGoslingSpec);
     }
 
-    altGoslingSpec.alt = 'Gosling visualization.';
+    altGoslingSpec.alt = 'Genomic visualization.';
 
     if (altGoslingSpec.composition.nTracks === 1) {
+        // long description
         altGoslingSpec.longDescription = altGoslingSpec.tracks[0].description;
-        altGoslingSpec.alt = altGoslingSpec.longDescription.split('.')[0];
+
+        // alt
+        let alt = '';
+        alt = alt.concat(altGoslingSpec.longDescription.split('.')[0]);
+        if (hasGenomicData(altGoslingSpec.tracks[0])) {
+            alt = alt.concat(' showing genomic data')
+        }
+        if (altGoslingSpec.title) {
+            alt = alt.concat(`, titled ${altGoslingSpec.title}`);
+        } else if (altGoslingSpec.tracks[0].title) {
+            alt = alt.concat(`, titled '${altGoslingSpec.tracks[0].title}'`);
+        }
+        altGoslingSpec.alt = alt;
+
     } else if (altGoslingSpec.composition.nTracks === 2) {
         let alt = '';
         let desc = '';
@@ -61,7 +75,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
 
         desc = desc.concat(`Figure with ${altGoslingSpec.composition.nTracks} individual charts. Briefly, these are ${arrayToString(chartTypeListUniqueText).toLowerCase()}.`);
 
-        altGoslingSpec.alt = `Gosling visualization with ${altGoslingSpec.composition.nTracks} individual charts.`;
+        altGoslingSpec.alt = `Genomic visualization with ${altGoslingSpec.composition.nTracks} individual charts.`;
         altGoslingSpec.longDescription = desc;
     }
 }
@@ -88,12 +102,39 @@ export function addTrackDescription(t: AltTrack, includePosition: boolean) {
         // if (includePosition) {
         //     descPos = descPos.concat(t.position.description);
         // }
-        desc = descPos.concat(` ${t.appearance.description} ${t.data.description}`);
+        desc = descPos.concat(`${t.appearance.description} ${t.data.description}`);
     } else {
-        // if (includePosition) {
-        //     descPos.concat(t.position.description);
-        // }
-        desc = descPos.concat(` Overlaid track with different data sources. See individual tracks for details.`);
+        const chartTypeList = [] as string[];
+        for (const ti of t.tracks) {
+            chartTypeList.push(ti.appearance.description.split('.')[0]);
+            ti.description = `${ti.appearance.description}`;
+        }
+        desc = descPos.concat(`Overlaid track with ${arrayToString(chartTypeList).toLowerCase()}. See separate overlaid tracks for details.`);
     }
     t.description = desc;
+}
+
+
+/**
+ * Function to check if AltTrack describes genomic data
+ * @param track AltTrack
+ * @returns true if any genomicField, false otherwise
+ */
+export function hasGenomicData(track: AltTrack) {
+    if (track.alttype === 'single' || track.alttype === 'ov-mark') {
+        if (track.data.details.fields.genomicField) {
+            if (track.data.details.fields.genomicField.length > 0) {
+                return true;
+            }
+        }
+    } else {
+        for (const ti of track.tracks) {
+            if (ti.data.details.fields.genomicField) {
+                if (ti.data.details.fields.genomicField.length > 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
