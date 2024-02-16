@@ -169,7 +169,7 @@ export interface AltTrackOverlaidByDataInd extends AltTrackBase {
 export interface AltTrackOverlaidByData extends AltTrackBase {
     alttype: 'ov-data';
     uids: string[];
-    appearance: {description: string, details: {layout: Layout}};
+    appearance: {description: string, details: {layout: Layout, charttype: string}};
     tracks: AltTrackOverlaidByDataInd[];
     position: AltTrackPosition;
 }

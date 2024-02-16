@@ -10,7 +10,7 @@ import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from
 import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
 
 import { attributeExists, attributeExistsReturn } from '../util';
-import { determineSpecialCases } from './chart-types';
+import { determineSpecialCases, determineOverlaidByDataCases } from './chart-types';
 // @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
 
@@ -670,15 +670,17 @@ function altOverlaidByData(
         altTrackInd.push(altOverlaidByDataSingleTrack(track, altParentValues, counter));
     }
 
+    altTrack.tracks = altTrackInd;
+    altTrack.uids = uids;
+
     const position: AltTrackPosition = {description: '', details: positionDetails};
     altTrack.position = position;
     
     altTrack.title = specPart.title;
 
-    altTrack.appearance = {description: '', details: {layout: 'linear'}}; // only linear is supported at this time
+    const combinedChartType = determineOverlaidByDataCases(altTrack);
+    altTrack.appearance = {description: '', details: {layout: 'linear', charttype: combinedChartType}}; // only linear is supported at this time
 
-    altTrack.tracks = altTrackInd;
-    altTrack.uids = uids;
     altTrack.description = '';
 
     return altTrack;
