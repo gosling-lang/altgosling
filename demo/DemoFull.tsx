@@ -26,11 +26,11 @@ import MenuItem from '@mui/material/MenuItem';
 
 
 function Demo() {
-    const examples = {'Bar chart': barChart, 
+    const examples = {'Bar chart': barChart,
                       'Ideogram': ideogramWithArea,
                       'Linked views': brush,
                       'Tonsil ChIP-seq comparison': compareTwoSamples,
-                      'Bar chart with lines': ruleMark, 
+                      'Bar chart with lines': ruleMark,
                       'Double marks': doubleMarks,
                       'Gene annotations': geneAnnotation,
                       'Circular halves': circularHalves,

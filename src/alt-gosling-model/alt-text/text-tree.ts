@@ -68,7 +68,7 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
             firstPlace = 'top';
             secondPlace = 'bottom';
             desc = 'are shown below each other.';
-        }           
+        }
     }
     altGoslingSpec.tracks[0].position.description = firstPlace;
     altGoslingSpec.tracks[1].position.description = secondPlace;
@@ -192,11 +192,11 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             desc = desc.concat(` ${encodingDescriptions.desc}`);
 
             if (track.appearance.details.linked && track.appearance.details.linked.length > 0) {
-                let linkChannels = track.appearance.details.linked.map(l => l.channel);
+                const linkChannels = track.appearance.details.linked.map(l => l.channel);
                 if (linkChannels.length === 1) {
-                    desc = desc.concat(` The ${linkChannels[0]}-axis has a brush, linking to the other chart.`)
+                    desc = desc.concat(` The ${linkChannels[0]}-axis has a brush, linking to the other chart.`);
                 } else {
-                    desc = desc.concat(` The x and y-axes have brushes, linking to the other charts.`)
+                    desc = desc.concat(` The x and y-axes have brushes, linking to the other charts.`);
                 }
             }
         
@@ -216,11 +216,11 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
             desc = desc.concat(' ' + encodingDescriptions.desc);
 
             if (track.appearance.details.linked && track.appearance.details.linked.length > 0) {
-                let linkChannels = track.appearance.details.linked.map(l => l.channel);
+                const linkChannels = track.appearance.details.linked.map(l => l.channel);
                 if (linkChannels.length === 1) {
-                    desc = desc.concat(` The ${linkChannels[0]}-axis has a brush, linking to one of the other charts.`)
+                    desc = desc.concat(` The ${linkChannels[0]}-axis has a brush, linking to one of the other charts.`);
                 } else {
-                    desc = desc.concat(` The x and y-axes have brushes, linking to one of the other charts.`)
+                    desc = desc.concat(` The x and y-axes have brushes, linking to one of the other charts.`);
                 }
             }
 
@@ -256,7 +256,7 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
         return {desc: desc, descList: descList};
     } else {
         marks = track.appearance.details.markByTrack as string[];
-        const descriptionsList = []
+        const descriptionsList = [];
 
         markText = arrayToString(marks.filter(m => m !== undefined).map(m => markToText.get(m)).filter(m => m !== undefined));
         descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodings));
@@ -272,16 +272,16 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
         const descQuantitativeAll = descriptionsList.map(d => d.descQuantitative).filter(d => d !== '').join(' ');
         const descNominalAll = descriptionsList.map(d => d.descNominal).filter(d => d !== '').join(' ');
         const descValueAll = descriptionsList.map(d => d.descValue).filter(d => d !== '').join(' ');
-        let desc = [descGenomicAll, descQuantitativeAll, descNominalAll, descValueAll].join(' ');
+        const desc = [descGenomicAll, descQuantitativeAll, descNominalAll, descValueAll].join(' ');
 
-        let descListAll = descriptionsList.map(d => d.descList);
+        const descListAll = descriptionsList.map(d => d.descList);
         let descListAllFlat = descListAll[0].concat(...descListAll.slice(1));
 
         // collapse duplicates
-        let descListAllFlatNames = descListAllFlat.map(d => d[0])
+        const descListAllFlatNames = descListAllFlat.map(d => d[0]);
         const descListDuplicates = descListAllFlatNames.filter((item, index) => descListAllFlatNames.indexOf(item) !== index);
         for (const descListDuplicate of descListDuplicates) {
-            let duplicateItems = descListAllFlat.filter(item => item[0] === descListDuplicate).map(item => item[1]).join(' ');
+            const duplicateItems = descListAllFlat.filter(item => item[0] === descListDuplicate).map(item => item[1]).join(' ');
             descListAllFlat = descListAllFlat.filter(item => item[0] !== descListDuplicate);
             descListAllFlat.push([descListDuplicate, duplicateItems]);
         }

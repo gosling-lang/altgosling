@@ -16,7 +16,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         let alt = '';
         alt = alt.concat(altGoslingSpec.longDescription.split('.')[0]);
         if (hasGenomicData(altGoslingSpec.tracks[0])) {
-            alt = alt.concat(' showing genomic data')
+            alt = alt.concat(' showing genomic data');
         }
         if (altGoslingSpec.title) {
             alt = alt.concat(`, titled ${altGoslingSpec.title}`);

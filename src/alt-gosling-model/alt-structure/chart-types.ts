@@ -49,7 +49,7 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     }
     if (markToText.get(_mark)) {
         return `${layoutDesc}chart with ${markToText.get(_mark)}`;
-    } 
+    }
     
     return `unknown chart`;
 }
