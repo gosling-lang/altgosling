@@ -1,8 +1,8 @@
 {
-  "name": "alt_gosling_demo",
+  "name": "alt-gosling",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://thomcsmits.github.io/alt-gosling/",
+  "homepage": "https://gosling-lang.github.io/alt-gosling/",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
