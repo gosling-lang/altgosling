@@ -1,4 +1,4 @@
-import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Encoding, X, Y, Assembly, Layout, Orientation, DataTransform } from './gosling.schema';
+import type { ChannelDeep, ChannelValue, ChannelTypes, DataDeep, Mark, Assembly, Layout, Orientation, DataTransform } from './gosling.schema';
 
 /**
  * Values in the form of JSON.
@@ -61,7 +61,7 @@ export type AltLinked = {
 }
 
 export type AltLinkedTrack = {
-    trackNumber: number; 
+    trackNumber: number;
     positionDesc: string
 }
 
@@ -169,7 +169,7 @@ export interface AltTrackOverlaidByDataInd extends AltTrackBase {
 export interface AltTrackOverlaidByData extends AltTrackBase {
     alttype: 'ov-data';
     uids: string[];
-    appearance: {description: string, details: {layout: Layout}};
+    appearance: {description: string, details: {layout: Layout, charttype: string}};
     tracks: AltTrackOverlaidByDataInd[];
     position: AltTrackPosition;
 }

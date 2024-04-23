@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { Datum } from '@alt-gosling/schema/gosling.schema';
-import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByData, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { arrayToString } from './util';
 import { createDataTable } from './data-table';
@@ -216,7 +216,7 @@ function trackNodeSingle(t: AltTrack): Array<AltNode> {
             ]),
         ];
     } else {
-        let structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-1-T-' + i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-1-T-'+i)))
+        const structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-1-T-' + i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-1-T-'+i)));
         structureList = [
             new AltNode('Tracks', 'T-1-T', true, true, 'altnodelist', [
                 ...structureIndList
@@ -245,7 +245,7 @@ function trackNodeMulti(t: AltTrack): AltNode {
             ]),
         ]);
     } else {
-        let structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-'+uid+'-T-'+i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-'+uid+'-T-'+i)))
+        const structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-'+uid+'-T-'+i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-'+uid+'-T-'+i)));
         structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
             new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
             new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
@@ -260,7 +260,7 @@ function trackNodeMulti(t: AltTrack): AltNode {
             ]),
         ]);
     }
-    return(structure); 
+    return(structure);
 }
 
 
@@ -272,7 +272,7 @@ function trackNodeOvData(ti: AltTrackOverlaidByDataInd, uid: string) {
             appearanceNode(ti, uid),
             dataNode(ti, uid)
         ])
-    ]
+    ];
     return structure;
 }
 

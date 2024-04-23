@@ -75,7 +75,7 @@ export function getRangeText(p1: number, p2: number, assembly?: Assembly): strin
 export function addTrackDataDescriptionsTrack(track: AltTrack) {
     if (track.alttype === 'single' || track.alttype === 'ov-mark') {
         addTrackDataDescriptionsTrackInd(track);
-    } 
+    }
     if (track.alttype === 'ov-data') {
         for (let i = 0; i < Object.keys(track.tracks).length; i++) {
             const overlaidDataTrack = track.tracks[i];

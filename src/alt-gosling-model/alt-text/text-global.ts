@@ -16,7 +16,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         let alt = '';
         alt = alt.concat(altGoslingSpec.longDescription.split('.')[0]);
         if (hasGenomicData(altGoslingSpec.tracks[0])) {
-            alt = alt.concat(' showing genomic data')
+            alt = alt.concat(' showing genomic data');
         }
         if (altGoslingSpec.title) {
             alt = alt.concat(`, titled ${altGoslingSpec.title}`);
@@ -104,12 +104,7 @@ export function addTrackDescription(t: AltTrack, includePosition: boolean) {
         // }
         desc = descPos.concat(`${t.appearance.description} ${t.data.description}`);
     } else {
-        const chartTypeList = [] as string[];
-        for (const ti of t.tracks) {
-            chartTypeList.push(ti.appearance.description.split('.')[0]);
-            ti.description = `${ti.appearance.description}`;
-        }
-        desc = descPos.concat(`Overlaid track with ${arrayToString(chartTypeList).toLowerCase()}. See separate overlaid tracks for details.`);
+        desc = descPos.concat(`${capDesc(t.appearance.details.charttype)}. See separate overlaid tracks for details.`);
     }
     t.description = desc;
 }

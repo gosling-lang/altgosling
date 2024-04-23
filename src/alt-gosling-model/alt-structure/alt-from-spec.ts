@@ -10,7 +10,7 @@ import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from
 import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
 
 import { attributeExists, attributeExistsReturn } from '../util';
-import { determineSpecialCases } from './chart-types';
+import { determineSpecialCases, determineOverlaidByDataCases } from './chart-types';
 // @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
 
@@ -26,8 +26,8 @@ export function getAltSpec(
     altSpec.subtitle =  spec.subtitle;
 
     const counter = {
-        'nTracks' : 0, 'rowViews' : 0, 'colViews' : 0, 
-        'allPositions': [[0,0]] as number[][], 'totalRows': 0, 'totalCols': 0, 'matrix': {} as number[][], 
+        'nTracks' : 0, 'rowViews' : 0, 'colViews' : 0,
+        'allPositions': [[0,0]] as number[][], 'totalRows': 0, 'totalCols': 0, 'matrix': {} as number[][],
         'serialView': -1, 'parallelView': -1, 'serialCircular': [] as number[][], 'parallelCircular': [] as number[][]};
     const altParentValues = {} as AltParentValues;
 
@@ -35,10 +35,10 @@ export function getAltSpec(
         altParentValues.arrangement = attributeExistsReturn(spec, 'arrangement');
         if (altParentValues.arrangement === 'serial') {
             counter.serialView += 1;
-            counter.serialCircular.push(new Array());
+            counter.serialCircular.push([]);
         } else if (altParentValues.arrangement === 'parallel') {
             counter.parallelView += 1;
-            counter.parallelCircular.push(new Array());
+            counter.parallelCircular.push([]);
         }
     } else {
         altParentValues.arrangement = 'vertical';
@@ -134,11 +134,11 @@ function determineStructure(
             const altParentValuesCopy = altUpdateParentValues(view, altParentValues);
             if (altParentValuesCopy.arrangement === 'serial' && altParentValues.arrangement !== 'serial') {
                 counter.serialView += 1;
-                counter.serialCircular.push(new Array());
+                counter.serialCircular.push([]);
             }
             if (altParentValuesCopy.arrangement === 'parallel' && altParentValues.arrangement !== 'parallel') {
                 counter.parallelView += 1;
-                counter.parallelCircular.push(new Array());
+                counter.parallelCircular.push([]);
             }
             determineStructure(view, altSpec, altParentValuesCopy, counter);
         });
@@ -207,7 +207,7 @@ function altSingleTrack(
     } else {
         // figure out how to get the uid.
         uid = '';
-        console.warn('ID not found?')
+        console.warn('ID not found?');
     }
     
     
@@ -289,7 +289,7 @@ function altOverlaidTrackGetStructure(
     altParentValues: AltParentValues,
     counter: AltCounter
 ): [OverlaidTrack, AltOverlayPart[], AltTrackSingle[]] {
-    let altOverlay = [] as AltOverlayPart[];
+    const altOverlay = [] as AltOverlayPart[];
 
     // collect the mark, channels and data transform of each overlay
     for (let i = 0; i < specPart._overlay.length; i++) {
@@ -305,7 +305,7 @@ function altOverlaidTrackGetStructure(
 
         SUPPORTED_CHANNELS.forEach(k => {
             if (k === 'text') {
-                return
+                return;
             }
 
             if (specPart._overlay[i][k]) {
@@ -327,8 +327,8 @@ function altOverlaidTrackGetStructure(
     }
 
     // determine which to include and exclude in top
-    let includeInTop = {} as any;
-    let excludeInTop = {} as any;
+    const includeInTop = {} as any;
+    const excludeInTop = {} as any;
 
     // if no undefined and only 1 unique item, include in top
     if (altOverlay.filter(e => e.mark === undefined).length === 0 && [...new Set(altOverlay.map(e => e.mark))].length === 1) {
@@ -341,7 +341,7 @@ function altOverlaidTrackGetStructure(
 
     SUPPORTED_CHANNELS.forEach(k => {
         if (k === 'text') {
-            return
+            return;
         }
         if (altOverlay.filter(e => e[k] === undefined).length === 0 && [...new Set(altOverlay.map(e => e[k]))].length === 1) {
             includeInTop[k] = altOverlay[0][k];
@@ -361,7 +361,7 @@ function altOverlaidTrackGetStructure(
 
     if (excludeInTop.mark) {
         delete specPart.mark;
-    } 
+    }
 
     if (includeInTop.mark) {
         specPart.mark = includeInTop.mark;
@@ -377,7 +377,7 @@ function altOverlaidTrackGetStructure(
 
     SUPPORTED_CHANNELS.forEach(k => {
         if (k === 'text') {
-            return
+            return;
         }
         if (excludeInTop[k]) {
             delete specPart[k];
@@ -396,7 +396,7 @@ function altOverlaidTrackGetStructure(
         singleTracks.push(convertToSingleTrack(specPart, altOverlay[i], altParentValues, counter));
     }
 
-    return [specPart, altOverlay, singleTracks]
+    return [specPart, altOverlay, singleTracks];
 }
 
 function altOverlaidTrack(
@@ -411,15 +411,15 @@ function altOverlaidTrack(
     } else {
         // figure out how to get the uid.
         uid = '';
-        console.warn('ID not found?')
+        console.warn('ID not found?');
     }
     
     // position
     const positionDetails: AltTrackPositionDetails = {trackNumber: counter.nTracks, rowNumber: counter.rowViews, colNumber: counter.colViews};
 
     // check if overlaid just because there is a brush
-    let brush = [];
-    let nonBrush = [];
+    const brush = [];
+    const nonBrush = [];
     for (const overlay of specPart._overlay) {
         if (overlay.mark) {
             if (overlay.mark === 'brush') {
@@ -431,7 +431,7 @@ function altOverlaidTrack(
             nonBrush.push(overlay);
         }
     }
-    let linked = [] as AltLinked[];
+    const linked = [] as AltLinked[];
     if (brush.length > 0) {
         for (const b of brush) {
             let linkingId;
@@ -456,7 +456,7 @@ function altOverlaidTrack(
         if (nonBrush.length === 1) {
             // then it's just a SingleTrack with a brush
             // we create the SingleTrack to get the AltSingleTrack
-            let altTrack = convertToSingleTrack(specPart, nonBrush[0], altParentValues, counter)
+            const altTrack = convertToSingleTrack(specPart, nonBrush[0], altParentValues, counter);
             
             altTrack.appearance.details.linked = linked;
             return altTrack;
@@ -468,7 +468,7 @@ function altOverlaidTrack(
         }
     }
    
-    let [specPartNew, altOverlay, singleTracks] = altOverlaidTrackGetStructure(specPart, altParentValues, counter);
+    const [specPartNew, altOverlay, singleTracks] = altOverlaidTrackGetStructure(specPart, altParentValues, counter);
 
     // appearance (anything from mark to layout to encodings)
     const appearanceDetails = {} as AltTrackAppearanceDetailsOverlaid;
@@ -482,12 +482,12 @@ function altOverlaidTrack(
         for (let i = 0; i < altOverlay.length; i++) {
             SUPPORTED_CHANNELS.forEach(k => {
                 if (k === 'text') {
-                    return
+                    return;
                 }
                 if (!specPartNewWithAllEncodings[k]) {
                     if (altOverlay[i][k]) {
                         specPartNewWithAllEncodings[k] = altOverlay[i][k];
-                    } 
+                    }
                 }
             });
         }
@@ -670,15 +670,17 @@ function altOverlaidByData(
         altTrackInd.push(altOverlaidByDataSingleTrack(track, altParentValues, counter));
     }
 
+    altTrack.tracks = altTrackInd;
+    altTrack.uids = uids;
+
     const position: AltTrackPosition = {description: '', details: positionDetails};
     altTrack.position = position;
     
     altTrack.title = specPart.title;
 
-    altTrack.appearance = {description: '', details: {layout: 'linear'}}; // only linear is supported at this time
+    const combinedChartType = determineOverlaidByDataCases(altTrack);
+    altTrack.appearance = {description: '', details: {layout: 'linear', charttype: combinedChartType}}; // only linear is supported at this time
 
-    altTrack.tracks = altTrackInd;
-    altTrack.uids = uids;
     altTrack.description = '';
 
     return altTrack;

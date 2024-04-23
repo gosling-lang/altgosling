@@ -3,23 +3,19 @@ import React, { useState } from 'react';
 import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
 // simple examples
-import { barChart, barChartStatic } from './examples/barChart';
-import { lineChart } from './examples/lineChart';
-import { pointChart } from './examples/pointChart';
-import { ideogram, ideogramWithArea } from './examples/ideogram';
-import { compare2 } from './examples/tonsil';
+import { barChart } from './examples/barChart';
+import { ideogramWithArea } from './examples/ideogram';
+import { compareTwoSamples } from './examples/tonsil';
 import { circularHalves } from './examples/circularHalves';
 import { heatmap } from './examples/heatmap';
 
 // multiple visual encodings
-import { visualEncoding } from './examples/visualEncoding';
-import { visualEncodingTrack1, visualEncodingTrack1And2, visualEncodingTrack4, visualEncodingTrack4WithDataCopied } from './examples/visualEncodingVariations';
-import { ruleMark, ruleMark2, ruleMarkOverlaidWithSecondEncoding, ruleMarkOverlaidWithSecondEncodingSame } from './examples/ruleMark';
+import { doubleMarks } from './examples/visualEncodingOverlay';
+import { ruleMark } from './examples/ruleMark';
+import { brush } from './examples/brush';
 
 // complex examples
-import { give } from './examples/exampleGIVE';
 import { geneAnnotation } from './examples/geneAnnotation';
-import { transform } from './examples/transform';
 
 // MUI elements
 import Grid from '@mui/material/Grid';
@@ -27,30 +23,18 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { brush } from './examples/brush';
 
 
 function Demo() {
-    const examples = {'Bar chart': barChart, 
-                      'Line chart': lineChart,
-                    //   'Point chart': pointChart,
-                      // 'Ideogram': ideogram,
-                    'Ideogram': ideogramWithArea,
-                    'Linked views': brush,
-                    //   'Multiple Visual Encodings': visualEncoding, 
-                      'Tonsil ChIP-seq comparison': compare2,
-                    //   'Multiple Visual Encoding Track 1 and 2': visualEncodingTrack1And2, 
-                    //   'Multiple Visual Encoding Track 4': visualEncodingTrack4, 
-                    //   'Multiple Visual Encoding Track 4 Test': visualEncodingTrack4WithDataCopied, 
-                      'Bar chart with lines': ruleMark, 
-                    //   'Bar chart with lines2': ruleMark2, 
-                      // 'Bar chart with points': ruleMarkOverlaidWithSecondEncoding, 
-                    //   'Bar chart with points2': ruleMarkOverlaidWithSecondEncodingSame,
-                    //   'GIVE - CAO et al.': give,
+    const examples = {'Bar chart': barChart,
+                      'Ideogram': ideogramWithArea,
+                      'Linked views': brush,
+                      'Tonsil ChIP-seq comparison': compareTwoSamples,
+                      'Bar chart with lines': ruleMark,
+                      'Double marks': doubleMarks,
                       'Gene annotations': geneAnnotation,
                       'Circular halves': circularHalves,
-                      'Circular heatmap': heatmap
-                    //   'transform': transform
+                      'Heatmap': heatmap,
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
