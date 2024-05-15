@@ -3,7 +3,7 @@
   "author": "Thomas C. Smits",
   "version": "0.0.0",
   "license": "MIT",
-  "homepage": "https://gosling-lang.github.io/alt-gosling/",
+  "homepage": "https://gosling-lang.github.io/altgosling/",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
