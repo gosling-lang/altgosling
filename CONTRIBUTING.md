@@ -20,7 +20,7 @@ We use the convention of `{github-username}/{descriptive-title}` for branches.
 ### Linting 
 We use ESLint for linting. You can run the following: 
 ```sh
-pnpm run lint
+pnpm eslint
 ```
 
 ## Depending on a change in gosling.js
