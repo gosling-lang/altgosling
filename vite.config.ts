@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   plugins: [react()],
-  base: '/alt-gosling',
+  base: '/altgosling',
   server: {
     open: 'index.html'
   }
