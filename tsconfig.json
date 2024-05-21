@@ -27,6 +27,6 @@
       "@alt-gosling/alt-gosling-schema": ["src/schema/modules/alt-gosling-schema.ts"]
     },
   },
-  "include": ["src"],
+  "include": ["src", "src/alt-gosling-model/util.test.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

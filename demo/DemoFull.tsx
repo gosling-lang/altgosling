@@ -16,6 +16,7 @@ import { brush } from './examples/brush';
 
 // complex examples
 import { geneAnnotation } from './examples/geneAnnotation';
+import { matrix } from './examples/matrix';
 
 // MUI elements
 import Grid from '@mui/material/Grid';
@@ -35,6 +36,7 @@ function Demo() {
                       'Gene annotations': geneAnnotation,
                       'Circular halves': circularHalves,
                       'Heatmap': heatmap,
+                      'Matrix': matrix
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
