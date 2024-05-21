@@ -302,7 +302,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
     if (genomicEncodingsI.includes('x') && genomicEncodingsI.includes('y')) {
         descGenomic = descGenomic.concat(`The genome is shown on both the x- and y-axes.`);
         if (genomicEncodingsI.includes('xe') && genomicEncodingsI.includes('ye')) {
-            descGenomic = descGenomic.concat(` Each displays genomic intervals.`);
+            descGenomic = descGenomic.concat(` Both axes show intervals.`);
             descList.push(['x', `The x-axis show genomic intervals.`]);
             descList.push(['y', `The y-axis show genomic intervals.`]);
         } else if (genomicEncodingsI.includes('xe')) {
