@@ -32,6 +32,9 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     if (_mark === 'bar' && _genomicEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
         return `${layoutDesc}bar chart`;
     }
+    if (_mark === 'bar' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _genomicEncodings.includes('y') && _genomicEncodings.includes('ye') && _quantitativeEncodings.includes('color')) {
+        return `${layoutDesc}matrix`;
+    }
     if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _quantitativeEncodings.includes('color')) {
         return `${layoutDesc}heat map`;
     }
