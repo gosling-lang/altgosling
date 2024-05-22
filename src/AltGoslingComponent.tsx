@@ -7,7 +7,7 @@ import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
 
 import Grid from '@mui/material/Grid';
-// import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
 
 
 // eventually import this from gosling
@@ -149,6 +149,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         if (specProcessed) {
             // Get AltGoslingSpec
             const altSpec = getAlt(specProcessed);
+            console.log(altSpec.alt)
+            console.log(altSpec.longDescription)
             setGoslingDimensions({width: specProcessed._assignedWidth, height: specProcessed._assignedHeight});
             // Update current alt
             updateAltPanelDisplay(altSpec);
@@ -288,10 +290,20 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         }
     };
 
-    // debug purposes
-    // function handleChange() {
-    //     console.log('Button clicked!');
-    // }
+    const downloadDescription = () => {
+        const element = document.createElement("a");
+        let file;
+        try {
+            const altSpec = AltPanels.current[selectedAltPanel].data;
+            file = new Blob(['Alt: ', altSpec.alt, '\n\n', 'Long description: ', altSpec.longDescription], {type: 'text/plain'});
+        } catch {
+            file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
+        }
+        element.href = URL.createObjectURL(file);
+        element.download = "descriptions.txt";
+        document.body.appendChild(element); // Required for this to work in FireFox
+        element.click();
+    }
     
     return(
         <>
@@ -313,7 +325,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                         <DataPanelComponent/>
                     </Grid>
                 {/* </Grid> */}
-                {/* <Button onClick={handleChange}>Click me!</Button> */}
+                <Button onClick={downloadDescription}>Download description</Button>
             </Grid>
         </>
     );
