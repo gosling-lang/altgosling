@@ -177,13 +177,13 @@ export function nodeToJSX(node: AltNode): JSX.Element {
 /* ------------------------------ CREATING NODE STRUCTURE ------------------------------ */
 function createAltNodes(altSpec: AltGoslingSpec): AltNode {
     const structure = new AltNode('Automatic description', 'tree', true, true, 'altnodelist', [
-        new AltNode('Alt-text', 'alt', true, true, 'value', altSpec.alt),
-        new AltNode('Description', 'long', true, true, 'value', altSpec.longDescription),
-        new AltNode('Details', 'details', true, true, 'altnodelist', [
+        // new AltNode('Alt-text', 'alt', true, true, 'value', altSpec.alt),
+        // new AltNode('Description', 'long', true, true, 'value', altSpec.longDescription),
+        // new AltNode('Details', 'details', true, true, 'altnodelist', [
             new AltNode('Title', 'title', false, true, 'value', altSpec.title),
             new AltNode('Subtitle', 'subtitle', false, true, 'value', altSpec.subtitle),
             ...trackNode(altSpec)
-        ]),
+        // ]),
     ]);
     return(structure);
 }
@@ -207,13 +207,13 @@ function trackNodeSingle(t: AltTrack): Array<AltNode> {
     let structureList;
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
         structureList = [
-            new AltNode('Description', 'T-1-desc', true, true, 'value', t.description),
-            new AltNode('Details', 'T-1-det', true, true, 'altnodelist', [
+            // new AltNode('Description', 'T-1-desc', true, true, 'value', t.description),
+            // new AltNode('Details', 'T-1-det', true, true, 'altnodelist', [
                 new AltNode('Title', 'T-1-det-title', false, true, 'value', t.title),
                 chartTypeNode(t, '1'),
                 appearanceNode(t, '1'),
                 dataNode(t, '1')
-            ]),
+            // ]),
         ];
     } else {
         const structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-1-T-' + i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-1-T-'+i)));
@@ -232,8 +232,8 @@ function trackNodeMulti(t: AltTrack): AltNode {
 
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
         structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
-            new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
-            new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
+            // new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
+            // new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
                 new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
                 new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
                     new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
@@ -242,13 +242,13 @@ function trackNodeMulti(t: AltTrack): AltNode {
                 chartTypeNode(t, uid),
                 appearanceNode(t, uid),
                 dataNode(t, uid),
-            ]),
+            // ]),
         ]);
     } else {
         const structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-'+uid+'-T-'+i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-'+uid+'-T-'+i)));
         structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
-            new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
-            new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
+            // new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
+            // new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
                 new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
                 new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
                     new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
@@ -257,7 +257,7 @@ function trackNodeMulti(t: AltTrack): AltNode {
                 new AltNode('Tracks', 'T-'+uid+'-T', true, true, 'altnodelist', [
                     ...structureIndList
                 ]),
-            ]),
+            // ]),
         ]);
     }
     return(structure);
@@ -266,12 +266,12 @@ function trackNodeMulti(t: AltTrack): AltNode {
 
 function trackNodeOvData(ti: AltTrackOverlaidByDataInd, uid: string) {
     const structure = [
-        new AltNode('Description', uid+'-desc', true, true, 'value', ti.description),
-        new AltNode('Details', uid+'-det', true, true, 'altnodelist', [
+        // new AltNode('Description', uid+'-desc', true, true, 'value', ti.description),
+        // new AltNode('Details', uid+'-det', true, true, 'altnodelist', [
             chartTypeNode(ti, uid),
             appearanceNode(ti, uid),
             dataNode(ti, uid)
-        ])
+        // ])
     ];
     return structure;
 }
@@ -295,25 +295,25 @@ function appearanceNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): A
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
         return(
             new AltNode('Appearance', 'T-'+uid+'-det-app', false, true, 'altnodelist', [
-                new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
-                new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
+                // new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
+                // new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
                     markNode(t, uid),
                     new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, false, 'value', t.appearance.details.layout),
                     // new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
                     ...encodingNode(t, uid)
-                ]),
+                // ]),
             ])
         );
     } else if (t.alttype === 'ov-data-ind') {
         return(
             new AltNode('Appearance', 'T-'+uid+'-det-app', false, true, 'altnodelist', [
-                new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
-                new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
+                // new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
+                // new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
                     markNode(t, uid),
                     new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, false, 'value', t.appearance.details.layout),
                     new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
                     ...encodingNode(t, uid)
-                ]),
+                // ]),
             ])
         );
     } else {
