@@ -287,7 +287,7 @@ function chartTypeNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): Al
             charttype = arrayToString(t.charttype);
         }
     }
-    return(new AltNode('Type', 'T-'+uid+'-det-type', false, false, 'value', charttype));
+    return(new AltNode('Chart Type', 'T-'+uid+'-det-type', false, true, 'value', charttype));
 }
 
 
