@@ -123,7 +123,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
         if (track.data.details.dataStatistics?.categories) {
             if (track.data.details.dataStatistics?.categories.length === 1) {
                 desc = desc.concat(` The category shown is called '${track.data.details.dataStatistics?.categories[0]}'.`);
-                linkDataToChannels(track, 'nominal', [['Categories', `There is one category called $'${track.data.details.dataStatistics?.categories[0]}'`]]);
+                linkDataToChannels(track, 'nominal', [['Categories', `There is one category called ${track.data.details.dataStatistics?.categories[0]}`]]);
             } else {
                 const linkDataToChannelsList = ['Categories'];
                 // number of categories
@@ -163,11 +163,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
 function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][], categories?: string[], theme?: Theme) {
     for (const enc of track.appearance.details.encodingsDescList) {
         if (enc.channelType.includes(typeDescList)) {
-            if (enc.dataDesc) {
-                enc.dataDesc = [...enc.dataDesc, ...descList];
-            } else {
-                enc.dataDesc = descList;
-            }
+            enc.dataDesc = descList;
             // for rows, add information about which category is on which row
             if (enc.channel === 'row' && enc.channelType === 'nominal' && categories) {
                 switch (categories.length) {
@@ -203,13 +199,13 @@ function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | Alt
                         enc.dataDesc[0].push(`The only category (${categories[0]}) is ${GetColorName(nominalColors[0])}.`);
                         break;
                     case 2:
-                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0])} and category ${categories[1]} is ${GetColorName(nominalColors[1])}.`);
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0]).toLowerCase()} and category ${categories[1]} is ${GetColorName(nominalColors[1]).toLowerCase()}.`);
                         break;
                     case 3: 
-                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0])}, category ${categories[1]} is ${GetColorName(nominalColors[1])} and category ${categories[2]} is ${GetColorName(nominalColors[2])}.`);
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0]).toLowerCase()}, category ${categories[1]} is ${GetColorName(nominalColors[1]).toLowerCase()} and category ${categories[2]} is ${GetColorName(nominalColors[2]).toLowerCase()}.`);
                         break;
                     case 4: 
-                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0])}, category ${categories[1]} is ${GetColorName(nominalColors[1])}, category ${categories[2]} is ${GetColorName(nominalColors[2])} and category ${categories[3]} is ${GetColorName(nominalColors[3])}.`);
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0]).toLowerCase()}, category ${categories[1]} is ${GetColorName(nominalColors[1]).toLowerCase()}, category ${categories[2]} is ${GetColorName(nominalColors[2]).toLowerCase()} and category ${categories[3]} is ${GetColorName(nominalColors[3]).toLowerCase()}.`);
                         break;
                     default:
                         break;
@@ -224,7 +220,7 @@ function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | Alt
             console.warn("AltGosling was not provided a Gosling Theme, so light theme is assumed.");
         }
         const nominalColors = getThemeColors(theme);
-        const color = GetColorName(nominalColors[0]);
+        const color = GetColorName(nominalColors[0]).toLowerCase();
         if (track.appearance.details.mark) {
             track.appearance.details.encodingsDescList.push({channel: 'color', channelType: 'value', desc: `The color of the ${markToText.get(track.appearance.details.mark)} is ${color}.`} as AltEncodingDesc);
         } else {
