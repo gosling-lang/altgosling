@@ -1,10 +1,14 @@
 import { Assembly, GenomicPosition } from '@alt-gosling/schema/gosling.schema';
-import type { AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import { Theme } from 'gosling.js';
+import type { AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 
-import { arrayToString, chrNumberOnly } from '../util';
+import { arrayToString, markToText, chrNumberOnly } from '../util';
 
 // @ts-expect-error no type definition
 import { getRelativeGenomicPosition } from 'gosling.js/utils';
+
+import { getThemeColors } from '@alt-gosling/schema/gosling-theme';
+import { GetColorName } from 'hex-color-to-color-name';
 
 
 export function addTrackDataDescriptions(altGoslingSpec: AltGoslingSpec) {
@@ -72,19 +76,19 @@ export function getRangeText(p1: number, p2: number, assembly?: Assembly): strin
     return ` The genomic range is shown from chromosome ${p1t[0]} position ${p1t[1]} to chromosome ${p2t[0]} position ${p2t[1]}.`;
 }
 
-export function addTrackDataDescriptionsTrack(track: AltTrack) {
+export function addTrackDataDescriptionsTrack(track: AltTrack, theme?: Theme) {
     if (track.alttype === 'single' || track.alttype === 'ov-mark') {
-        addTrackDataDescriptionsTrackInd(track);
+        addTrackDataDescriptionsTrackInd(track, theme);
     }
     if (track.alttype === 'ov-data') {
         for (let i = 0; i < Object.keys(track.tracks).length; i++) {
             const overlaidDataTrack = track.tracks[i];
-            addTrackDataDescriptionsTrackInd(overlaidDataTrack);
+            addTrackDataDescriptionsTrackInd(overlaidDataTrack, theme);
         }
     }
 }
 
-export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd) {
+export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, theme?: Theme) {
     if (track.data.details.dataStatistics) {
         let desc = '';
         const assembly = track.appearance.details.assembly;
@@ -146,7 +150,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 }
                 // See if genomic positions are the same for the min and max values of each category
 
-                linkDataToChannels(track, 'nominal', [linkDataToChannelsList], track.data.details.dataStatistics?.categories);
+                linkDataToChannels(track, 'nominal', [linkDataToChannelsList], track.data.details.dataStatistics?.categories, theme);
 
             }
         }
@@ -156,7 +160,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
 }
 
 
-function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][], categories?: string[]) {
+function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][], categories?: string[], theme?: Theme) {
     for (const enc of track.appearance.details.encodingsDescList) {
         if (enc.channelType.includes(typeDescList)) {
             if (enc.dataDesc) {
@@ -164,6 +168,7 @@ function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | Alt
             } else {
                 enc.dataDesc = descList;
             }
+            // for rows, add information about which category is on which row
             if (enc.channel === 'row' && enc.channelType === 'nominal' && categories) {
                 switch (categories.length) {
                     case 0: 
@@ -184,6 +189,46 @@ function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | Alt
                         enc.dataDesc[0].push(`The first category (${categories[0]}) is shown on the top, the second (${categories[1]}) is shown below, the other categories are shown below in their own rows respectively.`);
                 }
             }
+            // for color, add information about which category is shown in which color
+            if (enc.channel === 'color' && enc.channelType === 'nominal' && categories) {
+                if (!theme) {
+                    console.warn("AltGosling was not provided a Gosling Theme, so light theme is assumed.");
+                }
+                const nominalColors = getThemeColors(theme);
+
+                switch (categories.length) {
+                    case 0: 
+                        break;
+                    case 1: 
+                        enc.dataDesc[0].push(`The only category (${categories[0]}) is ${GetColorName(nominalColors[0])}.`);
+                        break;
+                    case 2:
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0])} and category ${categories[1]} is ${GetColorName(nominalColors[1])}.`);
+                        break;
+                    case 3: 
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0])}, category ${categories[1]} is ${GetColorName(nominalColors[1])} and category ${categories[2]} is ${GetColorName(nominalColors[2])}.`);
+                        break;
+                    case 4: 
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${GetColorName(nominalColors[0])}, category ${categories[1]} is ${GetColorName(nominalColors[1])}, category ${categories[2]} is ${GetColorName(nominalColors[2])} and category ${categories[3]} is ${GetColorName(nominalColors[3])}.`);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
+    }
+
+    // if no color is in the encodings, add color with the default theme color
+    if ((track.appearance.details.encodingsDescList.filter(enc => enc.channel === 'color').length) === 0) {
+        if (!theme) {
+            console.warn("AltGosling was not provided a Gosling Theme, so light theme is assumed.");
+        }
+        const nominalColors = getThemeColors(theme);
+        const color = GetColorName(nominalColors[0]);
+        if (track.appearance.details.mark) {
+            track.appearance.details.encodingsDescList.push({channel: 'color', channelType: 'value', desc: `The color of the ${markToText.get(track.appearance.details.mark)} is ${color}.`} as AltEncodingDesc);
+        } else {
+            track.appearance.details.encodingsDescList.push({channel: 'color', channelType: 'value', desc: `The color is ${color}.`} as AltEncodingDesc);
+        }  
     }
 }
