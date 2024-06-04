@@ -65,12 +65,19 @@ export type AltLinkedTrack = {
     positionDesc: string
 }
 
+export type AltEncodingDesc = {
+    channel: string,
+    channelType: string,
+    desc: string,
+    dataDesc?: Object
+}
+
 export type AltTrackAppearanceDetails = {
     overlaid: false;
     layout: Layout;
     mark: Mark;
     encodings: AltEncodingSeparated;
-    encodingsDescList: string[][];
+    encodingsDescList: AltEncodingDesc[];
     orientation?: Orientation;
     assembly?: Assembly;
     linkingId?: string;
@@ -84,7 +91,7 @@ export type AltTrackAppearanceDetailsOverlaid = {
     markByTrack: Mark[];
     encodings: AltEncodingSeparated;
     encodingsByTrack: AltEncodingSeparated[];
-    encodingsDescList: string[][];
+    encodingsDescList: AltEncodingDesc[];
     orientation?: Orientation;
     assembly?: Assembly;
     linkingId?: string;

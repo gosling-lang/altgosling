@@ -1,4 +1,4 @@
-import type { AltEncodingSeparated, AltGoslingSpec, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltEncodingDesc, AltEncodingSeparated, AltGoslingSpec, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
 
 import { GetColorName } from 'hex-color-to-color-name';
@@ -278,12 +278,16 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
         let descListAllFlat = descListAll[0].concat(...descListAll.slice(1));
 
         // collapse duplicates
-        const descListAllFlatNames = descListAllFlat.map(d => d[0]);
+        const descListAllFlatNames = descListAllFlat.map(d => d.channel);
         const descListDuplicates = descListAllFlatNames.filter((item, index) => descListAllFlatNames.indexOf(item) !== index);
         for (const descListDuplicate of descListDuplicates) {
-            const duplicateItems = descListAllFlat.filter(item => item[0] === descListDuplicate).map(item => item[1]).join(' ');
-            descListAllFlat = descListAllFlat.filter(item => item[0] !== descListDuplicate);
-            descListAllFlat.push([descListDuplicate, duplicateItems]);
+            const duplicateItems = descListAllFlat.filter(item => item.channel === descListDuplicate).map(item => item.desc).join(' ');
+            descListAllFlat = descListAllFlat.filter(item => item.channel !== descListDuplicate);
+            descListAllFlat.push({
+                channel: descListDuplicate,
+                desc: duplicateItems,
+                channelType: descListAllFlat.filter(item => item.channel === descListDuplicate).map(item => item.channelType).join(' ')
+            } as AltEncodingDesc);
         }
         return {desc: desc, descList: descListAllFlat};
     }
@@ -295,7 +299,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
     let descNominal = '';
     let descValue = '';
 
-    const descList = [] as string[][];
+    const descList = [] as AltEncodingDesc[];
 
     // genomic encodings
     const genomicEncodingsI = encodings.encodingDeepGenomic.map(o => o.name);
@@ -303,29 +307,68 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
         descGenomic = descGenomic.concat(`The genome is shown on both the x- and y-axes.`);
         if (genomicEncodingsI.includes('xe') && genomicEncodingsI.includes('ye')) {
             descGenomic = descGenomic.concat(` Both axes show intervals.`);
-            descList.push(['x', `The x-axis show genomic intervals.`]);
-            descList.push(['y', `The y-axis show genomic intervals.`]);
+            descList.push({
+                channel: 'x',
+                desc: `The x-axis show genomic intervals.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
+            descList.push({
+                channel: 'y',
+                desc: `The y-axis show genomic intervals.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
         } else if (genomicEncodingsI.includes('xe')) {
             descGenomic = descGenomic.concat(` The genome on the x-axis displays genomic intervals.`);
-            descList.push(['x', `The x-axis show genomic intervals.`]);
-            descList.push(['y', `The y-axis shows the genome.`]);
-
+            descList.push({
+                channel: 'x',
+                desc: `The x-axis show genomic intervals.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
+            descList.push({
+                channel: 'y',
+                desc: `The y-axis shows the genome.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
         } else if (genomicEncodingsI.includes('ye')) {
             descGenomic = descGenomic.concat(` The genome on the y-axis displays genomic intervals.`);
-            descList.push(['x', `The x-axis shows the genome.`]);
-            descList.push(['y', `The y-axis show genomic intervals.`]);
+            descList.push({
+                channel: 'x',
+                desc: `The x-axis shows the genome.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
+            descList.push({
+                channel: 'y',
+                desc: `The y-axis show genomic intervals.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
         } else {
-            descList.push(['x', `The x-axis shows the genome.`]);
-            descList.push(['y', `The y-axis shows the genome.`]);
+            descList.push({
+                channel: 'x',
+                desc: `The x-axis shows the genome.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
+            descList.push({
+                channel: 'y',
+                desc: `The y-axis shows the genome.`,
+                channelType: 'genomic'
+            } as AltEncodingDesc);
         }
     } else {
         if (genomicEncodingsI.includes('x')) {
             let add = '';
             if (genomicEncodingsI.includes('xe')) {
                 add = 'in intervals ';
-                descList.push(['x', `The x-axis show genomic intervals.`]);
+                descList.push({
+                    channel: 'x',
+                    desc: `The x-axis show genomic intervals.`,
+                    channelType: 'genomic'
+                } as AltEncodingDesc);
             } else {
-                descList.push(['x', `The x-axis shows the genome.`]);
+                descList.push({
+                    channel: 'x',
+                    desc: `The x-axis shows the genome.`,
+                    channelType: 'genomic'
+                } as AltEncodingDesc);
             }
             descGenomic = descGenomic.concat(`The genome is shown ${add}on the x-axis.`);
         }
@@ -334,9 +377,17 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             let add = '';
             if (genomicEncodingsI.includes('ye')) {
                 add = 'in intervals ';
-                descList.push(['y', `The y-axis show genomic intervals.`]);
+                descList.push({
+                    channel: 'y',
+                    desc: `The y-axis show genomic intervals.`,
+                    channelType: 'genomic'
+                } as AltEncodingDesc);
             } else {
-                descList.push(['y', `The y-axis shows the genome.`]);
+                descList.push({
+                    channel: 'y',
+                    desc: `The y-axis shows the genome.`,
+                    channelType: 'genomic'
+                } as AltEncodingDesc);
             }
             descGenomic = descGenomic.concat(`The genome is shown ${add}on the y-axis.`);
         }
@@ -354,20 +405,36 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
     if (quantitativeEncodingsI.length > 1) {
         descQuantitative = descQuantitative.concat(`The expression values are shown with ${markText} on the ${arrayToString(quantitativeEncodingsI)}-axes.`);
         for (const q of quantitativeEncodingsI) {
-            descList.push([q, `The ${channelToText.get(q)} of the ${markText} shows the expression values.`]);
+            descList.push({
+                channel: q,
+                desc: `The ${channelToText.get(q)} of the ${markText} shows the expression values.`,
+                channelType: 'quantitative'
+            } as AltEncodingDesc);
         }
     } else if (quantitativeEncodingsI.length === 1) {
         if (quantitativeEncodingsI.includes('y')) {
             descQuantitative = descQuantitative.concat(`The expression is shown on the y-axis with ${markText}.`);
-            descList.push(['y', `The y-axis shows the expression with ${markText}.`]);
+            descList.push({
+                channel: 'y',
+                desc: `The y-axis shows the expression with ${markText}.`,
+                channelType: 'quantitative'
+            } as AltEncodingDesc);
         }
         else if (quantitativeEncodingsI.includes('color')) {
             descQuantitative = descQuantitative.concat('The height of the expression values is shown with color.');
-            descList.push(['color', `The color of the ${markText} shows the expression values.`]);
+            descList.push({
+                channel: 'color',
+                desc: `The color of the ${markText} shows the expression values.`,
+                channelType: 'quantitative'
+            } as AltEncodingDesc);
         }
         else {
             descQuantitative = descQuantitative.concat(`The height of the expression values is shown with the ${quantitativeEncodingsI[0]}-axis.`);
-            descList.push([channelToText.get(quantitativeEncodingsI[0]) as string, `The ${channelToText.get(quantitativeEncodingsI[0])} of the ${markText} shows the expression values.`]);
+            descList.push({
+                channel: channelToText.get(quantitativeEncodingsI[0]) as string,
+                desc: `The ${channelToText.get(quantitativeEncodingsI[0])} of the ${markText} shows the expression values.`,
+                channelType: 'quantitative'
+            } as AltEncodingDesc);
         }
     }
 
@@ -380,27 +447,47 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             descNominal = descNominal.concat(`The chart is stratified by rows for the categories.`);
             const nominalEncodingsINames = nominalEncodingsI.filter(e => e !== 'row').map(e => channelToText.get(e)) as string[];
             descNominal = descNominal.concat(` The categories are also shown with the ${arrayToString(nominalEncodingsINames)} of the ${markText}.`);
-            descList.push(['row', `The chart is stratified by rows for the categories.`]);
+            descList.push({
+                channel: 'row',
+                desc: `The chart is stratified by rows for the categories.`,
+                channelType: 'nominal'
+            } as AltEncodingDesc);
             for (const q of nominalEncodingsINames) {
-                descList.push([channelToText.get(q) as string, `The ${channelToText.get(q)} of the ${markText} show the different categories.`]);
+                descList.push({
+                    channel: channelToText.get(q) as string,
+                    desc: `The ${channelToText.get(q)} of the ${markText} show the different categories.`,
+                    channelType: 'nominal'
+                } as AltEncodingDesc);
             }
         }
         else {
             const nominalEncodingsINames = nominalEncodingsI.map(e => channelToText.get(e)) as string[];
             descNominal = descNominal.concat(`The categories are shown with the ${arrayToString(nominalEncodingsINames)} of the ${markText}.`);
             for (const q of nominalEncodingsI) {
-                descList.push([channelToText.get(q) as string, `The ${channelToText.get(q)} of the ${markText} show the different categories.`]);
+                descList.push({
+                    channel: channelToText.get(q) as string,
+                    desc: `The ${channelToText.get(q)} of the ${markText} show the different categories.`,
+                    channelType: 'nominal'
+                } as AltEncodingDesc);
             }
         }
     }
     else if (nominalEncodingsI.length == 1) {
         if (nominalEncodingsI.includes('row')) {
             descNominal = descNominal.concat(`The chart is stratified by rows for the categories.`);
-            descList.push(['row', `The chart is stratified by rows for the categories.`]);
+            descList.push({
+                channel: 'row',
+                desc: `The chart is stratified by rows for the categories.`,
+                channelType: 'nominal'
+            } as AltEncodingDesc);
         }
         else {
             descNominal = descNominal.concat(`The ${channelToText.get(nominalEncodingsI[0])} of the ${markText} indicates the different categories.`);
-            descList.push([channelToText.get(nominalEncodingsI[0]) as string, `The ${channelToText.get(nominalEncodingsI[0])} of the ${markText} show the different categories.`]);
+            descList.push({
+                channel: channelToText.get(nominalEncodingsI[0]) as string,
+                desc: `The ${channelToText.get(nominalEncodingsI[0])} of the ${markText} show the different categories.`,
+                channelType: 'nominal'
+            } as AltEncodingDesc);
         }
     }
 
@@ -415,7 +502,11 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
                 }
             }
             descValue = descValue.concat(`The color of the ${markText} is ${e.details.value}.`);
-            descList.push(['color', `The color of the ${markText} is ${e.details.value}.`]);
+            descList.push({
+                channel: 'color',
+                desc: `The color of the ${markText} is ${e.details.value}.`,
+                channelType: 'nominal'
+            } as AltEncodingDesc);
         }
     }
 

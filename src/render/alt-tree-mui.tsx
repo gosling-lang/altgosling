@@ -347,7 +347,7 @@ function markNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode
 function encodingNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): Array<AltNode> {
     if (t.alttype === 'single' || t.alttype === 'ov-mark' || t.alttype === 'ov-data-ind') {
         const nodeList = t.appearance.details.encodingsDescList.map((enc, i) => {
-            return new AltNode(enc[0], 'T-'+uid+'-det-pos-enc'+enc[0]+i, false, true, 'value', enc[1]);
+            return new AltNode(enc.channel, 'T-'+uid+'-det-pos-enc'+enc.channel+i, false, true, 'value', enc.desc);
         });
         return nodeList;
     }
