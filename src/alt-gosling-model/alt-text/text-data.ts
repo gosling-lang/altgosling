@@ -95,7 +95,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
             const genmin = getOnePositionText(track.data.details.dataStatistics?.genomicMin, assembly);
             const genmax = getOnePositionText(track.data.details.dataStatistics?.genomicMax , assembly);
             track.data.details.dataStatistics.genomicDescList = [['Minimum', genmin], ['Maximum', genmax]];
-            linkDataToChannels(track, 'genomic', [['Minimum', `The minimum shown is ${genmin}`], ['Maximum', `The maximum shown is ${genmax}`]]);
+            linkDataToChannels(track, 'genomic', [['Minimum', `The minimum shown is ${genmin}.`], ['Maximum', `The maximum shown is ${genmax}.`]]);
             desc = desc.concat(rangeText);
         }
         if (track.data.details.dataStatistics?.valueMin !== undefined && track.data.details.dataStatistics?.valueMax !== undefined) {
@@ -109,7 +109,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 const valmaxgen = addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum', assembly);
                 desc = desc.concat(valmaxgen, valmingen);
                 track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}. ${valmingen}`], ['Maximum', `${valmax}. ${valmaxgen}`]];
-                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}. ${valmingen}`], ['Maximum', `The maximum value shown is ${valmax}. ${valmaxgen}`]]);
+                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}.`, `${valmingen}`], ['Maximum', `The maximum value shown is ${valmax}.`, `${valmaxgen}`]]);
             } else {
                 track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}`], ['Maximum', `${valmax}`]];
                 linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}.`], ['Maximum', `The maximum value shown is ${valmax}.`]]);
@@ -129,6 +129,8 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 } else {
                     desc = desc.concat(`.`);
                 }
+
+                linkDataToChannels(track, 'value', [['Categories', `There are ${track.data.details.dataStatistics?.categories.length} categories.`, `The categories are: ${arrayToString(track.data.details.dataStatistics?.categories)}`]]);
 
                 // which category has the highest expression peak
                 if (track.data.details.dataStatistics?.highestCategory) {

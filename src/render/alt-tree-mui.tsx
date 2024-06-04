@@ -350,7 +350,15 @@ function encodingNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): Arr
             if (enc.dataDesc) {
                 return new AltNode(enc.channel, 'T-'+uid+'-det-pos-enc'+enc.channel+i, false, true, 'altnodelist', [
                     new AltNode(enc.desc, 'T-'+uid+'-det-pos-enc'+enc.channel+''+i+'value', false, false, 'value', enc.desc),
-                    ...enc.dataDesc.map((encDataDesc, j) => {return new AltNode(encDataDesc[0], 'T-'+uid+'-det-pos-enc'+enc.channel+''+i+j, false, true, 'value', encDataDesc[1])})
+                    ...enc.dataDesc.map((encDataDesc, j) => {
+                        if (encDataDesc.length > 2) {
+                            return new AltNode(encDataDesc[0], 'T-'+uid+'-det-pos-enc'+enc.channel+''+i+j, false, true, 'altnodelist', 
+                                encDataDesc.slice(1).map((encDataDescList, k) => new AltNode(encDataDescList[0], 'T-'+uid+'-det-pos-enc'+enc.channel+''+i+j+k, false, false, 'value', encDataDescList)));
+                        } else {
+                            return new AltNode(encDataDesc[0], 'T-'+uid+'-det-pos-enc'+enc.channel+''+i+j, false, true, 'value', encDataDesc[1]);
+                        }
+                        
+                    })
                 ])
             } else {
                 return new AltNode(enc.channel, 'T-'+uid+'-det-pos-enc'+enc.channel+i, false, true, 'value', enc.desc);
