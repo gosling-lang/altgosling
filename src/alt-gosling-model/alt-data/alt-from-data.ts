@@ -1,7 +1,8 @@
-import type { Datum, AltGoslingSpec, AltTrackDataFields, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, AltTrack, AltTrackDataFields, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
+import { Theme } from 'gosling.js';
 
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields): AltDataStatistics {
     const altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
@@ -94,7 +95,8 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
 export function altUpdateSpecWithData(
     altGoslingSpec: AltGoslingSpec,
     id: string,
-    flatTileData: Datum[]
+    flatTileData: Datum[],
+    theme?: Theme
 ): AltGoslingSpec {
 
     const includePosition = altGoslingSpec.tracks.length > 1;
@@ -116,7 +118,7 @@ export function altUpdateSpecWithData(
                 track.data.details.dataStatistics = altDataStatistics;
 
                 // update description
-                addTrackDataDescriptionsTrack(track);
+                addTrackDataDescriptionsTrack(track, theme);
                 addTrackDescription(track, includePosition);
             }
         }
@@ -134,7 +136,7 @@ export function altUpdateSpecWithData(
                 overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
 
                 // update description
-                addTrackDataDescriptionsTrack(track);
+                addTrackDataDescriptionsTrack(track, theme);
                 addTrackDescription(track, includePosition);
                 }
             }

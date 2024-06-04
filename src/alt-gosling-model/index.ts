@@ -4,6 +4,7 @@ import type {  AltGoslingSpec } from '@alt-gosling/schema/alt-gosling-schema';
 import { getAltSpec } from './alt-structure/alt-from-spec';
 import { treeText, dataText } from './alt-text';
 import { altUpdateSpecWithData } from './alt-data/alt-from-data';
+import { Theme } from 'gosling.js';
 
 // this function is only called once every time a spec is compiled
 export function getAlt(
@@ -23,7 +24,8 @@ export function getAlt(
 export function updateAlt(
     altGoslingSpec: AltGoslingSpec,
     id: string,
-    flatTileData: Datum[]
+    flatTileData: Datum[],
+    theme?: Theme
 ): AltGoslingSpec {
-    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData);
+    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData, theme);
 }

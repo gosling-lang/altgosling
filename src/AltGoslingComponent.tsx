@@ -149,8 +149,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         if (specProcessed) {
             // Get AltGoslingSpec
             const altSpec = getAlt(specProcessed);
-            console.log(altSpec.alt)
-            console.log(altSpec.longDescription)
+            // Set dimensions
             setGoslingDimensions({width: specProcessed._assignedWidth, height: specProcessed._assignedHeight});
             // Update current alt
             updateAltPanelDisplay(altSpec);
@@ -188,7 +187,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 
             //rawData
             currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
-                // console.log('New rawData', data);
+                console.log('New rawData', data);
                 setRawData(data);
             });
         }
@@ -205,7 +204,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         // update altpanel
         const data = rawData;
         if (data) {
-           const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data);
+           const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data, props.theme);
            updateAltPanelDisplay(updatedAlt);
            
            // update datapanel, match uid of updated data to individual track
