@@ -69,7 +69,7 @@ export type AltEncodingDesc = {
     channel: string,
     channelType: string,
     desc: string,
-    dataDesc?: Object
+    dataDesc?: string[][]
 }
 
 export type AltTrackAppearanceDetails = {

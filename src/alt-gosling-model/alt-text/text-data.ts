@@ -95,6 +95,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
             const genmin = getOnePositionText(track.data.details.dataStatistics?.genomicMin, assembly);
             const genmax = getOnePositionText(track.data.details.dataStatistics?.genomicMax , assembly);
             track.data.details.dataStatistics.genomicDescList = [['Minimum', genmin], ['Maximum', genmax]];
+            linkDataToChannels(track, 'genomic', [['Minimum', `The minimum shown is ${genmin}`], ['Maximum', `The maximum shown is ${genmax}`]]);
             desc = desc.concat(rangeText);
         }
         if (track.data.details.dataStatistics?.valueMin !== undefined && track.data.details.dataStatistics?.valueMax !== undefined) {
@@ -108,14 +109,17 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 const valmaxgen = addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum', assembly);
                 desc = desc.concat(valmaxgen, valmingen);
                 track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}. ${valmingen}`], ['Maximum', `${valmax}. ${valmaxgen}`]];
+                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}. ${valmingen}`], ['Maximum', `The maximum value shown is ${valmax}. ${valmaxgen}`]]);
             } else {
                 track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}`], ['Maximum', `${valmax}`]];
+                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}.`], ['Maximum', `The maximum value shown is ${valmax}.`]]);
             }
         }
         // add category data information
         if (track.data.details.dataStatistics?.categories) {
             if (track.data.details.dataStatistics?.categories.length === 1) {
                 desc = desc.concat(` The category shown is called '${track.data.details.dataStatistics?.categories[0]}'.`);
+                linkDataToChannels(track, 'value', [['Categories', `There is one category called $'${track.data.details.dataStatistics?.categories[0]}'`]]);
             } else {
                 // number of categories
                 desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
@@ -143,3 +147,11 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
     }
 }
 
+
+function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][]) {
+    for (const enc of track.appearance.details.encodingsDescList) {
+        if (enc.channelType.includes(typeDescList)) {
+            enc.dataDesc = descList;
+        }
+    }
+}

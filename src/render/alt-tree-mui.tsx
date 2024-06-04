@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { Datum } from '@alt-gosling/schema/gosling.schema';
-import type { AltDataStatistics, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltDataStatistics, AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { arrayToString } from './util';
 import { createDataTable } from './data-table';
@@ -127,7 +127,7 @@ export function nodeToJSX(node: AltNode): JSX.Element {
                 </TreeItem>
                 );
         } else {
-            return(<TreeItem nodeId={node.key} label={node.name + ': ' + node.children}></TreeItem>);
+            return(<TreeItem nodeId={node.key} label={node.children}></TreeItem>);
         }
     }
     
@@ -305,7 +305,7 @@ function appearanceNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): A
                 // new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
                 // new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
                     markNode(t, uid),
-                    new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, false, 'value', t.appearance.details.layout),
+                    new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, true, 'value', t.appearance.details.layout),
                     // new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
                     ...encodingNode(t, uid)
                 // ]),
@@ -339,7 +339,7 @@ function markNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode
     } else {
         return emptyNode();
     }
-    return(new AltNode('Mark', 'T-'+uid+'-det-pos-app-mark', false, false, 'value', mark));
+    return(new AltNode('Mark', 'T-'+uid+'-det-pos-app-mark', false, true, 'value', mark));
 }
 
 
@@ -347,7 +347,14 @@ function markNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode
 function encodingNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): Array<AltNode> {
     if (t.alttype === 'single' || t.alttype === 'ov-mark' || t.alttype === 'ov-data-ind') {
         const nodeList = t.appearance.details.encodingsDescList.map((enc, i) => {
-            return new AltNode(enc.channel, 'T-'+uid+'-det-pos-enc'+enc.channel+i, false, true, 'value', enc.desc);
+            if (enc.dataDesc) {
+                return new AltNode(enc.channel, 'T-'+uid+'-det-pos-enc'+enc.channel+i, false, true, 'altnodelist', [
+                    new AltNode(enc.desc, 'T-'+uid+'-det-pos-enc'+enc.channel+''+i+'value', false, false, 'value', enc.desc),
+                    ...enc.dataDesc.map((encDataDesc, j) => {return new AltNode(encDataDesc[0], 'T-'+uid+'-det-pos-enc'+enc.channel+''+i+j, false, true, 'value', encDataDesc[1])})
+                ])
+            } else {
+                return new AltNode(enc.channel, 'T-'+uid+'-det-pos-enc'+enc.channel+i, false, true, 'value', enc.desc);
+            }
         });
         return nodeList;
     }
