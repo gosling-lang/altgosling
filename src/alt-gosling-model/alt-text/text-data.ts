@@ -119,7 +119,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
         if (track.data.details.dataStatistics?.categories) {
             if (track.data.details.dataStatistics?.categories.length === 1) {
                 desc = desc.concat(` The category shown is called '${track.data.details.dataStatistics?.categories[0]}'.`);
-                linkDataToChannels(track, 'value', [['Categories', `There is one category called $'${track.data.details.dataStatistics?.categories[0]}'`]]);
+                linkDataToChannels(track, 'nominal', [['Categories', `There is one category called $'${track.data.details.dataStatistics?.categories[0]}'`]]);
             } else {
                 // number of categories
                 desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
@@ -130,7 +130,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                     desc = desc.concat(`.`);
                 }
 
-                linkDataToChannels(track, 'value', [['Categories', `There are ${track.data.details.dataStatistics?.categories.length} categories.`, `The categories are: ${arrayToString(track.data.details.dataStatistics?.categories)}`]]);
+                linkDataToChannels(track, 'nominal', [['Categories', `There are ${track.data.details.dataStatistics?.categories.length} categories.`, `The categories are: ${arrayToString(track.data.details.dataStatistics?.categories)}.`]], track.data.details.dataStatistics?.categories);
 
                 // which category has the highest expression peak
                 if (track.data.details.dataStatistics?.highestCategory) {
@@ -150,10 +150,30 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
 }
 
 
-function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][]) {
+function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][], categories?: string[]) {
     for (const enc of track.appearance.details.encodingsDescList) {
         if (enc.channelType.includes(typeDescList)) {
             enc.dataDesc = descList;
+            if (enc.channel === 'row' && enc.channelType === 'nominal' && categories) {
+                switch (categories.length) {
+                    case 0: 
+                        break;
+                    case 1: 
+                        enc.dataDesc[0].push(`Since there is only one category (${categories[0]}), this stratification does not change the chart.`);
+                        break;
+                    case 2:
+                        enc.dataDesc[0].push(`The first category (${categories[0]}) is shown on the top, the second (${categories[1]}) is shown on the bottom.`);
+                        break;
+                    case 3: 
+                        enc.dataDesc[0].push(`The first category (${categories[0]}) is shown on the top, the second (${categories[1]}) is shown in the middle and the third (${categories[2]}) is shown on the bottom.`);
+                        break;
+                    case 4: 
+                        enc.dataDesc[0].push(`The first category (${categories[0]}) is shown on the top, the second (${categories[1]}) is shown below, the third (${categories[2]}) is shown below, and the last (${categories[3]}) is shown on the bottom.`);
+                        break;
+                    default: 
+                        enc.dataDesc[0].push(`The first category (${categories[0]}) is shown on the top, the second (${categories[1]}) is shown below, the other categories are shown below in their own rows respectively.`);
+                }
+            }
         }
     }
 }
