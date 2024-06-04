@@ -191,7 +191,7 @@ function createAltNodes(altSpec: AltGoslingSpec): AltNode {
 
 function trackNode(altSpec: AltGoslingSpec): Array<AltNode> {
     if (altSpec.composition.nTracks === 1) {
-        return(trackNodeSingle(altSpec.tracks[0]));
+        return(trackNodeSingle(altSpec.tracks[0], altSpec));
     } else {
         const tracks = Object.keys(altSpec.tracks).map((_, i) => (trackNodeMulti(altSpec.tracks[i])));
         return([
@@ -203,18 +203,25 @@ function trackNode(altSpec: AltGoslingSpec): Array<AltNode> {
 }
 
 
-function trackNodeSingle(t: AltTrack): Array<AltNode> {
+function trackNodeSingle(t: AltTrack, altSpec: AltGoslingSpec): Array<AltNode> {
     let structureList;
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
-        structureList = [
-            // new AltNode('Description', 'T-1-desc', true, true, 'value', t.description),
-            // new AltNode('Details', 'T-1-det', true, true, 'altnodelist', [
+        // check if track title is same as chart title. If so, don't show track title.
+        if (altSpec.title && t.title && altSpec.title === t.title) {
+            structureList = [
+                chartTypeNode(t, '1'),
+                appearanceNode(t, '1'),
+                dataNode(t, '1')
+            ];
+        }
+        else {
+            structureList = [
                 new AltNode('Title', 'T-1-det-title', false, true, 'value', t.title),
                 chartTypeNode(t, '1'),
                 appearanceNode(t, '1'),
                 dataNode(t, '1')
-            // ]),
-        ];
+            ];
+        }
     } else {
         const structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-1-T-' + i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-1-T-'+i)));
         structureList = [
