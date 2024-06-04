@@ -121,6 +121,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 desc = desc.concat(` The category shown is called '${track.data.details.dataStatistics?.categories[0]}'.`);
                 linkDataToChannels(track, 'nominal', [['Categories', `There is one category called $'${track.data.details.dataStatistics?.categories[0]}'`]]);
             } else {
+                const linkDataToChannelsList = ['Categories'];
                 // number of categories
                 desc = desc.concat(` There are ${track.data.details.dataStatistics?.categories.length} categories`);
 
@@ -130,18 +131,23 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                     desc = desc.concat(`.`);
                 }
 
-                linkDataToChannels(track, 'nominal', [['Categories', `There are ${track.data.details.dataStatistics?.categories.length} categories.`, `The categories are: ${arrayToString(track.data.details.dataStatistics?.categories)}.`]], track.data.details.dataStatistics?.categories);
+                linkDataToChannelsList.push(...[`There are ${track.data.details.dataStatistics?.categories.length} categories.`, `The categories are: ${arrayToString(track.data.details.dataStatistics?.categories)}.`]);
 
                 // which category has the highest expression peak
                 if (track.data.details.dataStatistics?.highestCategory) {
                     // console.log('highest cat', track.data.details.dataStatistics?.highestCategory)
                     if (track.data.details.dataStatistics?.highestCategory.length === 1) {
                         desc = desc.concat(` The highest value is observed in category ${track.data.details.dataStatistics?.highestCategory[0]}.`);
+                        linkDataToChannelsList.push(`The highest value is observed in category ${track.data.details.dataStatistics?.highestCategory[0]}.`);
                     } else {
                         desc = desc.concat(` The highest value is observed in categories ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
+                        linkDataToChannelsList.push(`The highest value is observed in categories ${arrayToString(track.data.details.dataStatistics?.highestCategory)}.`);
                     }
                 }
                 // See if genomic positions are the same for the min and max values of each category
+
+                linkDataToChannels(track, 'nominal', [linkDataToChannelsList], track.data.details.dataStatistics?.categories);
+
             }
         }
         // track.data.details.dataStatistics.genomicMaxDescription = ''
@@ -153,7 +159,11 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
 function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][], categories?: string[]) {
     for (const enc of track.appearance.details.encodingsDescList) {
         if (enc.channelType.includes(typeDescList)) {
-            enc.dataDesc = descList;
+            if (enc.dataDesc) {
+                enc.dataDesc = [...enc.dataDesc, ...descList];
+            } else {
+                enc.dataDesc = descList;
+            }
             if (enc.channel === 'row' && enc.channelType === 'nominal' && categories) {
                 switch (categories.length) {
                     case 0: 
