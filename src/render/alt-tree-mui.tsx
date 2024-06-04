@@ -305,7 +305,7 @@ function appearanceNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): A
                 // new AltNode('Description', 'T-'+uid+'-det-app-desc', false, true, 'value', t.appearance.description),
                 // new AltNode('Details', 'T-'+uid+'-det-app-det', false, true, 'altnodelist', [
                     markNode(t, uid),
-                    new AltNode('Layout (linear or circular)', 'T-'+uid+'-det-app-lay', false, true, 'value', t.appearance.details.layout),
+                    new AltNode('Layout', 'T-'+uid+'-det-app-lay', false, true, 'value', `A ${t.appearance.details.layout} layout is used. The visualization is 2D.`),
                     // new AltNode('overlaid', 'T-'+uid+'-det-app-overlaid', false, false, 'value', t.appearance.details.overlaid.toString()),
                     ...encodingNode(t, uid)
                 // ]),
@@ -332,10 +332,10 @@ function appearanceNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): A
 function markNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode {
     let mark;
     if (t.alttype === 'single' || t.alttype === 'ov-data-ind') {
-        mark = t.appearance.details.mark;
+        mark = `The mark used is ${t.appearance.details.mark}.`;
     }
     if (t.alttype === 'ov-mark') {
-        mark = arrayToString([t.appearance.details.mark, ...t.appearance.details.markByTrack]);
+        mark = `The marks used are ${arrayToString([t.appearance.details.mark, ...t.appearance.details.markByTrack])}.`;
     } else {
         return emptyNode();
     }
