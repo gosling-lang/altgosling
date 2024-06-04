@@ -14,9 +14,6 @@ dependencies:
   '@mui/x-tree-view':
     specifier: 6.0.0-beta.0
     version: 6.0.0-beta.0(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.15.1)(@mui/system@5.15.1)(@types/react@18.2.39)(react-dom@18.2.0)(react@18.2.0)
-  gosling-theme:
-    specifier: ^0.0.10
-    version: 0.0.10
   gosling.js:
     specifier: ^0.13.2
     version: 0.13.2(pixi.js@6.5.10)(react-dom@18.2.0)(react@18.2.0)
@@ -4684,10 +4681,6 @@ packages:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
     dependencies:
       get-intrinsic: 1.2.2
-    dev: false
-
-  /gosling-theme@0.0.10:
-    resolution: {integrity: sha512-GRm+XGeSGhKBjM/bNyeUkwp6tjnFKpNbywr58WzzA2qSA4RFPOoitS03R7xpYxqLXBGMFgahkyYd9Mostd2Csw==}
     dev: false
 
   /gosling.js@0.13.2(pixi.js@6.5.10)(react-dom@18.2.0)(react@18.2.0):
