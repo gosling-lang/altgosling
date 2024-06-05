@@ -32,6 +32,7 @@ interface GoslingCompProps {
 interface AltGoslingCompProps extends GoslingCompProps {
     layout?: 'vertical' | 'horizontal';
     layoutPanels?: 'vertical' | 'horizontal';
+    download?: boolean;
 }
 
 
@@ -324,7 +325,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                         <DataPanelComponent/>
                     </Grid>
                 {/* </Grid> */}
-                <Button onClick={downloadDescription}>Download description</Button>
+                {props.download ? <Button onClick={downloadDescription}>Download description</Button> : null}
             </Grid>
         </>
     );
