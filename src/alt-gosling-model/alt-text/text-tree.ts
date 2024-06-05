@@ -59,15 +59,24 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
         }
     }
    else {
+        if (nCircular == 1) {
+            if (altGoslingSpec.tracks[0].appearance.details.layout === 'circular') {
+                desc = 'A circular and a linear track';
+            } else {
+                desc = 'A linear and a circular track';
+            }
+        } else {
+            desc = 'Two linear tracks';
+        }
         if (altGoslingSpec.composition.counter.totalRows < 2) {
             firstPlace = 'left';
             secondPlace = 'right';
-            desc = ' are shown next to each other.';
+            desc = desc.concat(' are shown next to each other.');
         }
         else {
             firstPlace = 'top';
             secondPlace = 'bottom';
-            desc = 'are shown below each other.';
+            desc = desc.concat(' are shown below each other.');
         }
     }
     altGoslingSpec.tracks[0].position.description = firstPlace;
