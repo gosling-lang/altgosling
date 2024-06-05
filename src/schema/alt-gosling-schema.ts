@@ -222,6 +222,7 @@ export type AltGoslingSpec = {
     subtitle?: string;
     alt: string;
     longDescription: string;
+    fullDescription: string;
     composition: AltSpecComposition;
     tracks: Array<AltTrack>
 }

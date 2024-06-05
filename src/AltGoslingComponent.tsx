@@ -295,7 +295,13 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         let file;
         try {
             const altSpec = AltPanels.current[selectedAltPanel].data;
-            file = new Blob(['Alt: ', altSpec.alt, '\n\n', 'Long description: ', altSpec.longDescription], {type: 'text/plain'});
+            file = new Blob(
+                [
+                    'Alt: ', altSpec.alt, '\n', 'Number of char: ', altSpec.alt.length.toString(), '\t', 'Number of words: ', altSpec.alt.split(' ').length.toString(), '\n\n', 
+                    'Long description: ', altSpec.longDescription, '\n', 'Number of char: ', altSpec.longDescription.length.toString(), '\t', 'Number of words: ', altSpec.longDescription.split(' ').length.toString(), '\n\n', 
+                    'Full description: ', altSpec.fullDescription, '\n', 'Number of char: ', altSpec.fullDescription.length.toString(), '\t', 'Number of words: ', altSpec.fullDescription.split(' ').length.toString(), '\n\n',
+                ], 
+                {type: 'text/plain'});
         } catch {
             file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
         }

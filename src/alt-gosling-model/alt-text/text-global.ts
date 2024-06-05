@@ -11,6 +11,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
     if (altGoslingSpec.composition.nTracks === 1) {
         // long description
         altGoslingSpec.longDescription = altGoslingSpec.tracks[0].description;
+        altGoslingSpec.fullDescription = altGoslingSpec.tracks[0].description;
 
         // alt
         let alt = '';
@@ -45,6 +46,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         
         altGoslingSpec.alt = alt;
         altGoslingSpec.longDescription = desc;
+        altGoslingSpec.fullDescription = desc;
 
     } else {
         let desc = '';
@@ -77,6 +79,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
 
         altGoslingSpec.alt = `Genomic visualization with ${altGoslingSpec.composition.nTracks} individual charts.`;
         altGoslingSpec.longDescription = desc;
+        altGoslingSpec.fullDescription = desc.concat(...altGoslingSpec.tracks.map(t => t.description));
     }
 }
 
