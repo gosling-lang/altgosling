@@ -90,7 +90,7 @@ function determineStructure(
                 counter.nTracks ++;
             } else {
                 // otherwise treat every track as a single track
-                for (const i in specPart.tracks) {
+                for (let i = 0; i < specPart.tracks.length; i++) {
                     const track =  specPart.tracks[i] as SingleTrack;
                     altSpec.tracks[counter.nTracks] = altSingleTrack(track, altParentValuesCopy, counter);
                     if (counter.nTracks > 0) {
@@ -98,6 +98,11 @@ function determineStructure(
                     }
                     checkCircular(altSpec, altParentValues, counter);
                     counter.nTracks ++;
+                    if (altParentValues.arrangement === 'vertical' || altParentValues.arrangement === 'parallel') {
+                        counter.rowViews ++;
+                    } else {
+                        counter.colViews ++;
+                    }
                 }
             }
          

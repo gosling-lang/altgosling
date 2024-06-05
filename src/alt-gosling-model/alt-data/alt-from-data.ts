@@ -1,7 +1,8 @@
-import type { Datum, AltGoslingSpec, AltTrackDataFields, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, AltTrack, AltTrackDataFields, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
 
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
+import { Theme } from 'gosling.js';
 
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields): AltDataStatistics {
     const altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
@@ -94,7 +95,8 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
 export function altUpdateSpecWithData(
     altGoslingSpec: AltGoslingSpec,
     id: string,
-    flatTileData: Datum[]
+    flatTileData: Datum[],
+    theme?: Theme
 ): AltGoslingSpec {
 
     const includePosition = altGoslingSpec.tracks.length > 1;
@@ -116,7 +118,7 @@ export function altUpdateSpecWithData(
                 track.data.details.dataStatistics = altDataStatistics;
 
                 // update description
-                addTrackDataDescriptionsTrack(track);
+                addTrackDataDescriptionsTrack(track, theme);
                 addTrackDescription(track, includePosition);
             }
         }
@@ -125,17 +127,17 @@ export function altUpdateSpecWithData(
                 const overlaidDataTrack = track.tracks[i];
                 if (overlaidDataTrack.uid === id) {
                     // get genomic field headers for that track
-                fields = overlaidDataTrack.data.details.fields;
+                    fields = overlaidDataTrack.data.details.fields;
 
-                // retrieve data statistics
-                const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
+                    // retrieve data statistics
+                    const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
 
-                // fill in data
-                overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
+                    // fill in data
+                    overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
 
-                // update description
-                addTrackDataDescriptionsTrack(track);
-                addTrackDescription(track, includePosition);
+                    // update description
+                    addTrackDataDescriptionsTrack(track, theme);
+                    addTrackDescription(track, includePosition);
                 }
             }
         }
