@@ -199,7 +199,7 @@ function trackNodeSingle(t: AltTrack, altSpec: AltGoslingSpec): Array<AltNode> {
             ];
         }
     } else {
-        const structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-1-T-' + i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-1-T-'+i)));
+        const structureIndList = t.tracks.map((ti, i) => new AltNode(`Overlaid track ${i+1} (${ti.charttype})`, 'T-1-T-' + i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-1-T-'+i)));
         structureList = [] as AltNode[];
         if (t.appearance.details.charttype) {
             structureList.push(new AltNode('Chart Type', 'T-1-T-CT', true, true, 'value', `This overlaid chart is a ${t.appearance.details.charttype}.`))
@@ -215,11 +215,11 @@ function trackNodeMulti(t: AltTrack): AltNode {
     let structure;
 
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
-        structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
+        structure = new AltNode(`Track ${(t.position.details.trackNumber + 1).toString()} (${t.position.description}) (${t.charttype})`, 'T-'+uid, true, true, 'altnodelist', [
             new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
             new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
                 new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
-                new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, 'value', (t.position.details.trackNumber + 1).toString()),
+                new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, 'value', `Track number ${(t.position.details.trackNumber + 1).toString()}`),
             ]),
             chartTypeNode(t, uid),
             appearanceNode(t, uid),
@@ -227,13 +227,13 @@ function trackNodeMulti(t: AltTrack): AltNode {
         ]);
     } else {
         const structureIndList = t.tracks.map((ti, i) => new AltNode('Overlaid track ' + i, 'T-'+uid+'-T-'+i, true, true, 'altnodelist', trackNodeOvData(ti, 'T-'+uid+'-T-'+i)));
-        structure = new AltNode('Track ' + t.position.description, 'T-'+uid, true, true, 'altnodelist', [
+        structure = new AltNode(`Track ${(t.position.details.trackNumber + 1).toString()} (${t.position.description})`, 'T-'+uid, true, true, 'altnodelist', [
             // new AltNode('Description', 'T-'+uid+'-desc', true, true, 'value', t.description),
             // new AltNode('Details', 'T-'+uid+'-det', true, true, 'altnodelist', [
                 new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
                 new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
                     new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
-                    new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, 'value', (t.position.details.trackNumber + 1).toString()),
+                    new AltNode('Track number', 'T-'+uid+'-det-pos-trackN', true, false, 'value', `Track number ${(t.position.details.trackNumber + 1).toString()}`),
                 ]),
                 new AltNode('Tracks', 'T-'+uid+'-T', true, true, 'altnodelist', [
                     ...structureIndList
