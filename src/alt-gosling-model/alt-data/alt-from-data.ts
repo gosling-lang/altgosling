@@ -127,17 +127,17 @@ export function altUpdateSpecWithData(
                 const overlaidDataTrack = track.tracks[i];
                 if (overlaidDataTrack.uid === id) {
                     // get genomic field headers for that track
-                fields = overlaidDataTrack.data.details.fields;
+                    fields = overlaidDataTrack.data.details.fields;
 
-                // retrieve data statistics
-                const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
+                    // retrieve data statistics
+                    const altDataStatistics = altRetrieveDataStatistics(id, flatTileData, fields);
 
-                // fill in data
-                overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
+                    // fill in data
+                    overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
 
-                // update description
-                addTrackDataDescriptionsTrack(track, theme);
-                addTrackDescription(track, includePosition);
+                    // update description
+                    addTrackDataDescriptionsTrack(track, theme);
+                    addTrackDescription(track, includePosition);
                 }
             }
         }
