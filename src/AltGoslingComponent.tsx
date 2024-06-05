@@ -61,8 +61,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const [dataPanelPrevious, setDataPanelPrevious] = useState<DataPanelInformation>();
 
     // expansion and focus of panel, using refs to avoid updating the state
-    const expandedAltPanelRef = useRef<string[]>(['tree']);
-    const focusAltPanelRef = useRef<string>('tree');
+    const expandedAltPanelRef = useRef<string[]>([]);
+    const focusAltPanelRef = useRef<string>();
     const setExpandedAltPanelWrapper = (newExpanded: string[]) => {
         expandedAltPanelRef.current = newExpanded;
     };
@@ -70,8 +70,8 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         focusAltPanelRef.current = newFocus;
     };
 
-    const expandedDataPanelRef = useRef<string[]>(['tree']);
-    const focusDataPanelRef = useRef<string>('tree');
+    const expandedDataPanelRef = useRef<string[]>([]);
+    const focusDataPanelRef = useRef<string>();
     const setExpandedDataPanelWrapper = (newExpanded: string[]) => {
         expandedDataPanelRef.current = newExpanded;
     };
@@ -231,11 +231,11 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     const AltPanelComponent = () => {
         // determine expanded and focussed values 
-        let expandedStart = ['tree'];
+        let expandedStart = [] as string[];
         if (expandedAltPanelRef.current) {
             expandedStart = expandedAltPanelRef.current;
         }
-        let focusStart = 'tree';
+        let focusStart = '';
         if (focusAltPanelRef.current) {
             focusStart = focusAltPanelRef.current;
         }
@@ -258,11 +258,11 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     const DataPanelComponent = () => {
         // determine expanded and focussed values 
-        let expandedStart = ['tree'];
+        let expandedStart = [] as string[];
         if (expandedDataPanelRef.current) {
             expandedStart = expandedDataPanelRef.current;
         }
-        let focusStart = 'tree';
+        let focusStart = '';
         if (focusDataPanelRef.current) {
             focusStart = focusDataPanelRef.current;
         }
