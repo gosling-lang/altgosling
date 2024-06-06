@@ -4,7 +4,7 @@ import { GoslingComponent, type GoslingRef, type GoslingSpec, type HiGlassSpec, 
 import type { Datum, AltGoslingSpec, PreviewAlt, DataPanelInformation, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAlt, updateAlt } from './alt-gosling-model';
-import { renderAltTree, renderDataPanel } from './render';
+import { renderAltTree, renderDataPanel, createAltTextList } from './render';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -294,26 +294,33 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     };
 
     const downloadDescription = () => {
-        // const element = document.createElement("a");
-        // let file;
-        // try {
-        //     const altSpec = AltPanels.current[selectedAltPanel].data;
-        //     file = new Blob(
-        //         [
-        //             'Alt: ', altSpec.alt, '\n', 'Number of char: ', altSpec.alt.length.toString(), '\t', 'Number of words: ', altSpec.alt.split(' ').length.toString(), '\n\n', 
-        //             'Long description: ', altSpec.longDescription, '\n', 'Number of char: ', altSpec.longDescription.length.toString(), '\t', 'Number of words: ', altSpec.longDescription.split(' ').length.toString(), '\n\n', 
-        //             'Full description: ', altSpec.fullDescription, '\n', 'Number of char: ', altSpec.fullDescription.length.toString(), '\t', 'Number of words: ', altSpec.fullDescription.split(' ').length.toString(), '\n\n',
-        //         ], 
-        //         {type: 'text/plain'});
-        // } catch {
-        //     file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
-        // }
-        // element.href = URL.createObjectURL(file);
-        // element.download = "descriptions.txt";
-        // document.body.appendChild(element); // Required for this to work in FireFox
-        // element.click();
-        const altspecnode = document.getElementsByClassName("editor-alt-text-body")[0];
-        console.log(altspecnode)
+        const element = document.createElement("a");
+        let file;
+        try {
+            const altSpec = AltPanels.current[selectedAltPanel].data;
+
+            const altTextList = createAltTextList(altSpec);
+
+            let altTextListFlat = "";
+            for (const el of altTextList) {
+                altTextListFlat = altTextListFlat.concat("\t".repeat(el[1]) + el[0] + "\n")
+            }
+
+            file = new Blob(
+                [
+                    'Alt: ', altSpec.alt, '\n', 'Number of char: ', altSpec.alt.length.toString(), '\t', 'Number of words: ', altSpec.alt.split(' ').length.toString(), '\n\n', 
+                    'Long description: ', altSpec.longDescription, '\n', 'Number of char: ', altSpec.longDescription.length.toString(), '\t', 'Number of words: ', altSpec.longDescription.split(' ').length.toString(), '\n\n', 
+                    'Full description: ', altSpec.fullDescription, '\n', 'Number of char: ', altSpec.fullDescription.length.toString(), '\t', 'Number of words: ', altSpec.fullDescription.split(' ').length.toString(), '\n\n',
+                    'Tree: ', '\n', altTextListFlat, '\n', 'Number of char: ', altTextList.map(e => e[0].length).reduce((a, b) => a + b, 0).toString(), '\t', 'Number of words: ', altTextList.map(e => e[0].split(' ').length).reduce((a, b) => a + b, 0).toString(), '\n\n',
+                ], 
+                {type: 'text/plain'});
+        } catch {
+            file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
+        }
+        element.href = URL.createObjectURL(file);
+        element.download = "descriptions.txt";
+        document.body.appendChild(element); // Required for this to work in FireFox
+        element.click();
     }
     
     return(
