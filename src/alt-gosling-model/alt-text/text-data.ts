@@ -1,13 +1,13 @@
-import { Assembly, GenomicPosition } from '@alt-gosling/schema/gosling.schema';
+import { Assembly, GenomicPosition } from '@altgosling/schema/gosling.schema';
 import { Theme } from 'gosling.js';
-import type { AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 
 import { arrayToString, markToText, chrNumberOnly } from '../util';
 
 // @ts-expect-error no type definition
 import { getRelativeGenomicPosition } from 'gosling.js/utils';
 
-import { getThemeColors } from '@alt-gosling/schema/gosling-theme';
+import { getThemeColors } from '@altgosling/schema/gosling-theme';
 import { GetColorName } from 'hex-color-to-color-name';
 
 

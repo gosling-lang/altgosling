@@ -1,4 +1,4 @@
-import type { AltGoslingSpec, AltTrack } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltGoslingSpec, AltTrack } from '@altgosling/schema/alt-gosling-schema';
 import { arrayToString, capDesc, countOccurences } from '../util';
 
 export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: boolean) {

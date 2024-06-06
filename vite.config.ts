@@ -13,8 +13,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@alt-gosling': path.resolve(__dirname, './src'),
-      '@alt-gosling/alt-gosling-schema': path.resolve(__dirname, './src/schema/modules/alt-gosling-schema.ts'),
+      '@altgosling': path.resolve(__dirname, './src'),
+      '@altgosling/alt-gosling-schema': path.resolve(__dirname, './src/schema/modules/alt-gosling-schema.ts'),
     },
   },
   plugins: [react()],

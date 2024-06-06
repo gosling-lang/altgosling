@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import type { Datum } from '@alt-gosling/schema/gosling.schema';
-import type { AltDataStatistics, AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum } from '@altgosling/schema/gosling.schema';
+import type { AltDataStatistics, AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd } from '@altgosling/schema/alt-gosling-schema';
 
 import { arrayToString } from './util';
 import { createDataTable } from './data-table';

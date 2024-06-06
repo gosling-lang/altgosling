@@ -1,5 +1,5 @@
-import type { GoslingSpec, Datum } from '@alt-gosling/schema/gosling.schema';
-import type {  AltGoslingSpec } from '@alt-gosling/schema/alt-gosling-schema';
+import type { GoslingSpec, Datum } from '@altgosling/schema/gosling.schema';
+import type {  AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAltSpec } from './alt-structure/alt-from-spec';
 import { treeText, dataText } from './alt-text';

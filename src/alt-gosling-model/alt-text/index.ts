@@ -1,4 +1,4 @@
-import type { AltGoslingSpec } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
 
 import { addTreeDescriptions } from './text-tree';
 import { addTrackDataDescriptions } from './text-data';

@@ -1,4 +1,4 @@
-import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByData, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByData, AltTrackOverlaidByDataInd } from '@altgosling/schema/alt-gosling-schema';
 import { arrayToString, markToText } from './../util';
 
 export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, markIndex?: number): string {

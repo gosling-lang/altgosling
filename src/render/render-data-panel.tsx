@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { AltTrack, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+import { AltTrack, AltDataStatistics } from '@altgosling/schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
 import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
 
@@ -9,7 +9,7 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import { getRangeText } from '@alt-gosling/alt-gosling-model/alt-text/text-data';
+import { getRangeText } from '@altgosling/alt-gosling-model/alt-text/text-data';
 
 
 export function renderDataPanel(

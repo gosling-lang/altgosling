@@ -65,7 +65,7 @@ function Demo() {
                 <Grid item aria-label='example checkbox' xs={12}>
                     <ExampleOptions/>
                 </Grid>
-                <Grid item aria-label='alt-gosling component' xs={12}>
+                <Grid item aria-label='altgosling component' xs={12}>
                     <AltGoslingComponent spec={examples[selectedExample]} download={true} />
                 </Grid>
             </Grid>

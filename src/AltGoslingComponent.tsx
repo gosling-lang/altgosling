@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { GoslingComponent, type GoslingRef, type GoslingSpec, type HiGlassSpec, type Theme, type TemplateTrackDef } from 'gosling.js';
-import type { Datum, AltGoslingSpec, PreviewAlt, DataPanelInformation, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, PreviewAlt, DataPanelInformation, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAlt, updateAlt } from './alt-gosling-model';
 import { renderAltTree, renderDataPanel } from './render';
@@ -29,6 +29,9 @@ interface GoslingCompProps {
     };
 }
 
+// other options for people who want to specify things
+// text-to-color-name? 
+// different chart types
 interface AltGoslingCompProps extends GoslingCompProps {
     layout?: 'vertical' | 'horizontal';
     layoutPanels?: 'vertical' | 'horizontal';
@@ -39,7 +42,7 @@ interface AltGoslingCompProps extends GoslingCompProps {
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     if (props.compiled) {
         try {
-            throw new Error("The compiled calledback function is used by Alt-Gosling, and cannot be used.");
+            throw new Error("The compiled calledback function is used by AltGosling, and cannot be used.");
           } catch (e) {
             console.error(`${(e as Error).name}: ${(e as Error).message}`);
           }
@@ -291,24 +294,26 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     };
 
     const downloadDescription = () => {
-        const element = document.createElement("a");
-        let file;
-        try {
-            const altSpec = AltPanels.current[selectedAltPanel].data;
-            file = new Blob(
-                [
-                    'Alt: ', altSpec.alt, '\n', 'Number of char: ', altSpec.alt.length.toString(), '\t', 'Number of words: ', altSpec.alt.split(' ').length.toString(), '\n\n', 
-                    'Long description: ', altSpec.longDescription, '\n', 'Number of char: ', altSpec.longDescription.length.toString(), '\t', 'Number of words: ', altSpec.longDescription.split(' ').length.toString(), '\n\n', 
-                    'Full description: ', altSpec.fullDescription, '\n', 'Number of char: ', altSpec.fullDescription.length.toString(), '\t', 'Number of words: ', altSpec.fullDescription.split(' ').length.toString(), '\n\n',
-                ], 
-                {type: 'text/plain'});
-        } catch {
-            file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
-        }
-        element.href = URL.createObjectURL(file);
-        element.download = "descriptions.txt";
-        document.body.appendChild(element); // Required for this to work in FireFox
-        element.click();
+        // const element = document.createElement("a");
+        // let file;
+        // try {
+        //     const altSpec = AltPanels.current[selectedAltPanel].data;
+        //     file = new Blob(
+        //         [
+        //             'Alt: ', altSpec.alt, '\n', 'Number of char: ', altSpec.alt.length.toString(), '\t', 'Number of words: ', altSpec.alt.split(' ').length.toString(), '\n\n', 
+        //             'Long description: ', altSpec.longDescription, '\n', 'Number of char: ', altSpec.longDescription.length.toString(), '\t', 'Number of words: ', altSpec.longDescription.split(' ').length.toString(), '\n\n', 
+        //             'Full description: ', altSpec.fullDescription, '\n', 'Number of char: ', altSpec.fullDescription.length.toString(), '\t', 'Number of words: ', altSpec.fullDescription.split(' ').length.toString(), '\n\n',
+        //         ], 
+        //         {type: 'text/plain'});
+        // } catch {
+        //     file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
+        // }
+        // element.href = URL.createObjectURL(file);
+        // element.download = "descriptions.txt";
+        // document.body.appendChild(element); // Required for this to work in FireFox
+        // element.click();
+        const altspecnode = document.getElementsByClassName("editor-alt-text-body")[0];
+        console.log(altspecnode)
     }
     
     return(

@@ -1,4 +1,4 @@
-import type { Datum, AltGoslingSpec, AltTrack, AltTrackDataFields, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, AltTrack, AltTrackDataFields, AltDataStatistics } from '@altgosling/schema/alt-gosling-schema';
 
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
