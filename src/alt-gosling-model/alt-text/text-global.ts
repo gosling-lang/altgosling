@@ -79,7 +79,12 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
 
         altGoslingSpec.alt = `Genomic visualization with ${altGoslingSpec.composition.nTracks} individual charts.`;
         altGoslingSpec.longDescription = desc;
-        altGoslingSpec.fullDescription = desc.concat(...altGoslingSpec.tracks.map(t => t.description));
+
+        const descriptionList = [];
+        for (const t in Object.keys(altGoslingSpec.tracks)) {
+            descriptionList.push(altGoslingSpec.tracks[t].description);
+        }
+        altGoslingSpec.fullDescription = desc.concat(...descriptionList);
     }
 }
 
