@@ -11,7 +11,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
     if (altGoslingSpec.composition.nTracks === 1) {
         // long description
         altGoslingSpec.longDescription = altGoslingSpec.tracks[0].description;
-        altGoslingSpec.fullDescription = altGoslingSpec.tracks[0].description;
+        altGoslingSpec.fullDescription = altGoslingSpec.tracks[0].descriptionFull;
 
         // alt
         let alt = '';
@@ -30,23 +30,38 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         let alt = '';
         let desc = '';
         desc = desc.concat('Figure with two charts.');
+        let descFull = desc;
 
-        const chart1 = altGoslingSpec.tracks[0].description.split('.');
-        const chart1Type = chart1[0];
-        const chart1Desc = chart1.slice(1).join('.');
-        
-        const chart2 = altGoslingSpec.tracks[1].description.split('.');
-        const chart2Type = chart2[0];
-        const chart2Desc = chart2.slice(1).join('.');
+        // two helper functions to reduce code duplication
 
-        desc = desc.concat(` ${capDesc(altGoslingSpec.tracks[0].position.description)} track is a ${chart1Type.toLowerCase()}. ${chart1Desc}`);
-        desc = desc.concat(` ${capDesc(altGoslingSpec.tracks[1].position.description)} track is a ${chart2Type.toLowerCase()}. ${chart2Desc}`);
+        // split out charttype and chartdesc from a description
+        function getSlicedDescriptions(description: string) {
+            const chart = description.split('.');
+            const chartType = chart[0];
+            const chartDesc = chart.slice(1).join('.');
+            return [chartType, chartDesc];
+        }
+
+        // combine positiondescriptions and charttype and chartdesc descriptions
+        function getSlicedDescriptionsDescText(positionDescription: string, chartType: string, chartDesc: string) {
+            return ` ${capDesc(positionDescription)} track is a ${chartType.toLowerCase()}. ${chartDesc}`;
+        }
+
+        const [chart1Type, chart1Desc] = getSlicedDescriptions(altGoslingSpec.tracks[0].description);
+        const [chart2Type, chart2Desc] = getSlicedDescriptions(altGoslingSpec.tracks[1].description);
+        const [chart1TypeFull, chart1DescFull] = getSlicedDescriptions(altGoslingSpec.tracks[0].descriptionFull);
+        const [chart2TypeFull, chart2DescFull] = getSlicedDescriptions(altGoslingSpec.tracks[1].descriptionFull);
+
+        desc = desc.concat(getSlicedDescriptionsDescText(altGoslingSpec.tracks[0].position.description, chart1Type, chart1Desc));
+        desc = desc.concat(getSlicedDescriptionsDescText(altGoslingSpec.tracks[1].position.description, chart2Type, chart2Desc));
+        descFull = descFull.concat(getSlicedDescriptionsDescText(altGoslingSpec.tracks[0].position.description, chart1TypeFull, chart1DescFull));
+        descFull = descFull.concat(getSlicedDescriptionsDescText(altGoslingSpec.tracks[1].position.description, chart2TypeFull, chart2DescFull));
 
         alt = alt.concat(` Figure with ${chart1Type.toLowerCase()} on ${altGoslingSpec.tracks[0].position.description} and ${chart2Type.toLowerCase()} on ${altGoslingSpec.tracks[1].position.description}`);
         
         altGoslingSpec.alt = alt;
         altGoslingSpec.longDescription = desc;
-        altGoslingSpec.fullDescription = desc;
+        altGoslingSpec.fullDescription = descFull;
 
     } else {
         let desc = '';
@@ -82,7 +97,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
 
         const descriptionList = [];
         for (const t in Object.keys(altGoslingSpec.tracks)) {
-            descriptionList.push(altGoslingSpec.tracks[t].description);
+            descriptionList.push(altGoslingSpec.tracks[t].descriptionFull);
         }
         altGoslingSpec.fullDescription = desc.concat(...descriptionList);
     }
@@ -105,16 +120,26 @@ export function addTrackDescriptions(altGoslingSpec: AltGoslingSpec) {
 
 export function addTrackDescription(t: AltTrack, includePosition: boolean) {
     let desc = '';
+    let descFull = '';
     let descPos = '';
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
         // if (includePosition) {
         //     descPos = descPos.concat(t.position.description);
         // }
         desc = descPos.concat(`${t.appearance.description} ${t.data.description}`);
+        descFull = desc;
     } else {
         desc = descPos.concat(`${capDesc(t.appearance.details.charttype)}. See separate overlaid tracks for details.`);
+
+        // if someone wants to extract the full description, we save the full track description
+        descFull = descPos.concat(`${capDesc(t.appearance.details.charttype)}. Multiple tracks are overlaid in this chart.`);
+        for (let i = 0; i < Object.keys(t.tracks).length; i++) {
+            const overlaidDataTrack = t.tracks[i];
+            descFull = descFull.concat(` Overlaid track ${i+1}. ${overlaidDataTrack.appearance.description} ${overlaidDataTrack.data.description}`)
+        }
     }
     t.description = desc;
+    t.descriptionFull = descFull;
 }
 
 
