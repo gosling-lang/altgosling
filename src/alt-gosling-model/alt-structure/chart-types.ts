@@ -23,6 +23,12 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     if (_mark === 'point' && _quantitativeEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
         return `${layoutDesc}scatter plot`;
     }
+    if (_mark === 'point' && _genomicEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
+        return `${layoutDesc}scatter plot`;
+    }
+    if (_mark === 'point' && _quantitativeEncodings.includes('x') && _genomicEncodings.includes('y')) {
+        return `${layoutDesc}scatter plot`;
+    }
     if (_mark === 'line' && _genomicEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
         return `${layoutDesc}line chart`;
     }
