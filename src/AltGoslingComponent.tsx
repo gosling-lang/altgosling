@@ -33,6 +33,7 @@ interface GoslingCompProps {
 // text-to-color-name? 
 // different chart types
 interface AltGoslingCompProps extends GoslingCompProps {
+    name?: string;
     layout?: 'vertical' | 'horizontal';
     layoutPanels?: 'vertical' | 'horizontal';
     download?: boolean;
@@ -318,7 +319,12 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
         }
         element.href = URL.createObjectURL(file);
-        element.download = "descriptions.txt";
+        if (props.name) {
+            element.download = `AltGosling-descriptions-${props.name}.txt`;
+        } else {
+            element.download = "AltGosling-descriptions.txt";
+        }
+       
         document.body.appendChild(element); // Required for this to work in FireFox
         element.click();
     }

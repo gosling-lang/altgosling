@@ -66,7 +66,7 @@ function Demo() {
                     <ExampleOptions/>
                 </Grid>
                 <Grid item aria-label='altgosling component' xs={12}>
-                    <AltGoslingComponent spec={examples[selectedExample]} download={true} />
+                    <AltGoslingComponent spec={examples[selectedExample]} download={true} name={selectedExample} />
                 </Grid>
             </Grid>
        </>
