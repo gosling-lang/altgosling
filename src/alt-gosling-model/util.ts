@@ -99,3 +99,18 @@ export function chrNumberOnly(chr: string): string {
 export function countOccurences(array: string[], value: string) {
     return array.filter((v) => (v === value)).length;
 }
+
+/**
+ * Use exponential notation for numbers with more than 3 characters.
+ * @param n number
+ * @returns the number as exponential notation with 2 decimals.
+ */
+export function summarizeValueNumber(n: number | string) {
+    if (typeof n === 'string') {
+        n = Number.parseFloat(n);
+    }
+    if (n.toString().length < 3) {
+        return n;
+    }
+    return n.toExponential(2);
+}
