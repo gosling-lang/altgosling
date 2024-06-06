@@ -57,7 +57,7 @@ export function addGlobalDescription(altGoslingSpec: AltGoslingSpec, update?: bo
         descFull = descFull.concat(getSlicedDescriptionsDescText(altGoslingSpec.tracks[0].position.description, chart1TypeFull, chart1DescFull));
         descFull = descFull.concat(getSlicedDescriptionsDescText(altGoslingSpec.tracks[1].position.description, chart2TypeFull, chart2DescFull));
 
-        alt = alt.concat(` Figure with ${chart1Type.toLowerCase()} on ${altGoslingSpec.tracks[0].position.description} and ${chart2Type.toLowerCase()} on ${altGoslingSpec.tracks[1].position.description}`);
+        alt = alt.concat(`Figure with ${chart1Type.toLowerCase()} on ${altGoslingSpec.tracks[0].position.description} and ${chart2Type.toLowerCase()} on ${altGoslingSpec.tracks[1].position.description}`);
         
         altGoslingSpec.alt = alt;
         altGoslingSpec.longDescription = desc;
