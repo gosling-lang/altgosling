@@ -302,17 +302,30 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
             const altTextList = createAltTextList(altSpec);
 
-            let altTextListFlat = "";
-            for (const el of altTextList) {
-                altTextListFlat = altTextListFlat.concat("\t".repeat(el[1]) + el[0] + "\n")
+            function info(descName: string, descValue: string) {
+                const nChar = descValue.length;
+                const nWords = descValue.split(' ').length;
+                const nSent = descValue.split('. ').length;
+                return `${descName}\n\nNumber of char: ${nChar}\tNumber of words: ${nWords}\tNumber of sentences: ${nSent}\n\n${descValue}\n\n\n\n`;
+            }
+
+            function infoTree(descName: string, altTextList: [string, number][]) {
+                let altTextListFlat = "";
+                for (const el of altTextList) {
+                    altTextListFlat = altTextListFlat.concat("\t".repeat(el[1]) + el[0] + "\n")
+                }
+                const nChar = altTextList.map(e => e[0].length).reduce((a, b) => a + b, 0);
+                const nWords = altTextList.map(e => e[0].split(' ').length).reduce((a, b) => a + b, 0);
+                const nSent = altTextList.map(e => e[0].split('. ').length).reduce((a, b) => a + b, 0);
+                return `${descName}\n\nNumber of char: ${nChar}\tNumber of words: ${nWords}\tNumber of sentences: ${nSent}\n\n${altTextListFlat}\n\n\n\n`;
             }
 
             file = new Blob(
                 [
-                    'Alt: ', altSpec.alt, '\n', 'Number of char: ', altSpec.alt.length.toString(), '\t', 'Number of words: ', altSpec.alt.split(' ').length.toString(), '\n\n', 
-                    'Long description: ', altSpec.longDescription, '\n', 'Number of char: ', altSpec.longDescription.length.toString(), '\t', 'Number of words: ', altSpec.longDescription.split(' ').length.toString(), '\n\n', 
-                    'Full description: ', altSpec.fullDescription, '\n', 'Number of char: ', altSpec.fullDescription.length.toString(), '\t', 'Number of words: ', altSpec.fullDescription.split(' ').length.toString(), '\n\n',
-                    'Tree: ', '\n', altTextListFlat, '\n', 'Number of char: ', altTextList.map(e => e[0].length).reduce((a, b) => a + b, 0).toString(), '\t', 'Number of words: ', altTextList.map(e => e[0].split(' ').length).reduce((a, b) => a + b, 0).toString(), '\n\n',
+                    info('Alt', altSpec.alt),
+                    info('Long description', altSpec.longDescription),
+                    info('Full description', altSpec.fullDescription),
+                    infoTree('Tree', altTextList),
                 ], 
                 {type: 'text/plain'});
         } catch {
