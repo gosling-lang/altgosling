@@ -101,7 +101,7 @@ export function renderDataPanel(
             <TreeItem nodeId='tree' label='Data panel'>
                 <TreeItem nodeId='desc' label={desc}></TreeItem>
                 {nodeToJSX(dataNode)}
-                <TreeItem nodeId='rawData' label='Raw Data'>{dataTable}</TreeItem>
+                <TreeItem nodeId='rawData' label='Data Table'>{dataTable}</TreeItem>
             </TreeItem>
         </TreeView>
     );
