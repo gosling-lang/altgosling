@@ -28,15 +28,15 @@ import MenuItem from '@mui/material/MenuItem';
 
 function Demo() {
     const examples = {'Bar chart': barChart,
-                      'Ideogram': ideogramWithArea,
-                      'Linked views': brush,
-                      'Tonsil ChIP-seq comparison': compareTwoSamples,
-                      'Bar chart with lines': ruleMark,
-                      'Double marks': doubleMarks,
-                      'Gene annotations': geneAnnotation,
-                      'Circular halves': circularHalves,
                       'Heatmap': heatmap,
-                      'Matrix': matrix
+                      'Matrix': matrix,
+                      'Comparison of four samples': doubleMarks,
+                      'Annotated chart': ruleMark,
+                      'Comparing two samples': compareTwoSamples,
+                      'Linked views': brush,
+                      'Circular halves': circularHalves,
+                      'Gene annotations': geneAnnotation,
+                      'Ideogram expression': ideogramWithArea,
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
