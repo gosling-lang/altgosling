@@ -41,7 +41,7 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
         if (JSON.stringify(altGoslingSpec.composition.counter.serialCircular).indexOf(JSON.stringify([0,1])) !== -1 ) {
             firstPlace = 'left half of ring';
             secondPlace = 'right half of ring';
-            desc = 'Two circular tracks  form one ring together, each forming half of the ring.';
+            desc = 'Two circular tracks form one ring together, each forming half of the ring.';
         } else if (JSON.stringify(altGoslingSpec.composition.counter.parallelCircular).indexOf(JSON.stringify([0,1])) !== -1 ) {
             firstPlace = 'outer ring';
             secondPlace = 'inner ring';
