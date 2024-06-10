@@ -1,6 +1,6 @@
 # AltGosling
 
-Alt-gosling is a library based on [Gosling](https://github.com/gosling-lang/gosling.js) that automatically extracts features and converts these into natural language to describe Gosling visualizations.
+AltGosling is a library based on [Gosling](https://github.com/gosling-lang/gosling.js) that automatically extracts features and converts these into natural language to describe Gosling visualizations.
 
 ## Why AltGosling? 
 There is a large gap in accessibility, specifically for people with blindness and low vision (BLV), on the web. The Web Content Accessibility Guidelines ([WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/)) require text descriptions for images. AltGosling creates text descriptions for genomic visualizations created with Gosling. In this way, interactive visualizations can be deployed on the web and automatically include text descriptions.

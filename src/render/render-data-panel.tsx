@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { AltTrack, AltDataStatistics } from '@alt-gosling/schema/alt-gosling-schema';
+import { AltTrack, AltDataStatistics } from '@altgosling/schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
 import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
 
@@ -9,7 +9,7 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import { getRangeText } from '@alt-gosling/alt-gosling-model/alt-text/text-data';
+import { getRangeText } from '@altgosling/alt-gosling-model/alt-text/text-data';
 
 
 export function renderDataPanel(
@@ -38,9 +38,8 @@ export function renderDataPanel(
         setFocusDataPanelWrapper(focus);
     }, [focus]);
 
-    // console.log(track.alttype)
     if (track.alttype == 'ov-data') {
-        console.log('overlaid with data not yet supported');
+        console.warn('overlaid with data not yet supported');
         return <></>;
     }
     // data panel has 3 pieces:
@@ -101,7 +100,7 @@ export function renderDataPanel(
             <TreeItem nodeId='tree' label='Data panel'>
                 <TreeItem nodeId='desc' label={desc}></TreeItem>
                 {nodeToJSX(dataNode)}
-                <TreeItem nodeId='rawData' label='Raw Data'>{dataTable}</TreeItem>
+                <TreeItem nodeId='rawData' label='Data Table'>{dataTable}</TreeItem>
             </TreeItem>
         </TreeView>
     );

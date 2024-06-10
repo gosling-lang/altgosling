@@ -1,13 +1,13 @@
-import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, Encoding, ChannelTypes, OverlaidTrack, OverlaidTracks, DataTransform } from '@alt-gosling/schema/gosling.schema';
+import type { GoslingSpec, Mark, Track, SingleTrack, DataDeep, Encoding, ChannelTypes, OverlaidTrack, OverlaidTracks, DataTransform } from '@altgosling/schema/gosling.schema';
 import type {
     AltGoslingSpec, AltTrack, AltTrackSingle,
     AltTrackOverlaid, AltTrackOverlaidByMark, AltTrackOverlaidByData,
     AltSpecComposition, AltCounter, AltParentValues, AltTrackPosition, AltTrackPositionDetails,
     AltTrackAppearance, AltTrackAppearanceDetails, AltTrackAppearanceOverlaid, AltOverlayPart, AltLinked, AltLinkedTrack,
     AltTrackData, AltTrackDataDetails, AltTrackOverlaidByDataInd, AltTrackDataFields,
-    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle, AltTrackAppearanceDetailsOverlaid } from '@alt-gosling/schema/alt-gosling-schema';
-import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from '@alt-gosling/schema/gosling.schema.guard';
-import { SUPPORTED_CHANNELS } from '@alt-gosling/schema/supported_channels';
+    AltEncodingSeparated, EncodingValueSingle, EncodingDeepSingle, AltTrackAppearanceDetailsOverlaid } from '@altgosling/schema/alt-gosling-schema';
+import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from '@altgosling/schema/gosling.schema.guard';
+import { SUPPORTED_CHANNELS } from '@altgosling/schema/supported_channels';
 
 import { attributeExists, attributeExistsReturn } from '../util';
 import { determineSpecialCases, determineOverlaidByDataCases } from './chart-types';
@@ -18,7 +18,6 @@ import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
 export function getAltSpec(
     spec: GoslingSpec
 ): AltGoslingSpec {
-    // console.log('spec', spec)
     const altSpec = {} as AltGoslingSpec;
     altSpec.tracks = {} as (AltTrack)[];
 

@@ -143,6 +143,7 @@ export interface AltTrackData {
 export interface AltTrackBase {
     alttype: 'single' | 'ov-mark' | 'ov-data' | 'ov-data-ind';
     description: string;
+    descriptionFull: string;
     title?: string;
 }
 
@@ -222,6 +223,7 @@ export type AltGoslingSpec = {
     subtitle?: string;
     alt: string;
     longDescription: string;
+    fullDescription: string;
     composition: AltSpecComposition;
     tracks: Array<AltTrack>
 }

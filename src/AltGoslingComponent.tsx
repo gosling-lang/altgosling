@@ -1,10 +1,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { GoslingComponent, type GoslingRef, type GoslingSpec, type HiGlassSpec, type Theme, type TemplateTrackDef } from 'gosling.js';
-import type { Datum, AltGoslingSpec, PreviewAlt, DataPanelInformation, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum, AltGoslingSpec, PreviewAlt, DataPanelInformation, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAlt, updateAlt } from './alt-gosling-model';
-import { renderAltTree, renderDataPanel } from './render';
+import { renderAltTree, renderDataPanel, createAltTextList } from './render';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -29,16 +29,21 @@ interface GoslingCompProps {
     };
 }
 
+// other options for people who want to specify things
+// text-to-color-name? 
+// different chart types
 interface AltGoslingCompProps extends GoslingCompProps {
+    name?: string;
     layout?: 'vertical' | 'horizontal';
     layoutPanels?: 'vertical' | 'horizontal';
+    download?: boolean;
 }
 
 
 export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     if (props.compiled) {
         try {
-            throw new Error("The compiled calledback function is used by Alt-Gosling, and cannot be used.");
+            throw new Error("The compiled calledback function is used by AltGosling, and cannot be used.");
           } catch (e) {
             console.error(`${(e as Error).name}: ${(e as Error).message}`);
           }
@@ -187,7 +192,6 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 
             //rawData
             currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
-                console.log('New rawData', data);
                 setRawData(data);
             });
         }
@@ -294,12 +298,45 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         let file;
         try {
             const altSpec = AltPanels.current[selectedAltPanel].data;
-            file = new Blob(['Alt: ', altSpec.alt, '\n\n', 'Long description: ', altSpec.longDescription], {type: 'text/plain'});
+
+            const altTextList = createAltTextList(altSpec);
+
+            function info(descName: string, descValue: string) {
+                const nChar = descValue.length;
+                const nWords = descValue.split(' ').length;
+                const nSent = descValue.split('. ').length;
+                return `${descName}\n\nNumber of char: ${nChar}\tNumber of words: ${nWords}\tNumber of sentences: ${nSent}\n\n${descValue}\n\n\n\n`;
+            }
+
+            function infoTree(descName: string, altTextList: [string, number][]) {
+                let altTextListFlat = "";
+                for (const el of altTextList) {
+                    altTextListFlat = altTextListFlat.concat("\t".repeat(el[1]) + el[0] + "\n")
+                }
+                const nChar = altTextList.map(e => e[0].length).reduce((a, b) => a + b, 0);
+                const nWords = altTextList.map(e => e[0].split(' ').length).reduce((a, b) => a + b, 0);
+                const nSent = altTextList.map(e => e[0].split('. ').length).reduce((a, b) => a + b, 0);
+                return `${descName}\n\nNumber of char: ${nChar}\tNumber of words: ${nWords}\tNumber of sentences: ${nSent}\n\n${altTextListFlat}\n\n\n\n`;
+            }
+
+            file = new Blob(
+                [
+                    info('Alt', altSpec.alt),
+                    info('Long description', altSpec.longDescription),
+                    info('Full description', altSpec.fullDescription),
+                    infoTree('Tree', altTextList),
+                ], 
+                {type: 'text/plain'});
         } catch {
             file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
         }
         element.href = URL.createObjectURL(file);
-        element.download = "descriptions.txt";
+        if (props.name) {
+            element.download = `AltGosling-descriptions-${props.name}.txt`;
+        } else {
+            element.download = "AltGosling-descriptions.txt";
+        }
+       
         document.body.appendChild(element); // Required for this to work in FireFox
         element.click();
     }
@@ -324,7 +361,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                         <DataPanelComponent/>
                     </Grid>
                 {/* </Grid> */}
-                <Button onClick={downloadDescription}>Download description</Button>
+                {props.download ? <Button onClick={downloadDescription}>Download description</Button> : null}
             </Grid>
         </>
     );

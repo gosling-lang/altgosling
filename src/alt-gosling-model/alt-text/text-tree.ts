@@ -1,4 +1,4 @@
-import type { AltEncodingDesc, AltEncodingSeparated, AltGoslingSpec, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltEncodingDesc, AltEncodingSeparated, AltGoslingSpec, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
 
 import { GetColorName } from 'hex-color-to-color-name';
@@ -430,10 +430,10 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             } as AltEncodingDesc);
         }
         else if (quantitativeEncodingsI.includes('color')) {
-            descQuantitative = descQuantitative.concat('The height of the expression values is shown with color.');
+            descQuantitative = descQuantitative.concat('The expression values are encoded using color intensity.');
             descList.push({
                 channel: 'color',
-                desc: `The color of the ${markText} shows the expression values.`,
+                desc: `The expression values are encoded using color intensity of the ${markText}.`,
                 channelType: 'quantitative'
             } as AltEncodingDesc);
         }

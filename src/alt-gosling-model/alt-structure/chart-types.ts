@@ -1,4 +1,4 @@
-import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByData, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
+import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByData, AltTrackOverlaidByDataInd } from '@altgosling/schema/alt-gosling-schema';
 import { arrayToString, markToText } from './../util';
 
 export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, markIndex?: number): string {
@@ -21,6 +21,12 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     }
     
     if (_mark === 'point' && _quantitativeEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
+        return `${layoutDesc}scatter plot`;
+    }
+    if (_mark === 'point' && _genomicEncodings.includes('x') && _quantitativeEncodings.includes('y')) {
+        return `${layoutDesc}scatter plot`;
+    }
+    if (_mark === 'point' && _quantitativeEncodings.includes('x') && _genomicEncodings.includes('y')) {
         return `${layoutDesc}scatter plot`;
     }
     if (_mark === 'line' && _genomicEncodings.includes('x') && _quantitativeEncodings.includes('y')) {

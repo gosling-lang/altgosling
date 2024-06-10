@@ -23,8 +23,8 @@
     /* Aliases */
     "baseUrl": ".",
     "paths": {
-      "@alt-gosling/*": ["src/*"],
-      "@alt-gosling/alt-gosling-schema": ["src/schema/modules/alt-gosling-schema.ts"]
+      "@altgosling/*": ["src/*"],
+      "@altgosling/alt-gosling-schema": ["src/schema/modules/alt-gosling-schema.ts"]
     },
   },
   "include": ["src", "src/alt-gosling-model/util.test.ts"],

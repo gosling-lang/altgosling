@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import type { Datum } from '@alt-gosling/schema/gosling.schema';
-import type { AltDataStatistics, AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd } from '@alt-gosling/schema/alt-gosling-schema';
+import type { Datum } from '@altgosling/schema/gosling.schema';
+import type { AltDataStatistics, AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd } from '@altgosling/schema/alt-gosling-schema';
 
 import { arrayToString } from './util';
 import { createDataTable } from './data-table';
@@ -43,6 +43,16 @@ export const renderAltTree = (altSpec: AltGoslingSpec, expandedStart: string[], 
     const structure = createAltNodes(altSpec);
     return structureToTree(structure, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper);
 };
+
+/**
+ * Wrapper function to generate a list with text output from AltGoslingSpec
+ * @param altSpec AltGoslingSpec
+ * @returns List of [text, number] where text is the displayed text and number is the indentation
+ */
+export const createAltTextList = (altSpec: AltGoslingSpec) => {
+    const structure = createAltNodes(altSpec);
+    return structureToTextList(structure);
+}
 
 
 /* ------------------------------ CREATING FINAL TREE ------------------------------ */
@@ -150,6 +160,52 @@ export function nodeToJSX(node: AltNode): JSX.Element {
                 {createDataTable(rawData)}
             </TreeItem>
         );
+    }
+}
+
+
+/**
+ * For structure of AltNodes, create a list of text with their indentations. 
+ * Simulates nodeToJSX
+ * @param node AltNode
+ * @returns List of [text, number] where text is the displayed text and number is the indentation
+ */
+function structureToTextList(node: AltNode): [string, number][] {
+    if (!node.children) {
+        if (node.always_show) {
+            node.children = 'This information cannot be displayed.';
+        } else {
+            return [["", 0]];
+        }
+    }
+
+    if (typeof(node.children) === 'string') {
+        if (node.collapsing) {
+            return([[node.name, 0], [node.children, 1]]);
+        } else {
+            return [[node.children, 0]];
+        }
+    }
+    
+    else if (node.children_type === 'altnodelist') {
+        const nodeList = node.children as AltNode[];
+        let elementList = Object.keys(node.children).map((_, i) => {
+            return structureToTextList(nodeList[i]);
+        });
+        let elementListUnpacked = [] as [string, number][];
+        for (const el of elementList) {
+            elementListUnpacked.push(...el); // unpack list
+        }
+        elementListUnpacked = elementListUnpacked.filter(e => e[0] !== ""); // remove empty nodes
+        elementListUnpacked = elementListUnpacked.map((e) => [e[0], e[1]+1]); // increase indentation by 1
+
+        return(
+            [[node.name, 0], ...elementListUnpacked]
+        );
+    }
+    
+    else {
+        return([["Data Table", 0], ["The data table is not displayed due to its size.", 1]]);
     }
 }
 
