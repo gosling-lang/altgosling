@@ -18,7 +18,6 @@ import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
 export function getAltSpec(
     spec: GoslingSpec
 ): AltGoslingSpec {
-    // console.log('spec', spec)
     const altSpec = {} as AltGoslingSpec;
     altSpec.tracks = {} as (AltTrack)[];
 

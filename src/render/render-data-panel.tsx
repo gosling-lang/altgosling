@@ -38,9 +38,8 @@ export function renderDataPanel(
         setFocusDataPanelWrapper(focus);
     }, [focus]);
 
-    // console.log(track.alttype)
     if (track.alttype == 'ov-data') {
-        console.log('overlaid with data not yet supported');
+        console.warn('overlaid with data not yet supported');
         return <></>;
     }
     // data panel has 3 pieces:

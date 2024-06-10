@@ -192,7 +192,6 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 
             //rawData
             currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
-                console.log('New rawData', data);
                 setRawData(data);
             });
         }
