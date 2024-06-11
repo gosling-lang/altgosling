@@ -26,4 +26,4 @@ We welcome contributions to AltGosling! Please refer to the [contributing guidel
 - Andrew P. Mar
 - Nils Gehlenborg
 
-Questions can be directed towards (<nils@hms.harvard.edu>)
+Questions can be directed towards <nils@hms.harvard.edu>
