@@ -4,48 +4,37 @@ import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
-  description: JSX.Element;
+  image: string;
+  alt: string;
+  description: string;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    description: (
-      <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
-      </>
-    ),
+    title: 'Grammar-Based',
+    image: require('@site/static/img/figure-1.png').default,
+    alt: 'Schematic with three boxes. The middle box has arrows to the left and right box. The left box (A), titled ‘Gosling Visualization,’ shows a heatmap matrix. The middle box (B), titled ‘Gosling JSON Specification,’ shows text in JSON format. The right box (C), titled ‘AltGosling Text Description,’ shows text in a quotation mark. The text in the right box reads ‘Matrix. Chart is titled ‘Hi-C for HFFc6 Cells’. The Genome is shown on both the x- and y-axes. Both axes show intervals. The height of the expression values is shown with colors.',
+    description: 'Based on flexible grammar-based genomics toolkit Gosling',
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
-    description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
-      </>
-    ),
+    title: 'Flexible',
+    image: require('@site/static/img/figure-2.png').default,
+    alt: 'Schematic with two sections. On the top left is a file icon with ‘Gosling Spec’. This points to the right section, labeled ‘Gosling.js,’ and the bottom section, labeled ‘AltGosling’.',
+    description: 'Various options for text descriptions',
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
-    ),
+    title: 'Navigable',
+    image: require('@site/static/img/figure-3.png').default,
+    alt: 'Screenshot of AltGosling in browser. On top is a Gosling visualization with two scatter plots. Below are two partially expanded panels, showing information such as title, tracks, appearance, and data table.',
+    description: 'Deliver descriptions in easy navigable format',
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({title, image, alt, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <img className={styles.featureimage} src={image} alt={alt}/>
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
