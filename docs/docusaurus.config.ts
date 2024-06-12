@@ -36,9 +36,6 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
         },
-        blog: {
-          showReadingTime: true,
-        },
         theme: {
           customCss: './src/css/custom.css',
         },
