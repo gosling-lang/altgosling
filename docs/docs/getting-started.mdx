@@ -1,0 +1,79 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting Started
+
+## Installation
+AltGosling is available as an [NPM package](https://www.npmjs.com/package/altgosling).
+
+
+<Tabs>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install altgosling
+```
+
+</TabItem>
+<TabItem value="yarn" label="yarn">
+
+```bash
+yarn add altgosling
+```
+
+</TabItem>
+<TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add altgosling
+```
+
+</TabItem>
+</Tabs>
+
+
+## Use React component
+The fastest way to get AltGosling running is shown below.
+
+```bash
+import React from 'react';
+import gosling from 'gosling.js';
+import { AltGoslingComponent } from 'altgosling';
+
+function Demo() {
+  // example spec
+  const goslingSpec = {
+    "title": "Tonsil ChIP-seq in Th1 cells",
+    "tracks": [
+      {
+        "layout": "linear",
+        "width": 800,
+        "height": 180,
+        "data": {
+          "url": "https://resgen.io/api/v1/tileset_info/?d=UvVPeLHuRDiYA3qwFlm7xQ",
+          "type": "multivec",
+          "row": "sample",
+          "column": "position",
+          "value": "peak",
+          "categories": ["sample 1"],
+          "binSize": 5
+        },
+        "mark": "bar",
+        "x": {"field": "start", "type": "genomic", "axis": "bottom"},
+        "xe": {"field": "end", "type": "genomic"},
+        "y": {"field": "peak", "type": "quantitative", "axis": "right"},
+        "size": {"value": 5}
+      }
+    ]
+  }
+  return (
+    <>
+      <AltGoslingComponent spec={goslingSpec}/>
+    </>
+  );
+}
+```
