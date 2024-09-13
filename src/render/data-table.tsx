@@ -1,5 +1,6 @@
 import type { Datum } from '@altgosling/schema/alt-gosling-schema';
 import { Cell, Column, Row, Table, TableBody, TableHeader } from 'react-aria-components';
+import { summarizeValueDataTable } from './util';
 
 export function createDataTable(flatTileData: Datum[]) {
     return (
@@ -12,7 +13,7 @@ export function createDataTable(flatTileData: Datum[]) {
                     {flatTileData.map((row: Datum, i: number) => (
                         <Row key={"row"+i}>
                             {Object.keys(row).map((field: string, j: number) => (
-                            <Cell key={"cell"+i+"+"+j}>{row[field]}</Cell>
+                                <Cell key={"cell"+i+"+"+j}>{summarizeValueDataTable(row[field])}</Cell>
                             ))}
                         </Row>))}
                 </TableBody>
