@@ -37,6 +37,7 @@ interface AltGoslingCompProps extends GoslingCompProps {
     layout?: 'vertical' | 'horizontal';
     layoutPanels?: 'vertical' | 'horizontal';
     download?: boolean;
+    dataTableRoundValues?: boolean;
 }
 
 
@@ -251,7 +252,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                     <>
                         <div className="editor-alt-text-body">
                             <div>
-                                {renderAltTree(AltPanels.current[selectedAltPanel].data, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper)}
+                                {renderAltTree(AltPanels.current[selectedAltPanel].data, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper,  props.dataTableRoundValues)}
                             </div>
                         </div>
                     </>
@@ -275,9 +276,9 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         let panel;
         if (dataPanelCurrent) {
             if (dataPanelPrevious) {
-                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, dataPanelPrevious.altDataStatistics);
+                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, dataPanelPrevious.altDataStatistics, props.dataTableRoundValues);
             } else {
-                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics);
+                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, undefined,  props.dataTableRoundValues);
             }
             return (
                 <div className="editor-data-panel">

@@ -2,7 +2,7 @@ import type { Datum } from '@altgosling/schema/alt-gosling-schema';
 import { Cell, Column, Row, Table, TableBody, TableHeader } from 'react-aria-components';
 import { summarizeValueDataTable } from './util';
 
-export function createDataTable(flatTileData: Datum[]) {
+export function createDataTable(flatTileData: Datum[], dataTableRoundValues?: boolean) {
     const tableStyle = {
         fontSize: "0.75em",
         fontFamily: "sans-serif",
@@ -40,7 +40,7 @@ export function createDataTable(flatTileData: Datum[]) {
                     {flatTileData.map((row: Datum, i: number) => (
                         <Row key={"row"+i} style={i % 2 === 0 ? { ...tableStyleBody, ...tableStyleBodyEven } : tableStyleBody}>
                             {Object.keys(row).map((field: string, j: number) => (
-                                <Cell key={"cell"+i+"+"+j} style={tableStyleCells}>{summarizeValueDataTable(row[field])}</Cell>
+                                <Cell key={"cell"+i+"+"+j} style={tableStyleCells}>{dataTableRoundValues === false ? row[field] : summarizeValueDataTable(row[field])}</Cell>
                             ))}
                         </Row>))}
                 </TableBody>

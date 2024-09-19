@@ -14,7 +14,7 @@ import { getRangeText } from '@altgosling/alt-gosling-model/alt-text/text-data';
 
 export function renderDataPanel(
         expandedStart: string[], setExpandedDataPanelWrapper: any, focusStart: string, setFocusDataPanelWrapper: any,
-        track: AltTrack, altDataStatistics: AltDataStatistics, previousAltDataStatistics?: AltDataStatistics
+        track: AltTrack, altDataStatistics: AltDataStatistics, previousAltDataStatistics?: AltDataStatistics, dataTableRoundValues?: boolean
     ) {
 
     /**
@@ -78,7 +78,7 @@ export function renderDataPanel(
 
     const dataNode = dataNodeStats(altDataStatistics, track.uid);
 
-    const dataTable = createDataTable(altDataStatistics.flatTileData);
+    const dataTable = createDataTable(altDataStatistics.flatTileData, dataTableRoundValues);
 
     return (
         <TreeView
