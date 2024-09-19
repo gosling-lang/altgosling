@@ -38,5 +38,8 @@ export function summarizeValueDataTable(n: number | string) {
     if (n.toString().length < 4) {
         return n;
     }
-    return n.toExponential(2);
+    if (n < 1) {
+        return n.toExponential(2);
+    }
+    return n;
 }
