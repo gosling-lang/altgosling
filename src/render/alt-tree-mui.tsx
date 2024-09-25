@@ -37,11 +37,12 @@ class AltNode {
  * @param altSpec AltGoslingSpec
  * @param expandedStart List of node names to be expanded when the tree is made
  * @param setExpandedAltPanelWrapper Function to edit the expanded state of parent component
+ * @param dataTableRoundValues (optional) boolean showing whether data in data table should have rounded values
  * @returns MUI TreeView
  */
-export const renderAltTree = (altSpec: AltGoslingSpec, expandedStart: string[], setExpandedAltPanelWrapper: any, focusStart: string, setFocusAltPanelWrapper: any) => {
+export const renderAltTree = (altSpec: AltGoslingSpec, expandedStart: string[], setExpandedAltPanelWrapper: any, focusStart: string, setFocusAltPanelWrapper: any, dataTableRoundValues?: boolean) => {
     const structure = createAltNodes(altSpec);
-    return structureToTree(structure, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper);
+    return structureToTree(structure, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper, dataTableRoundValues);
 };
 
 /**
@@ -61,9 +62,10 @@ export const createAltTextList = (altSpec: AltGoslingSpec) => {
  * @param structure AltNode of content for alt tree panel
  * @param expandedStart List of node names to be expanded when the tree is made
  * @param setExpandedAltPanelWrapper Function to edit the expanded state of parent component
+ * @param dataTableRoundValues (optional) boolean showing whether data in data table should have rounded values
  * @returns MUI TreeView
  */
-const structureToTree = (structure: AltNode, expandedStart: string[], setExpandedAltPanelWrapper: any, focusStart: string, setFocusAltPanelWrapper: any) => {
+const structureToTree = (structure: AltNode, expandedStart: string[], setExpandedAltPanelWrapper: any, focusStart: string, setFocusAltPanelWrapper: any, dataTableRoundValues?: boolean) => {
     /**
      * Keep track of the expanded nodes.
      * The tree does not depend on these component so it does not rerender every time it is updated
@@ -89,7 +91,7 @@ const structureToTree = (structure: AltNode, expandedStart: string[], setExpande
     /**
      * Retrieve the tree content
      */
-    const treeContent = nodeToJSX(structure);
+    const treeContent = nodeToJSX(structure, dataTableRoundValues);
     return(
         <TreeView
             className = 'tree-view'
@@ -118,9 +120,10 @@ const structureToTree = (structure: AltNode, expandedStart: string[], setExpande
  * a comment that the information cannot be displayed is shown.
  * AltNode has a parameter collapsing, indicating if node should be returned as name: info or name /n /t info
  * @param node AltNode
+ * @param dataTableRoundValues (optional) boolean showing whether data in data table should have rounded values
  * @returns MUI TreeItem
  */
-export function nodeToJSX(node: AltNode): JSX.Element {
+export function nodeToJSX(node: AltNode, dataTableRoundValues?: boolean): JSX.Element {
     if (!node.children) {
         if (node.always_show) {
             node.children = 'This information cannot be displayed.';
@@ -144,7 +147,7 @@ export function nodeToJSX(node: AltNode): JSX.Element {
     else if (node.children_type === 'altnodelist') {
         const nodeList = node.children as AltNode[];
         const elementList = Object.keys(node.children).map((_, i) => {
-            return nodeToJSX(nodeList[i]);
+            return nodeToJSX(nodeList[i], dataTableRoundValues);
         });
         return(
             <TreeItem nodeId={node.key} label={node.name}>
@@ -157,7 +160,7 @@ export function nodeToJSX(node: AltNode): JSX.Element {
         const rawData = node.children as Datum[];
         return(
             <TreeItem nodeId={node.key} label={node.name}>
-                {createDataTable(rawData)}
+                {createDataTable(rawData, dataTableRoundValues)}
             </TreeItem>
         );
     }
