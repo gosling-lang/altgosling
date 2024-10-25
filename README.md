@@ -77,3 +77,12 @@ We welcome contributions to AltGosling! Please refer to the [contributing guidel
 - Nils Gehlenborg
 
 Questions can be directed towards <nils@hms.harvard.edu>
+
+
+## Cite
+Our preprint is available [here](https://osf.io/preprints/osf/26jvr).
+
+Please cite this work as follows:
+
+```
+TC Smits, S L’Yi, AP Mar, N Gehlenborg. “AltGosling: Automatic Generation of Text Descriptions for Accessible Genomics Data Visualization”, OSF Preprints (2024). doi:10.31219/osf.io/26jvr
