@@ -27,17 +27,18 @@ import MenuItem from '@mui/material/MenuItem';
 
 
 function Demo() {
-    const examples = {'Bar chart': barChart,
-                      'Heatmap': heatmap,
-                      'Matrix': matrix,
-                      'Comparison of four samples': doubleMarks,
-                      'Annotated chart': ruleMark,
-                      'Comparing two samples': compareTwoSamples,
-                      'Linked views': brush,
-                      'Circular halves': circularHalves,
-                      'Gene annotations': geneAnnotation,
-                      'Ideogram expression': ideogramWithArea,
-                    };
+    const examples = {
+        'Bar chart': barChart,
+        'Heatmap': heatmap,
+        'Matrix': matrix,
+        'Comparison of four samples': doubleMarks,
+        'Annotated chart': ruleMark,
+        'Comparing two samples': compareTwoSamples,
+        'Linked views': brush,
+        'Circular halves': circularHalves,
+        'Gene annotations': geneAnnotation,
+        'Ideogram expression': ideogramWithArea,
+    };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
     const ExampleOptions = () => {
@@ -63,14 +64,21 @@ function Demo() {
         <>
             <Grid container spacing={1}>
                 <Grid item aria-label='example checkbox' xs={12}>
-                    <ExampleOptions/>
+                    <ExampleOptions />
                 </Grid>
                 <Grid item aria-label='altgosling component' xs={12}>
-                    <AltGoslingComponent spec={examples[selectedExample]} download={true} name={selectedExample} />
+                    <AltGoslingComponent
+                        spec={examples[selectedExample]}
+                        download={true}
+                        name={selectedExample}
+                        onAltGoslingSpecUpdated={x => {
+                            console.log(x);
+                        }}
+                    />
                 </Grid>
             </Grid>
-       </>
-   );
+        </>
+    );
 }
 
 export default Demo;

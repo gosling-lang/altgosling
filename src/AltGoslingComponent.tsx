@@ -38,6 +38,7 @@ interface AltGoslingCompProps extends GoslingCompProps {
     layoutPanels?: 'vertical' | 'horizontal';
     download?: boolean;
     dataTableRoundValues?: boolean;
+    onAltGoslingSpecUpdated?: (altSpec: AltGoslingSpec) => void;
 }
 
 
@@ -45,11 +46,11 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     if (props.compiled) {
         try {
             throw new Error("The compiled calledback function is used by AltGosling, and cannot be used.");
-          } catch (e) {
+        } catch (e) {
             console.error(`${(e as Error).name}: ${(e as Error).message}`);
-          }
+        }
     }
-    
+
     const gosRef = useRef<GoslingRef>(null);
 
     const [specProcessed, setSpecProcessed] = useState<GoslingSpec>();
@@ -60,7 +61,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     const [selectedAltPanel, setSelectedAltPanel] = useState<number>(-1);
 
     // save the state for rawData each time it is captured
-    const [rawData, setRawData] = useState<{id: string, data: Datum[]}>();
+    const [rawData, setRawData] = useState<{ id: string, data: Datum[] }>();
 
     // Save current and previous datapanels as states to trigger rerender every time they are updated
     const [dataPanelCurrent, setDataPanelCurrent] = useState<DataPanelInformation>();
@@ -95,7 +96,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         width: 0,
         height: 0,
     });
-    const [containerSizes, setContainerSizes] = useState([0,0,0]);
+    const [containerSizes, setContainerSizes] = useState([0, 0, 0]);
 
 
     // useEffect(() => {
@@ -111,12 +112,12 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     // If layout is not set, if GoslingComponent is wider than its height, set to vertical, otherwise horizontal
     // If layoutPanels is not set, set it to horizontal if layout is vertical, otherwise vertical
     useEffect(() => {
-        const sizes = [12,12,12];
+        const sizes = [12, 12, 12];
         let layout = props.layout;
         let layoutPanels = props.layoutPanels;
         if (!layout) {
             // if (goslingDimensions.width > goslingDimensions.height) {
-                layout = 'vertical';
+            layout = 'vertical';
             // } else {
             //     layout = 'horizontal';
             // }
@@ -156,7 +157,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             // Get AltGoslingSpec
             const altSpec = getAlt(specProcessed);
             // Set dimensions
-            setGoslingDimensions({width: specProcessed._assignedWidth, height: specProcessed._assignedHeight});
+            setGoslingDimensions({ width: specProcessed._assignedWidth, height: specProcessed._assignedHeight });
             // Update current alt
             updateAltPanelDisplay(altSpec);
             // Reset data panels
@@ -164,13 +165,16 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             setDataPanelPrevious(undefined);
             // setExpandedAltPanelWrapper(['tree']);
             // setExpandedDataPanelWrapper(['tree']);
+
+            // Callback function to pass over the AltGoslingSpec
+            props.onAltGoslingSpecUpdated?.(altSpec);
         }
     }, [specProcessed]);
 
     function updateAltPanelDisplay(altSpec: AltGoslingSpec) {
         // Create ID for data panel, to be able to filter by id
         const NewAltPanelID = JSON.stringify(altSpec);
-        const NewAltPanel: PreviewAlt = {id: NewAltPanelID, data: altSpec};
+        const NewAltPanel: PreviewAlt = { id: NewAltPanelID, data: altSpec };
 
         // Filter by ID such that we don't update if unnecessary
         const AltPanelsFiltered = AltPanels.current.filter(d => d.id !== NewAltPanelID);
@@ -181,7 +185,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     }
 
     function updateDataPanelDisplay(altTrack: AltTrack, altDataStatistics: AltDataStatistics) {
-        const NewDataPanel = {altTrack: altTrack, altDataStatistics: altDataStatistics};
+        const NewDataPanel = { altTrack: altTrack, altDataStatistics: altDataStatistics };
         setDataPanelPrevious(dataPanelCurrent);
         setDataPanelCurrent(NewDataPanel);
     }
@@ -190,9 +194,9 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
     useEffect(() => {
         if (gosRef.current) {
             const currentRef = gosRef.current;
-                
+
             //rawData
-            currentRef.api.subscribe("rawData", (_: string, data: {id: string, data: Datum[]}) => {
+            currentRef.api.subscribe("rawData", (_: string, data: { id: string, data: Datum[] }) => {
                 setRawData(data);
             });
         }
@@ -209,29 +213,29 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         // update altpanel
         const data = rawData;
         if (data) {
-           const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data, props.theme);
-           updateAltPanelDisplay(updatedAlt);
-           
-           // update datapanel, match uid of updated data to individual track
-           let t;
-           for (const i in updatedAlt.tracks) {
-               if (updatedAlt.tracks[i].alttype == 'ov-data') {
-                   t = updatedAlt.tracks[i] as AltTrackOverlaidByData;
-                   if (data.id in t.uids) {
-                       // updateDataPanelDisplay(t, t.data.details.dataStatistics)
-                   }
-               } else {
-                   t = updatedAlt.tracks[i] as AltTrackSingle | AltTrackOverlaidByMark;
-                   if (data.id == t.uid) {
-                       if (t.data.details.dataStatistics){
-                           updateDataPanelDisplay(t, t.data.details.dataStatistics);
-                       }
-                   }
-               }
-           }
+            const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data, props.theme);
+            updateAltPanelDisplay(updatedAlt);
+
+            // update datapanel, match uid of updated data to individual track
+            let t;
+            for (const i in updatedAlt.tracks) {
+                if (updatedAlt.tracks[i].alttype == 'ov-data') {
+                    t = updatedAlt.tracks[i] as AltTrackOverlaidByData;
+                    if (data.id in t.uids) {
+                        // updateDataPanelDisplay(t, t.data.details.dataStatistics)
+                    }
+                } else {
+                    t = updatedAlt.tracks[i] as AltTrackSingle | AltTrackOverlaidByMark;
+                    if (data.id == t.uid) {
+                        if (t.data.details.dataStatistics) {
+                            updateDataPanelDisplay(t, t.data.details.dataStatistics);
+                        }
+                    }
+                }
+            }
         }
-   }, [rawData]);
-   
+    }, [rawData]);
+
 
 
     const AltPanelComponent = () => {
@@ -247,12 +251,12 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         return (
             <div className="editor-alt-text-panel">
                 {selectedAltPanel >= 0 &&
-                AltPanels.current[selectedAltPanel] &&
-                Object.keys(AltPanels.current[selectedAltPanel].data).length > 0 ? (
+                    AltPanels.current[selectedAltPanel] &&
+                    Object.keys(AltPanels.current[selectedAltPanel].data).length > 0 ? (
                     <>
                         <div className="editor-alt-text-body">
                             <div>
-                                {renderAltTree(AltPanels.current[selectedAltPanel].data, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper,  props.dataTableRoundValues)}
+                                {renderAltTree(AltPanels.current[selectedAltPanel].data, expandedStart, setExpandedAltPanelWrapper, focusStart, setFocusAltPanelWrapper, props.dataTableRoundValues)}
                             </div>
                         </div>
                     </>
@@ -278,7 +282,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             if (dataPanelPrevious) {
                 panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, dataPanelPrevious.altDataStatistics, props.dataTableRoundValues);
             } else {
-                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, undefined,  props.dataTableRoundValues);
+                panel = renderDataPanel(expandedStart, setExpandedDataPanelWrapper, focusStart, setFocusDataPanelWrapper, dataPanelCurrent.altTrack, dataPanelCurrent.altDataStatistics, undefined, props.dataTableRoundValues);
             }
             return (
                 <div className="editor-data-panel">
@@ -312,7 +316,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             function infoTree(descName: string, altTextList: [string, number][]) {
                 let altTextListFlat = "";
                 for (const el of altTextList) {
-                    altTextListFlat = altTextListFlat.concat("\t".repeat(el[1]) + el[0] + "\n")
+                    altTextListFlat = altTextListFlat.concat("\t".repeat(el[1]) + el[0] + "\n");
                 }
                 const nChar = altTextList.map(e => e[0].length).reduce((a, b) => a + b, 0);
                 const nWords = altTextList.map(e => e[0].split(' ').length).reduce((a, b) => a + b, 0);
@@ -326,10 +330,10 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                     info('Long description', altSpec.longDescription),
                     info('Full description', altSpec.fullDescription),
                     infoTree('Tree', altTextList),
-                ], 
-                {type: 'text/plain'});
+                ],
+                { type: 'text/plain' });
         } catch {
-            file = new Blob(['Description could not be loaded.'], {type: 'text/plain'});
+            file = new Blob(['Description could not be loaded.'], { type: 'text/plain' });
         }
         element.href = URL.createObjectURL(file);
         if (props.name) {
@@ -337,30 +341,30 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         } else {
             element.download = "AltGosling-descriptions.txt";
         }
-       
+
         document.body.appendChild(element); // Required for this to work in FireFox
         element.click();
-    }
-    
-    return(
+    };
+
+    return (
         <>
-            <Grid container rowSpacing={3} columnSpacing={{xs: 1, sm: 1}} aria-label='altgosling-component-container'>
+            <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 1 }} aria-label='altgosling-component-container'>
                 <Grid item xs={containerSizes[0]}>
                     <div
                         aria-label='gosling-component-container' //ref={refContainer}
                     >
-                    <GoslingComponent ref={gosRef} {...props} compiled={(_: GoslingSpec, __: HiGlassSpec, additionalData: any) => {
-                        setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec);
-                        }}/>
+                        <GoslingComponent ref={gosRef} {...props} compiled={(_: GoslingSpec, __: HiGlassSpec, additionalData: any) => {
+                            setSpecProcessed(additionalData['_processedSpec'] as AltGoslingSpec);
+                        }} />
                     </div>
                 </Grid>
                 {/* <Grid item xs={containerSizes[0] == 12 ? 12 : 12 - containerSizes[0]}> */}
-                    <Grid item xs={containerSizes[1]}>
-                        <AltPanelComponent/>
-                    </Grid>
-                    <Grid item xs={containerSizes[2]}>
-                        <DataPanelComponent/>
-                    </Grid>
+                <Grid item xs={containerSizes[1]}>
+                    <AltPanelComponent />
+                </Grid>
+                <Grid item xs={containerSizes[2]}>
+                    <DataPanelComponent />
+                </Grid>
                 {/* </Grid> */}
                 {props.download ? <Button onClick={downloadDescription}>Download description</Button> : null}
             </Grid>
