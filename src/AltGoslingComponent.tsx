@@ -361,7 +361,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 </Grid>
                 {/* <Grid item xs={containerSizes[0] == 12 ? 12 : 12 - containerSizes[0]}> */}
                 <Grid item xs={containerSizes[1]}>
-                    <AltPanelComponent />
+                    {/* <AltPanelComponent /> */}
                 </Grid>
                 <Grid item xs={containerSizes[2]}>
                     <DataPanelComponent />

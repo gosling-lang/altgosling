@@ -18,9 +18,18 @@ import { brush } from './examples/brush';
 import { geneAnnotation } from './examples/geneAnnotation';
 import { matrix } from './examples/matrix';
 
+// Editor examples
+import { examples as EditorExamples } from './editor-examples';
+const examples = {};
+Object.values(EditorExamples).forEach(ex => {
+    examples[ex.name] = ex.spec;
+});
+
 let output = '';
+console.log(Object.keys(examples).length);
 
 function Demo() {
+    /*
     const examples = {
         'Bar chart': barChart,
         'Heatmap': heatmap,
@@ -32,7 +41,8 @@ function Demo() {
         'Circular halves': circularHalves,
         'Gene annotations': geneAnnotation,
         'Ideogram expression': ideogramWithArea,
-    };
+    };*/
+
     const [exampleIdx, setExampleIdx] = useState<number>(0);
     // const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
