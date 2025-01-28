@@ -2,22 +2,6 @@ import React, { useState } from 'react';
 
 import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
-// simple examples
-import { barChart } from './examples/barChart';
-import { ideogramWithArea } from './examples/ideogram';
-import { compareTwoSamples } from './examples/tonsil';
-import { circularHalves } from './examples/circularHalves';
-import { heatmap } from './examples/heatmap';
-
-// multiple visual encodings
-import { doubleMarks } from './examples/visualEncodingOverlay';
-import { ruleMark } from './examples/ruleMark';
-import { brush } from './examples/brush';
-
-// complex examples
-import { geneAnnotation } from './examples/geneAnnotation';
-import { matrix } from './examples/matrix';
-
 // Editor examples
 import { examples as EditorExamples } from './editor-examples';
 const examples = {};
@@ -28,23 +12,21 @@ Object.values(EditorExamples).forEach(ex => {
 let output = '';
 console.log(Object.keys(examples).length);
 
-function Demo() {
-    /*
-    const examples = {
-        'Bar chart': barChart,
-        'Heatmap': heatmap,
-        'Matrix': matrix,
-        'Comparison of four samples': doubleMarks,
-        'Annotated chart': ruleMark,
-        'Comparing two samples': compareTwoSamples,
-        'Linked views': brush,
-        'Circular halves': circularHalves,
-        'Gene annotations': geneAnnotation,
-        'Ideogram expression': ideogramWithArea,
-    };*/
+function download(filename: string, text: string) {
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
 
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+function Demo() {
     const [exampleIdx, setExampleIdx] = useState<number>(0);
-    // const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
 
     return (
         <>
@@ -61,7 +43,8 @@ function Demo() {
                     if (exampleIdx < Object.keys(examples).length - 1) {
                         setExampleIdx(exampleIdx + 1);
                     } else {
-                        console.log(output);
+                        // console.log(output);
+                        download("gosling-editor-examples.txt", output);
                     }
                 }}
             />
