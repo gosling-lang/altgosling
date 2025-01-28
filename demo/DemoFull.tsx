@@ -72,7 +72,9 @@ function Demo() {
                         download={true}
                         name={selectedExample}
                         onAltGoslingSpecUpdated={x => {
-                            console.log(x);
+                            console.log(x.alt);
+                            console.log(x.fullDescription);
+                            console.log(x.longDescription);
                         }}
                     />
                 </Grid>

@@ -167,6 +167,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             // setExpandedDataPanelWrapper(['tree']);
 
             // Callback function to pass over the AltGoslingSpec
+            // Note that data is not included in the spec yet
             props.onAltGoslingSpecUpdated?.(altSpec);
         }
     }, [specProcessed]);
