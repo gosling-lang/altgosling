@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 
 import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
-// Editor examples
-import { examples as EditorExamples } from './editor-examples';
-const examples = {};
-Object.values(EditorExamples).forEach(ex => {
-    examples[ex.name] = ex.spec;
-});
+import examples from './screenshots/index.ts';
 
 let output = '';
 console.log(Object.keys(examples).length);
@@ -41,9 +36,10 @@ function Demo() {
                     output += `longDescription\n\n${x.longDescription}\n\n`;
 
                     if (exampleIdx < Object.keys(examples).length - 1) {
+                        console.log(exampleIdx);
                         setExampleIdx(exampleIdx + 1);
                     } else {
-                        // console.log(output);
+                        console.log(exampleIdx);
                         download("gosling-editor-examples.txt", output);
                     }
                 }}

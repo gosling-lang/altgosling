@@ -1,0 +1,1 @@
+Figure with 3 individual charts. Briefly, these are a circular bar chart and 2 different bar charts.

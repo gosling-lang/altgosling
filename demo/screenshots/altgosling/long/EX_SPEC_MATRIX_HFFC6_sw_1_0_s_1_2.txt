@@ -1,0 +1,1 @@
+Figure with 19 individual charts. Briefly, these are 8 different bar charts, 3 different unknown charts, 6 different charts with triangles and 2 different matrixs.

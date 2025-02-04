@@ -1,0 +1,1 @@
+Figure with 11 individual charts. Briefly, these are a chart with triangles, chart with text, chart with triangles, ideogram, chart with vertical lines and chart with vertical lines, 2 different unknown charts, a chart with connections, 2 different charts with triangles, a chart with text, a ideogram, 2 different charts with vertical lines and a chart with points.
