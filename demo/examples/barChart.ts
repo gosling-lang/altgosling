@@ -15,10 +15,10 @@ export const barChart = {
         "binSize": 5
       },
       "mark": "bar",
-      "x": {"field": "start", "type": "genomic", "axis": "bottom"},
-      "xe": {"field": "end", "type": "genomic"},
-      "y": {"field": "peak", "type": "quantitative", "axis": "right"},
-      "size": {"value": 5}
+      "x": { "field": "start", "type": "genomic", "axis": "bottom" },
+      "xe": { "field": "end", "type": "genomic" },
+      "y": { "field": "peak", "type": "quantitative", "axis": "right" },
+      "size": { "value": 5 }
     }
   ]
 }

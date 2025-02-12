@@ -29,17 +29,21 @@ export function arrayToString(arr: (string | number | undefined)[]): string {
  * - Otherwise, returns the number with scientific / exponential notation with 3 digits.
  */
 export function summarizeValueDataTable(n: number | string) {
-    if (typeof n === 'string') {
+    try {
+        if (typeof n === 'string') {
+            return n;
+        }
+        if (n > 1 && n < 10000) {
+            return Math.round(n);
+        }
+        if (n.toString().length < 4) {
+            return n;
+        }
+        if (n < 1) {
+            return n.toExponential(2);
+        }
         return n;
+    } catch {
+        return;
     }
-    if (n > 1 && n < 10000) {
-        return Math.round(n);
-    }
-    if (n.toString().length < 4) {
-        return n;
-    }
-    if (n < 1) {
-        return n.toExponential(2);
-    }
-    return n;
 }

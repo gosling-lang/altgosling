@@ -1,0 +1,1 @@
+Figure with 3 individual charts. Briefly, these are a chart with triangles, chart with triangles, ideogram, ideogram, ideogram and chart with text, a bar chart and chart with text and a ideogram, chart with triangles, chart with triangles and chart with text.

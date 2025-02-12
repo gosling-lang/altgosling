@@ -1,0 +1,1 @@
+Figure with 5 individual charts. Briefly, these are 5 different charts with rectangles.

@@ -1,5 +1,5 @@
 import type { GoslingSpec, Datum } from '@altgosling/schema/gosling.schema';
-import type {  AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
+import type { AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAltSpec } from './alt-structure/alt-from-spec';
 import { treeText, dataText } from './alt-text';
@@ -13,9 +13,13 @@ export function getAlt(
     // get altSpec
     const altSpec = getAltSpec(specProcessed) as AltGoslingSpec;
 
-    // add descriptions
-    treeText(altSpec);
-    dataText(altSpec);
+    try {
+        // add descriptions
+        treeText(altSpec);
+        dataText(altSpec);
+    } catch {
+        console.error('Unexpected error occurred when adding descriptions');
+    }
 
     return altSpec;
 }
