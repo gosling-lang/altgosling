@@ -88,12 +88,11 @@ function Demo() {
                 : null}
                 <Grid item aria-label='altgosling component' xs={12}>
                     { selectedExample === 'editor' ? 
-                        // <AltGoslingComponent spec={editorText} download={true} name={selectedExample} />
                         (editorValid === 'invalid' ? 
                             <Typography variant='body1' color='error'>No Gosling or AltGosling components could be loaded.</Typography>
-                        : <AltGoslingComponent spec={editorText} download={true} name={selectedExample} />
+                        : <AltGoslingComponent spec={editorText} download name={selectedExample} />
                         )
-                    : <AltGoslingComponent spec={examples[selectedExample]} download={true} name={selectedExample} />
+                    : <AltGoslingComponent spec={examples[selectedExample]} download name={selectedExample} />
                     }
                 </Grid>
             </Grid>
