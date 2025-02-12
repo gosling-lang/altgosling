@@ -85,4 +85,4 @@ Our preprint is available [here](https://osf.io/preprints/osf/26jvr).
 Please cite this work as follows:
 
 ```
-TC Smits, S L’Yi, AP Mar, N Gehlenborg. “AltGosling: Automatic Generation of Text Descriptions for Accessible Genomics Data Visualization”, OSF Preprints (2024). doi:10.31219/osf.io/26jvr
+Thomas C Smits, Sehi L’Yi, Andrew P Mar, Nils Gehlenborg (2024). AltGosling: Automatic Generation of Text Descriptions for Accessible Genomics Data Visualization, Bioinformatics 40(12), btae670. 10.1093/bioinformatics/btae670
