@@ -73,7 +73,6 @@ function Demo() {
                             multiline 
                             fullWidth
                             onChange={(event) => {
-                                setSelectedExample('editor')
                                 const { state, message, details } = validateGoslingSpec(JSON.parse(event.target.value));
                                 if (state !== "success") {
                                     console.error(message, details);
