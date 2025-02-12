@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { GoslingComponent, type GoslingRef, type GoslingSpec, type HiGlassSpec, type Theme, type TemplateTrackDef } from 'gosling.js';
+import { GoslingComponent, validateGoslingSpec, type GoslingRef, type GoslingSpec, type HiGlassSpec, type Theme, type TemplateTrackDef } from 'gosling.js';
 import type { Datum, AltGoslingSpec, PreviewAlt, DataPanelInformation, AltTrack, AltDataStatistics, AltTrackOverlaidByData, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAlt, updateAlt } from './alt-gosling-model';
@@ -47,7 +47,16 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             throw new Error("The compiled calledback function is used by AltGosling, and cannot be used.");
           } catch (e) {
             console.error(`${(e as Error).name}: ${(e as Error).message}`);
+            return <></>;
           }
+    }
+
+    if (props.spec) {
+        const { state, message, details } = validateGoslingSpec(props.spec);
+        if (state !== "success") {
+            console.error(message, details);
+            return <></>;
+        }
     }
     
     const gosRef = useRef<GoslingRef>(null);
@@ -153,6 +162,11 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
 
     useEffect(() => {
         if (specProcessed) {
+            // Check validity of Gosling spec
+            const { state, message, details } = validateGoslingSpec(props.spec);
+            if (state !== "success") {
+                console.error(message, details);
+            }
             // Get AltGoslingSpec
             const altSpec = getAlt(specProcessed);
             // Set dimensions
