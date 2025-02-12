@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { validateGoslingSpec } from 'gosling.js';
 import { AltGoslingComponent } from '../src/AltGoslingComponent';
 
 // simple examples
@@ -19,11 +20,7 @@ import { geneAnnotation } from './examples/geneAnnotation';
 import { matrix } from './examples/matrix';
 
 // MUI elements
-import Grid from '@mui/material/Grid';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import { Grid, FormControl, InputLabel, Select, MenuItem, TextField, Typography } from '@mui/material';
 
 
 function Demo() {
@@ -39,6 +36,8 @@ function Demo() {
                       'Ideogram expression': ideogramWithArea,
                     };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
+    const [editorText, setEditorText] = useState<string>('');
+    const [editorValid, setEditorValid] = useState<string>('invalid');
 
     const ExampleOptions = () => {
         return (
@@ -52,8 +51,9 @@ function Demo() {
                     onChange={(event) => setSelectedExample(event.target.value)}
                 >
                     {Object.keys(examples).sort().map(e => (
-                        <MenuItem value={e}>{e}</MenuItem>
+                        <MenuItem key={e} value={e}>{e}</MenuItem>
                     ))}
+                    <MenuItem key={"editor"} value="editor">Editor</MenuItem>
                 </Select>
             </FormControl>
         );
@@ -65,8 +65,34 @@ function Demo() {
                 <Grid item aria-label='example checkbox' xs={12}>
                     <ExampleOptions/>
                 </Grid>
+                { selectedExample === 'editor' ?
+                    <Grid item aria-label='editor textfield' xs={12}>
+                        <Typography variant='body1' color={editorValid === 'invalid' ? 'error' : ''}>Gosling spec is {editorValid}</Typography>
+                        <TextField 
+                            id="editor"
+                            multiline 
+                            fullWidth
+                            onChange={(event) => {
+                                const { state, message, details } = validateGoslingSpec(JSON.parse(event.target.value));
+                                if (state !== "success") {
+                                    console.error(message, details);
+                                    setEditorValid('invalid');
+                                } else {
+                                    setEditorValid('valid');
+                                }
+                                setEditorText(JSON.parse(event.target.value))
+                            }}
+                        /> 
+                    </Grid>
+                : null}
                 <Grid item aria-label='altgosling component' xs={12}>
-                    <AltGoslingComponent spec={examples[selectedExample]} download={true} name={selectedExample} />
+                    { selectedExample === 'editor' ? 
+                        (editorValid === 'invalid' ? 
+                            <Typography variant='body1' color='error'>No Gosling or AltGosling components could be loaded.</Typography>
+                        : <AltGoslingComponent spec={editorText} download name={selectedExample} />
+                        )
+                    : <AltGoslingComponent spec={examples[selectedExample]} download name={selectedExample} />
+                    }
                 </Grid>
             </Grid>
        </>
