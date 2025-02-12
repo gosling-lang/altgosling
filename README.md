@@ -80,7 +80,7 @@ Questions can be directed towards <nils@hms.harvard.edu>
 
 
 ## Cite
-Our preprint is available [here](https://osf.io/preprints/osf/26jvr).
+Our paper in _Bioinformatics_ is available [here](https://doi.org/10.1093/bioinformatics/btae670).
 
 Please cite this work as follows:
 
