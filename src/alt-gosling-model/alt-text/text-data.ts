@@ -1,5 +1,5 @@
-import { Assembly, GenomicPosition } from '@altgosling/schema/gosling.schema';
-import { Theme } from 'gosling.js';
+import type { Assembly, GenomicPosition } from '@altgosling/schema/gosling.schema';
+import type { Theme } from 'gosling.js';
 import type { AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 
 import { arrayToString, markToText, chrNumberOnly, summarizeValueNumber } from '../util';
