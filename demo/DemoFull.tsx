@@ -24,17 +24,18 @@ import { Grid, FormControl, InputLabel, Select, MenuItem, TextField, Typography 
 
 
 function Demo() {
-    const examples = {'Bar chart': barChart,
-                      'Heatmap': heatmap,
-                      'Matrix': matrix,
-                      'Comparison of four samples': doubleMarks,
-                      'Annotated chart': ruleMark,
-                      'Comparing two samples': compareTwoSamples,
-                      'Linked views': brush,
-                      'Circular halves': circularHalves,
-                      'Gene annotations': geneAnnotation,
-                      'Ideogram expression': ideogramWithArea,
-                    };
+    const examples = {
+        'Bar chart': barChart,
+        'Heatmap': heatmap,
+        'Matrix': matrix,
+        'Comparison of four samples': doubleMarks,
+        'Annotated chart': ruleMark,
+        'Comparing two samples': compareTwoSamples,
+        'Linked views': brush,
+        'Circular halves': circularHalves,
+        'Gene annotations': geneAnnotation,
+        'Ideogram expression': ideogramWithArea,
+    };
     const [selectedExample, setSelectedExample] = useState<string>(Object.keys(examples)[0]);
     const [editorText, setEditorText] = useState<string>('');
     const [editorValid, setEditorValid] = useState<string>('invalid');
@@ -63,14 +64,14 @@ function Demo() {
         <>
             <Grid container spacing={1}>
                 <Grid item aria-label='example checkbox' xs={12}>
-                    <ExampleOptions/>
+                    <ExampleOptions />
                 </Grid>
-                { selectedExample === 'editor' ?
+                {selectedExample === 'editor' ?
                     <Grid item aria-label='editor textfield' xs={12}>
                         <Typography variant='body1' color={editorValid === 'invalid' ? 'error' : ''}>Gosling spec is {editorValid}</Typography>
-                        <TextField 
+                        <TextField
                             id="editor"
-                            multiline 
+                            multiline
                             fullWidth
                             onChange={(event) => {
                                 const { state, message, details } = validateGoslingSpec(JSON.parse(event.target.value));
@@ -80,23 +81,29 @@ function Demo() {
                                 } else {
                                     setEditorValid('valid');
                                 }
-                                setEditorText(JSON.parse(event.target.value))
+                                setEditorText(JSON.parse(event.target.value));
                             }}
-                        /> 
+                        />
                     </Grid>
-                : null}
+                    : null}
                 <Grid item aria-label='altgosling component' xs={12}>
-                    { selectedExample === 'editor' ? 
-                        (editorValid === 'invalid' ? 
-                            <Typography variant='body1' color='error'>No Gosling or AltGosling components could be loaded.</Typography>
-                        : <AltGoslingComponent spec={editorText} download name={selectedExample} />
-                        )
-                    : <AltGoslingComponent spec={examples[selectedExample]} download name={selectedExample} />
-                    }
+                    {(() => {
+                        let goslingSpec: string;
+                        if (selectedExample === 'editor' && editorValid === 'invalid') {
+                            return <Typography variant='body1' color='error'>No Gosling or AltGosling components could be loaded.</Typography>;
+                        } else if (selectedExample === 'editor' && editorValid !== 'invalid') {
+                            goslingSpec = editorText;
+                        } else {
+                            goslingSpec = examples[selectedExample];
+                        }
+                        return <AltGoslingComponent spec={goslingSpec} download name={selectedExample} onAltGoslingSpecUpdate={spec => {
+                            console.log('AltGosling Spec Updated', spec);
+                        }} />;
+                    })()}
                 </Grid>
             </Grid>
-       </>
-   );
+        </>
+    );
 }
 
 export default Demo;
