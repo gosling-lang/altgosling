@@ -38,7 +38,7 @@ interface AltGoslingCompProps extends GoslingCompProps {
     layoutPanels?: 'vertical' | 'horizontal';
     download?: boolean;
     dataTableRoundValues?: boolean;
-    onAltGoslingSpecUpdated?: (altSpec: AltGoslingSpec) => void;
+    onAltGoslingSpecUpdate?: (altSpec: AltGoslingSpec) => void;
 }
 
 
@@ -181,7 +181,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
             // setExpandedDataPanelWrapper(['tree']);
 
             // Callback function to pass over the AltGoslingSpec
-            props.onAltGoslingSpecUpdated?.(altSpec);
+            props.onAltGoslingSpecUpdate?.(altSpec);
         }
     }, [specProcessed]);
 
