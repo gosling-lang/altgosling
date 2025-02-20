@@ -1,0 +1,18 @@
+{
+	"scripts": {
+		"dev": "npm run build -- --sourcemap=inline --watch",
+		"build": "esbuild js/widget.tsx --minify --format=esm --bundle --outdir=src/altgosling/static",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@anywidget/react": "^0.1.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
+	},
+	"devDependencies": {
+		"@types/react": "^19.0.1",
+		"@types/react-dom": "^19.0.2",
+		"typescript": "^5.7.2",
+		"esbuild": "^0.24.0"
+	}
+}
