@@ -10,7 +10,7 @@ except importlib.metadata.PackageNotFoundError:
     __version__ = "unknown"
 
 
-class Widget(anywidget.AnyWidget):
+class AltGoslingWidget(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
     spec = traitlets.Unicode().tag(sync=True)
     altSpec = traitlets.Unicode().tag(sync=True)
