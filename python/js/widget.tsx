@@ -1,15 +1,16 @@
-import * as React from "react";
-import { createRender, useModelState } from "@anywidget/react";
+import React, { useState, useEffect, useRef } from "react";
+import { createRender, useModel, useModelState } from "@anywidget/react";
 import * as altgosling from "altgosling";
 import { validateGoslingSpec } from "gosling.js";
 
 
 const render = createRender(() => {
 	const [spec, setSpec] = useModelState<string>("spec");
-	const [altSpec, setAltSpec] = useModelState<string>("altSpec");
-	const [error, setError] = React.useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
-	React.useEffect(() => {
+	const model = useModel();
+
+	useEffect(() => {
 		try {
 			const parsedSpec = JSON.parse(spec);
 
@@ -26,9 +27,14 @@ const render = createRender(() => {
 		}
 	}, [spec]);
 
+	const handleAltSpecUpdate = (newAltSpec: object) => {
+		model.set("altSpec", JSON.stringify(newAltSpec));
+		model.save_changes();
+	};
+
 	return (
 		<div className="altgosling">
-			{error ? <p>{error}</p> : <altgosling.AltGoslingComponent spec={JSON.parse(spec)} onAltGoslingSpecUpdate={(altSpec) => setAltSpec(JSON.stringify(altSpec))} />}
+			{error ? <p>{error}</p> : <altgosling.AltGoslingComponent spec={JSON.parse(spec)} onAltGoslingSpecUpdate={(handleAltSpecUpdate)} />}
 		</div>
 	);
 });
