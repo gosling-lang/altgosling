@@ -11,9 +11,16 @@ import Button from '@mui/material/Button';
 
 
 // eventually import this from gosling
+interface UrlToFetchOptions {
+    [url: string]: RequestInit;
+}
+type CompiledCallbackFn = (
+    goslingSpec: GoslingSpec,
+    higlassSpec: HiGlassSpec,
+) => void;
+
 interface GoslingCompProps {
     spec?: GoslingSpec;
-    // @ts-expect-error
     compiled?: CompiledCallbackFn;
     padding?: number;
     margin?: number;
@@ -22,7 +29,6 @@ interface GoslingCompProps {
     className?: string;
     theme?: Theme;
     templates?: TemplateTrackDef[];
-    // @ts-expect-error
     urlToFetchOptions?: UrlToFetchOptions;
     experimental?: {
         reactive?: boolean;

@@ -1,4 +1,4 @@
-import { Theme } from "gosling.js";
+import type { Theme } from "gosling.js";
 
 // gosling themes
 type ThemeType = "light" | "dark" | "warm" | "ggplot" | "igv" | "ensembl" | "jbrowse" | "ucsc" | "washu" | "excel" | "google";

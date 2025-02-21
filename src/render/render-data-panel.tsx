@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { AltTrack, AltDataStatistics } from '@altgosling/schema/alt-gosling-schema';
+import type { AltTrack, AltDataStatistics } from '@altgosling/schema/alt-gosling-schema';
 import { createDataTable } from './data-table';
 import { dataNodeStats, nodeToJSX } from './alt-tree-mui';
 
