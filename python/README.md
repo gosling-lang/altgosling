@@ -1,4 +1,6 @@
-# python
+# AltGosling Python
+This is the Python version for [AltGosling](https://github.com/gosling-lang/altgosling)! AltGosling was published in [_Bioinformatics_](https://academic.oup.com/bioinformatics/article/40/12/btae670/7900296).
+
 
 ## Installation
 
