@@ -228,6 +228,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         const data = rawData;
         if (data) {
             const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data, props.theme);
+            props.onAltGoslingSpecUpdate?.(updatedAlt);
             updateAltPanelDisplay(updatedAlt);
 
             // update datapanel, match uid of updated data to individual track
