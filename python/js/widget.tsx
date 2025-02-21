@@ -1,7 +1,6 @@
 import * as React from "react";
 import { createRender, useModelState } from "@anywidget/react";
 import * as altgosling from "altgosling";
-import "./widget.css";
 import { validateGoslingSpec } from "gosling.js";
 
 
