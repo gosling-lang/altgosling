@@ -5,12 +5,18 @@
   "license": "MIT",
   "homepage": "https://gosling-lang.github.io/altgosling/",
   "type": "module",
+  "main": "lib/altgosling.js",
+  "module": "lib/altgosling.js",
+  "exports": {
+    ".": "./lib/altgosling.js"
+  },
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build-only": "vite build",
     "build": "tsc && vite build",
+    "build-lib": "vite build --mode lib",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest"
