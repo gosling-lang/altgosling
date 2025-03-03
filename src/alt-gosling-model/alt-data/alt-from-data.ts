@@ -2,7 +2,7 @@ import type { Datum, AltGoslingSpec, AltTrack, AltTrackDataFields, AltDataStatis
 
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
 import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
-import { Theme } from 'gosling.js';
+import type { Theme } from 'gosling.js';
 
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields): AltDataStatistics {
     const altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
