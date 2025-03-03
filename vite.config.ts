@@ -33,8 +33,10 @@ export default defineConfig(({ mode }) => {
   return {
     build: {
       lib: {
-        entry: path.resolve(__dirname, 'src/index.ts'),
-        name: 'altgosling',
+        entry: {
+          altgosling: path.resolve(__dirname, 'src/index.ts'),
+          utils: path.resolve(__dirname, 'src/utils.ts')
+        },
         fileName: (format) => `index.${format}.js`,
       },
       formats: ['es', 'cjs'],
