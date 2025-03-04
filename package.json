@@ -11,10 +11,15 @@
     ".": {
       "import": "./dist/index.es.js",
       "require": "./dist/index.umd.js"
+    },
+    "./utils": {
+      "import": "./dist/utils.es.js",
+      "require": "./dist/utils.cjs.js"
     }
   },
   "files": [
-    "src", "dist"
+    "src",
+    "dist"
   ],
   "scripts": {
     "predeploy": "npm run build",
@@ -22,6 +27,7 @@
     "dev": "vite",
     "build-only": "vite build",
     "build": "tsc && vite build",
+    "build-lib": "vite build --mode lib",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest"

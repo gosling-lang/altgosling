@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
           altgosling: path.resolve(__dirname, 'src/index.ts'),
           utils: path.resolve(__dirname, 'src/utils.ts')
         },
-        fileName: (format) => `index.${format}.js`,
+        fileName: (format, entryName) => `${entryName == 'altgosling' ? 'index' : entryName}.${format}.js`,
       },
       formats: ['es', 'cjs'],
       rollupOptions: {
