@@ -25,24 +25,33 @@ function hexToRgb(hex: string) {
     return rgb;
 }
 
-const colors = {
-    "black": [0, 0, 0],
-    "green": [0, 128, 0],
-    "silver": [192, 192, 192],
-    "lime": [0, 255, 0],
-    "gray": [128, 128, 128],
-    "olive": [128, 128, 0],
-    "white": [255, 255, 255],
-    "yellow": [255, 255, 0],
-    "maroon": [128, 0, 0],
-    "navy": [0, 0, 128],
-    "red": [255, 0, 0],
-    "blue": [0, 0, 255],
-    "purple": [128, 0, 128],
-    "teal": [0, 128, 128],
-    "fuchsia": [255, 0, 255],
-    "aqua": [0, 255, 255]
-};
+const colors = [
+    { name: 'black', hex: '#000000', rgb: [0, 0, 0] },
+    { name: 'dark green', hex: '#008000', rgb: [0, 128, 0] },
+    { name: 'silver', hex: '#C0C0C0', rgb: [192, 192, 192] },
+    { name: 'bright green', hex: '#00FF00', rgb: [0, 255, 0] },
+    { name: 'gray', hex: '#808080', rgb: [128, 128, 128] },
+    { name: 'olive', hex: '#808000', rgb: [128, 128, 0] },
+    { name: 'white', hex: '#FFFFFF', rgb: [255, 255, 255] },
+    { name: 'yellow', hex: '#FFFF00', rgb: [255, 255, 0] },
+    { name: 'maroon', hex: '#800000', rgb: [128, 0, 0] },
+    { name: 'navy', hex: '#000080', rgb: [0, 0, 128] },
+    { name: 'red', hex: '#FF0000', rgb: [255, 0, 0] },
+    { name: 'dark blue', hex: '#0000FF', rgb: [0, 0, 255] },
+    { name: 'purple', hex: '#800080', rgb: [128, 0, 128] },
+    { name: 'teal', hex: '#008080', rgb: [0, 128, 128] },
+    { name: 'pink', hex: '#FF00FF', rgb: [255, 0, 255] },
+    { name: 'light blue', hex: '#00FFFF', rgb: [0, 255, 255] },
+
+    // gosling colors
+    { name: 'orange', hex: '#E79F00', rgb: [231, 159, 0] },
+    { name: 'green', hex: '#029F73', rgb: [2, 159, 115] },
+    { name: 'navy blue', hex: '#0072B2', rgb: [0, 114, 178] },
+    { name: 'pink', hex: '#CB7AA7', rgb: [203, 122, 167] },
+    { name: 'dark orange', hex: '#D45E00', rgb: [212, 94, 0] },
+    { name: 'sky blue', hex: '#57B4E9', rgb: [87, 180, 233] },
+    { name: 'yellow', hex: '#EFE441', rgb: [239, 228, 65] },
+];
 
 
 function colorDistance(c1: number[], c2: number[]) {
@@ -50,17 +59,22 @@ function colorDistance(c1: number[], c2: number[]) {
 }
 
 function findClosestColor(hex: string) {
+    const exactColor = colors.find(color => color.hex.toLowerCase().slice(0) === hex.toLowerCase());
+    if (exactColor) {
+        return exactColor.name;
+    }
+
     const targetRgb = hexToRgb(hex);
     if (!targetRgb) return "unknown color";
 
     let closestColor = "";
     let minDistance = Number.MAX_VALUE;
 
-    for (const [name, rgb] of Object.entries(colors)) {
-        const distance = colorDistance(rgb, targetRgb);
+    for (const color of colors) {
+        const distance = colorDistance(color.rgb, targetRgb);
         if (distance < minDistance) {
             minDistance = distance;
-            closestColor = name;
+            closestColor = color.name;
         }
     }
     return closestColor;
