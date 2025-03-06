@@ -9,13 +9,14 @@ import type { Theme } from 'gosling.js';
 // this function is only called once every time a spec is compiled
 export function getAlt(
     specProcessed: GoslingSpec,
+    simplifyColor?: boolean,
 ): AltGoslingSpec {
     // get altSpec
     const altSpec = getAltSpec(specProcessed) as AltGoslingSpec;
 
     // add descriptions
-    treeText(altSpec);
-    dataText(altSpec);
+    treeText(altSpec, simplifyColor);
+    dataText(altSpec, simplifyColor);
 
     return altSpec;
 }
@@ -25,7 +26,8 @@ export function updateAlt(
     altGoslingSpec: AltGoslingSpec,
     id: string,
     flatTileData: Datum[],
-    theme?: Theme
+    theme?: Theme,
+    simplifyColor?: boolean,
 ): AltGoslingSpec {
-    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData, theme);
+    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData, theme, simplifyColor);
 }
