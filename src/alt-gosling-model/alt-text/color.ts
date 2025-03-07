@@ -3,9 +3,8 @@ import { GetColorName } from 'hex-color-to-color-name';
 // Converting colors to names
 
 export function getColorName(color: string, simple?: boolean): string {
-    console.log("color", "simple", color, simple);
     color = color.replace('#', '');
-    if (simple === undefined || simple === false) {
+    if (!simple) {
         return GetColorName(color).toLowerCase();
     } else {
         return findClosestColor(color);
@@ -20,9 +19,8 @@ function hexToRgb(hex: string) {
         throw new Error(`Invalid hex color: ${hex}`);
     }
 
-    let rgb = [0, 0, 0];
-    rgb = rgb.map((_, i) => parseInt(hex.slice(i * 2, i * 2 + 2), 16));
-    return rgb;
+    const rgb = [0, 0, 0];
+    return rgb.map((_, i) => parseInt(hex.slice(i * 2, i * 2 + 2), 16));
 }
 
 const colors = [
