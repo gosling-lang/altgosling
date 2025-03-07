@@ -1,11 +1,11 @@
 import type { AltEncodingDesc, AltEncodingSeparated, AltGoslingSpec, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
 
-import { GetColorName } from 'hex-color-to-color-name';
+import { getColorName } from './color';
 
-export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec) {
+export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec, simplifyColorNames?: boolean) {
     addTrackPositionDescriptions(altGoslingSpec);
-    addTrackAppearanceDescriptions(altGoslingSpec);
+    addTrackAppearanceDescriptions(altGoslingSpec, simplifyColorNames);
 }
 
 function addTrackPositionDescriptions(altGoslingSpec: AltGoslingSpec) {
@@ -183,7 +183,7 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
 
 
 
-function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
+function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, simplifyColorNames?: boolean) {
     for (const i in altGoslingSpec.tracks) {
         const track = altGoslingSpec.tracks[i];
 
@@ -196,7 +196,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
             }
     
-            const encodingDescriptions = addEncodingDescriptions(track);
+            const encodingDescriptions = addEncodingDescriptions(track, simplifyColorNames);
 
             desc = desc.concat(` ${encodingDescriptions.desc}`);
 
@@ -220,7 +220,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
             }
 
-            const encodingDescriptions = addEncodingDescriptions(track);
+            const encodingDescriptions = addEncodingDescriptions(track, simplifyColorNames);
 
             desc = desc.concat(' ' + encodingDescriptions.desc);
 
@@ -241,7 +241,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
                 let descTrack = '';
                 descTrack = descTrack.concat(`${capDesc(overlaidDataTrack.charttype)}.`);
 
-                const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack);
+                const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack, simplifyColorNames);
 
                 descTrack = descTrack.concat(' ' + encodingDescriptions.desc);
             
@@ -252,7 +252,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec) {
     }
 }
 
-function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd) {
+function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, simplifyColorNames?: boolean) {
     let mark;
     let marks;
     let markText;
@@ -260,7 +260,7 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
     if (track.alttype === 'single' || (track.alttype === 'ov-mark' && track.appearance.details.mark) || track.alttype === 'ov-data-ind') {
         mark = track.appearance.details.mark as string;
         markText = markToText.get(mark) as string;
-        const {descGenomic, descQuantitative, descNominal, descValue, descList} = addEncodingDescriptionsAll(markText, track.appearance.details.encodings);
+        const {descGenomic, descQuantitative, descNominal, descValue, descList} = addEncodingDescriptionsAll(markText, track.appearance.details.encodings, simplifyColorNames);
         const desc = [descGenomic, descQuantitative, descNominal, descValue].join(' ');
         return {desc: desc, descList: descList};
     } else {
@@ -268,12 +268,12 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
         const descriptionsList = [];
 
         markText = arrayToString(marks.filter(m => m !== undefined).map(m => markToText.get(m)).filter(m => m !== undefined));
-        descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodings));
+        descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodings, simplifyColorNames));
 
         for (let i = 0; i < marks.length; i++) {
             if (marks[i]) {
                 markText = markToText.get(marks[i]) as string;
-                descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodingsByTrack[i]));
+                descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodingsByTrack[i], simplifyColorNames));
             }
         }
         
@@ -302,7 +302,7 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
     }
 }
 
-function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSeparated) {
+function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSeparated, simplifyColorNames?: boolean) {
     let descGenomic = '';
     let descQuantitative = '';
     let descNominal = '';
@@ -507,7 +507,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             // if the color is denoted as a hex code, get the name of the color value
             if (typeof e.details.value === 'string') {
                 if (e.details.value[0] === '#') {
-                    e.details.value = GetColorName(e.details.value.slice(0)).toLowerCase();
+                    e.details.value = getColorName(e.details.value, simplifyColorNames);
                 }
             }
             descValue = descValue.concat(`The color of the ${markText} is ${e.details.value}.`);
@@ -652,7 +652,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
 //             // if the color is denoted as a hex code, get the name of the color value
 //             if (typeof e.details.value === 'string') {
 //                 if (e.details.value[0] === '#') {
-//                     e.details.value = GetColorName(e.details.value.slice(0)).toLowerCase();
+//                     e.details.value = getColorName(e.details.value.slice(0)).toLowerCase();
 //                 }
 //             }
 //             descValue = descValue.concat('The color of the ' + markToText.get(mark) + ' is ' + e.details.value + '.');

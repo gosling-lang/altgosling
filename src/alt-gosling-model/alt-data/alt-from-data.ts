@@ -96,7 +96,8 @@ export function altUpdateSpecWithData(
     altGoslingSpec: AltGoslingSpec,
     id: string,
     flatTileData: Datum[],
-    theme?: Theme
+    theme?: Theme,
+    simplifyColorNames?: boolean,
 ): AltGoslingSpec {
 
     const includePosition = altGoslingSpec.tracks.length > 1;
@@ -118,7 +119,7 @@ export function altUpdateSpecWithData(
                 track.data.details.dataStatistics = altDataStatistics;
 
                 // update description
-                addTrackDataDescriptionsTrack(track, theme);
+                addTrackDataDescriptionsTrack(track, theme, simplifyColorNames);
                 addTrackDescription(track, includePosition);
             }
         }
@@ -136,7 +137,7 @@ export function altUpdateSpecWithData(
                     overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
 
                     // update description
-                    addTrackDataDescriptionsTrack(track, theme);
+                    addTrackDataDescriptionsTrack(track, theme, simplifyColorNames);
                     addTrackDescription(track, includePosition);
                 }
             }
