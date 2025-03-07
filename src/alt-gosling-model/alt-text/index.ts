@@ -5,12 +5,12 @@ import { addTrackDataDescriptions } from './text-data';
 import { addGlobalDescription } from './text-global';
 
 
-export function treeText(altGoslingSpec: AltGoslingSpec, simplifyColor?: boolean) {
-    addTreeDescriptions(altGoslingSpec, simplifyColor);
+export function treeText(altGoslingSpec: AltGoslingSpec, simplifyColorNames?: boolean) {
+    addTreeDescriptions(altGoslingSpec, simplifyColorNames);
     addGlobalDescription(altGoslingSpec);
 }
 
-export function dataText(altGoslingSpec: AltGoslingSpec, simplifyColor?: boolean) {
-    addTrackDataDescriptions(altGoslingSpec, undefined, simplifyColor);
+export function dataText(altGoslingSpec: AltGoslingSpec, simplifyColorNames?: boolean) {
+    addTrackDataDescriptions(altGoslingSpec, undefined, simplifyColorNames);
     addGlobalDescription(altGoslingSpec);
 }

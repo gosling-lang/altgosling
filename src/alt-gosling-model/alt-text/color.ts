@@ -7,7 +7,7 @@ export function getColorName(color: string, simple?: boolean): string {
     if (!simple) {
         return GetColorName(color).toLowerCase();
     } else {
-        return findClosestColor(color);
+        return findClosestColorName(color);
     }
 }
 
@@ -56,7 +56,7 @@ function colorDistance(c1: number[], c2: number[]) {
     return Math.sqrt((c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2 + (c1[2] - c2[2]) ** 2);
 }
 
-function findClosestColor(hex: string) {
+function findClosestColorName(hex: string) {
     const exactColor = colors.find(color => color.hex.toLowerCase().slice(0) === hex.toLowerCase());
     if (exactColor) {
         return exactColor.name;

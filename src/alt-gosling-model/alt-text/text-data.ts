@@ -10,10 +10,10 @@ import { getRelativeGenomicPosition } from 'gosling.js/utils';
 import { getThemeColors } from '@altgosling/schema/gosling-theme';
 import { getColorName } from './color';
 
-export function addTrackDataDescriptions(altGoslingSpec: AltGoslingSpec, theme?: Theme, simplifyColor?: boolean) {
+export function addTrackDataDescriptions(altGoslingSpec: AltGoslingSpec, theme?: Theme, simplifyColorNames?: boolean) {
     for (const i in altGoslingSpec.tracks) {
         const track = altGoslingSpec.tracks[i];
-        addTrackDataDescriptionsTrack(track, theme, simplifyColor);
+        addTrackDataDescriptionsTrack(track, theme, simplifyColorNames);
     }
 }
 
@@ -75,19 +75,19 @@ export function getRangeText(p1: number, p2: number, assembly?: Assembly): strin
     return ` The genomic range is shown from chromosome ${p1t[0]} position ${p1t[1]} to chromosome ${p2t[0]} position ${p2t[1]}.`;
 }
 
-export function addTrackDataDescriptionsTrack(track: AltTrack, theme?: Theme, simplifyColor?: boolean) {
+export function addTrackDataDescriptionsTrack(track: AltTrack, theme?: Theme, simplifyColorNames?: boolean) {
     if (track.alttype === 'single' || track.alttype === 'ov-mark') {
-        addTrackDataDescriptionsTrackInd(track, theme, simplifyColor);
+        addTrackDataDescriptionsTrackInd(track, theme, simplifyColorNames);
     }
     if (track.alttype === 'ov-data') {
         for (let i = 0; i < Object.keys(track.tracks).length; i++) {
             const overlaidDataTrack = track.tracks[i];
-            addTrackDataDescriptionsTrackInd(overlaidDataTrack, theme, simplifyColor);
+            addTrackDataDescriptionsTrackInd(overlaidDataTrack, theme, simplifyColorNames);
         }
     }
 }
 
-export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, theme?: Theme, simplifyColor?: boolean) {
+export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, theme?: Theme, simplifyColorNames?: boolean) {
     if (track.data.details.dataStatistics) {
         let desc = '';
         const assembly = track.appearance.details.assembly;
@@ -98,7 +98,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
             const genmin = getOnePositionText(track.data.details.dataStatistics?.genomicMin, assembly);
             const genmax = getOnePositionText(track.data.details.dataStatistics?.genomicMax , assembly);
             track.data.details.dataStatistics.genomicDescList = [['Minimum', genmin], ['Maximum', genmax]];
-            linkDataToChannels(track, 'genomic', [['Minimum', `The minimum shown is ${genmin}.`], ['Maximum', `The maximum shown is ${genmax}.`]], undefined, theme, simplifyColor);
+            linkDataToChannels(track, 'genomic', [['Minimum', `The minimum shown is ${genmin}.`], ['Maximum', `The maximum shown is ${genmax}.`]], undefined, theme, simplifyColorNames);
             desc = desc.concat(rangeText);
         }
         if (track.data.details.dataStatistics?.valueMin !== undefined && track.data.details.dataStatistics?.valueMax !== undefined) {
@@ -112,17 +112,17 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 const valmaxgen = addMinMaxDescription(track.data.details.dataStatistics?.valueMaxGenomic, 'maximum', assembly);
                 desc = desc.concat(valmaxgen, valmingen);
                 track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}. ${valmingen}`], ['Maximum', `${valmax}. ${valmaxgen}`]];
-                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}.`, `${valmingen}`], ['Maximum', `The maximum value shown is ${valmax}.`, `${valmaxgen}`]], undefined, theme, simplifyColor);
+                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}.`, `${valmingen}`], ['Maximum', `The maximum value shown is ${valmax}.`, `${valmaxgen}`]], undefined, theme, simplifyColorNames);
             } else {
                 track.data.details.dataStatistics.valueDescList = [['Minimum', `${valmin}`], ['Maximum', `${valmax}`]];
-                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}.`], ['Maximum', `The maximum value shown is ${valmax}.`]], undefined, theme, simplifyColor);
+                linkDataToChannels(track, 'quantitative', [['Minimum', `The minimum value shown is ${valmin}.`], ['Maximum', `The maximum value shown is ${valmax}.`]], undefined, theme, simplifyColorNames);
             }
         }
         // add category data information
         if (track.data.details.dataStatistics?.categories) {
             if (track.data.details.dataStatistics?.categories.length === 1) {
                 desc = desc.concat(` The category shown is called '${track.data.details.dataStatistics?.categories[0]}'.`);
-                linkDataToChannels(track, 'nominal', [['Categories', `There is one category called ${track.data.details.dataStatistics?.categories[0]}`]], undefined, theme, simplifyColor);
+                linkDataToChannels(track, 'nominal', [['Categories', `There is one category called ${track.data.details.dataStatistics?.categories[0]}`]], undefined, theme, simplifyColorNames);
             } else {
                 const linkDataToChannelsList = ['Categories'];
                 // number of categories
@@ -148,7 +148,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
                 }
                 // See if genomic positions are the same for the min and max values of each category
 
-                linkDataToChannels(track, 'nominal', [linkDataToChannelsList], track.data.details.dataStatistics?.categories, theme, simplifyColor);
+                linkDataToChannels(track, 'nominal', [linkDataToChannelsList], track.data.details.dataStatistics?.categories, theme, simplifyColorNames);
 
             }
         }
@@ -158,7 +158,7 @@ export function addTrackDataDescriptionsTrackInd(track: AltTrackSingle | AltTrac
 }
 
 
-function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][], categories?: string[], theme?: Theme, simplifyColor?: boolean) {
+function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, typeDescList: string, descList: string[][], categories?: string[], theme?: Theme, simplifyColorNames?: boolean) {
     for (const enc of track.appearance.details.encodingsDescList) {
         if (enc.channelType.includes(typeDescList)) {
             enc.dataDesc = descList;
@@ -194,16 +194,16 @@ function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | Alt
                     case 0: 
                         break;
                     case 1: 
-                        enc.dataDesc[0].push(`The only category (${categories[0]}) is ${getColorName(nominalColors[0], simplifyColor)}.`);
+                        enc.dataDesc[0].push(`The only category (${categories[0]}) is ${getColorName(nominalColors[0], simplifyColorNames)}.`);
                         break;
                     case 2:
-                        enc.dataDesc[0].push(`Category ${categories[0]} is ${getColorName(nominalColors[0], simplifyColor)} and category ${categories[1]} is ${getColorName(nominalColors[1], simplifyColor)}.`);
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${getColorName(nominalColors[0], simplifyColorNames)} and category ${categories[1]} is ${getColorName(nominalColors[1], simplifyColorNames)}.`);
                         break;
                     case 3: 
-                        enc.dataDesc[0].push(`Category ${categories[0]} is ${getColorName(nominalColors[0], simplifyColor)}, category ${categories[1]} is ${getColorName(nominalColors[1], simplifyColor)} and category ${categories[2]} is ${getColorName(nominalColors[2], simplifyColor)}.`);
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${getColorName(nominalColors[0], simplifyColorNames)}, category ${categories[1]} is ${getColorName(nominalColors[1], simplifyColorNames)} and category ${categories[2]} is ${getColorName(nominalColors[2], simplifyColorNames)}.`);
                         break;
                     case 4: 
-                        enc.dataDesc[0].push(`Category ${categories[0]} is ${getColorName(nominalColors[0], simplifyColor)}, category ${categories[1]} is ${getColorName(nominalColors[1], simplifyColor)}, category ${categories[2]} is ${getColorName(nominalColors[2], simplifyColor)} and category ${categories[3]} is ${getColorName(nominalColors[3], simplifyColor)}.`);
+                        enc.dataDesc[0].push(`Category ${categories[0]} is ${getColorName(nominalColors[0], simplifyColorNames)}, category ${categories[1]} is ${getColorName(nominalColors[1], simplifyColorNames)}, category ${categories[2]} is ${getColorName(nominalColors[2], simplifyColorNames)} and category ${categories[3]} is ${getColorName(nominalColors[3], simplifyColorNames)}.`);
                         break;
                     default:
                         break;
@@ -218,7 +218,7 @@ function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | Alt
             console.warn("AltGosling was not provided a Gosling Theme, so light theme is assumed.");
         }
         const nominalColors = getThemeColors(theme);
-        const color = getColorName(nominalColors[0], simplifyColor);
+        const color = getColorName(nominalColors[0], simplifyColorNames);
         if (track.appearance.details.mark) {
             track.appearance.details.encodingsDescList.push({channel: 'color', channelType: 'value', desc: `The color of the ${markToText.get(track.appearance.details.mark)} is ${color}.`} as AltEncodingDesc);
         } else {
