@@ -274,7 +274,7 @@ function trackNodeMulti(t: AltTrack): AltNode {
     let structure;
 
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
-        structure = new AltNode(`Track ${(t.position.details.trackNumber + 1).toString()} (${t.position.description}) (${t.charttype})`, 'T-'+uid, true, true, 'altnodelist', [
+        structure = new AltNode(`Track ${(t.position.details.trackNumber + 1).toString()} (${t.position.description}) (${arrayToString(t.charttype)})`, 'T-'+uid, true, true, 'altnodelist', [
             new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
             new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
                 new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
