@@ -96,7 +96,7 @@ function Demo() {
                         } else {
                             goslingSpec = examples[selectedExample];
                         }
-                        return <AltGoslingComponent spec={goslingSpec} download name={selectedExample} simplifyColorNames={true} onAltGoslingSpecUpdate={spec => {
+                        return <AltGoslingComponent spec={goslingSpec} download name={selectedExample} simplifyColorNames={true} customColorNames={() => 'custom color name'} onAltGoslingSpecUpdate={spec => {
                             console.log('AltGosling Spec Updated', spec);
                         }} />;
                     })()}

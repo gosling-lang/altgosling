@@ -1,10 +1,14 @@
 import { GetColorName } from 'hex-color-to-color-name';
+import type { ColorOption } from '.';
 
 // Converting colors to names
 
-export function getColorName(color: string, simple?: boolean): string {
+export function getColorName(color: string, opt: ColorOption = {}): string {
     color = color.replace('#', '');
-    if (!simple) {
+    if (opt.customColorNames) {
+        console.log('here');
+        return opt.customColorNames(color);
+    } else if (!opt.simplifyColorNames) {
         return GetColorName(color).toLowerCase();
     } else {
         return findClosestColorName(color);
