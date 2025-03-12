@@ -160,7 +160,7 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
         // indication of column is only useful if there is more than 1 column
         if (altGoslingSpec.composition.counter.totalCols > 1) {
             // there can still be rows with only 1 column, so for each track, check if there is more than 1 column
-            if (Object.keys(counter.matrix[trackPosition.colNumber]).length > 1) {
+            if (Object.keys(counter.matrix[trackPosition.rowNumber]).length > 1) {
                 // add a comma and space if there is already a row description
                 if (descTrack.length > 1) {
                     descTrack = descTrack.concat(', ');
