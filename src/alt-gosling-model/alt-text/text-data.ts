@@ -2,7 +2,7 @@ import type { Assembly, GenomicPosition } from '@altgosling/schema/gosling.schem
 import type { Theme } from 'gosling.js';
 import type { AltEncodingDesc, AltGoslingSpec, AltTrack, AltTrackOverlaidByDataInd, AltTrackOverlaidByMark, AltTrackSingle } from '@altgosling/schema/alt-gosling-schema';
 
-import { arrayToString, markToText, chrNumberOnly, summarizeValueNumber } from '../util';
+import { arrayToString, callMarkToText, chrNumberOnly, summarizeValueNumber } from '../util';
 
 // @ts-expect-error no type definition
 import { getRelativeGenomicPosition } from 'gosling.js/utils';
@@ -220,7 +220,7 @@ function linkDataToChannels(track: AltTrackSingle | AltTrackOverlaidByMark | Alt
         const nominalColors = getThemeColors(theme);
         const color = getColorName(nominalColors[0], simplifyColorNames);
         if (track.appearance.details.mark) {
-            track.appearance.details.encodingsDescList.push({channel: 'color', channelType: 'value', desc: `The color of the ${markToText.get(track.appearance.details.mark)} is ${color}.`} as AltEncodingDesc);
+            track.appearance.details.encodingsDescList.push({channel: 'color', channelType: 'value', desc: `The color of the ${callMarkToText(track.appearance.details.mark)} is ${color}.`} as AltEncodingDesc);
         } else {
             track.appearance.details.encodingsDescList.push({channel: 'color', channelType: 'value', desc: `The color is ${color}.`} as AltEncodingDesc);
         }  

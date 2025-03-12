@@ -1,5 +1,5 @@
 import type { AltTrackSingle, AltTrackOverlaidByMark, AltTrackOverlaidByData, AltTrackOverlaidByDataInd } from '@altgosling/schema/alt-gosling-schema';
-import { arrayToString, markToText } from './../util';
+import { arrayToString, callMarkToText } from './../util';
 
 export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, markIndex?: number): string {
     let _mark;
@@ -56,8 +56,8 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     if (_mark === 'rule' && _allEncodings.includes('y')) {
         return `${layoutDesc}chart with horizontal lines`;
     }
-    if (markToText.get(_mark)) {
-        return `${layoutDesc}chart with ${markToText.get(_mark)}`;
+    if (callMarkToText(_mark)) {
+        return `${layoutDesc}chart with ${callMarkToText(_mark)}`;
     }
     
     return `unknown chart`;
