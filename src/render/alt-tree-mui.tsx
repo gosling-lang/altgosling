@@ -357,7 +357,11 @@ function markNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode
         mark = `The mark used is ${t.appearance.details.mark}.`;
     }
     if (t.alttype === 'ov-mark') {
-        mark = `The marks used are ${arrayToString([t.appearance.details.mark, ...t.appearance.details.markByTrack])}.`;
+        if (t.appearance.details.markByTrack) {
+            mark = `The marks used are ${arrayToString([t.appearance.details.mark, ...t.appearance.details.markByTrack])}.`;
+        } else {         
+            mark = `The mark used is ${t.appearance.details.mark}.`;
+        }
     } else {
         return emptyNode();
     }
