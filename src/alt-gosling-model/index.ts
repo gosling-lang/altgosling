@@ -33,6 +33,8 @@ export function updateAlt(
     flatTileData: Datum[],
     theme?: Theme,
     simplifyColorNames?: boolean,
+    customColorNames?: (hex: string) => string
 ): AltGoslingSpec {
-    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData, theme, simplifyColorNames);
+    const colorOpt = { simplifyColorNames, customColorNames };
+    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData, theme, colorOpt);
 }

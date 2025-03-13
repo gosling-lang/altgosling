@@ -6,7 +6,6 @@ import type { ColorOption } from '.';
 export function getColorName(color: string, opt: ColorOption = {}): string {
     color = color.replace('#', '');
     if (opt.customColorNames) {
-        console.log('here');
         return opt.customColorNames(color);
     } else if (!opt.simplifyColorNames) {
         return GetColorName(color).toLowerCase();
