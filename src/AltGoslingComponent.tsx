@@ -45,6 +45,7 @@ interface AltGoslingCompProps extends GoslingCompProps {
     download?: boolean;
     dataTableRoundValues?: boolean;
     simplifyColorNames?: boolean;
+    customColorNames?: (hex: string) => string;
     onAltGoslingSpecUpdate?: (altSpec: AltGoslingSpec) => void;
 }
 
@@ -176,7 +177,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
                 console.error(message, details);
             }
             // Get AltGoslingSpec
-            const altSpec = getAlt(specProcessed, props.simplifyColorNames);
+            const altSpec = getAlt(specProcessed, props.simplifyColorNames, props.customColorNames);
             // Set dimensions
             setGoslingDimensions({ width: specProcessed._assignedWidth, height: specProcessed._assignedHeight });
             // Update current alt
@@ -234,7 +235,7 @@ export const AltGoslingComponent = (props: AltGoslingCompProps) => {
         // update altpanel
         const data = rawData;
         if (data) {
-            const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data, props.theme, props.simplifyColorNames);
+            const updatedAlt = updateAlt(AltPanels.current[selectedAltPanel].data, data.id, data.data, props.theme, props.simplifyColorNames, props.customColorNames);
             props.onAltGoslingSpecUpdate?.(updatedAlt);
             updateAltPanelDisplay(updatedAlt);
 

@@ -1,11 +1,12 @@
 import type { Datum, AltGoslingSpec, AltTrack, AltTrackDataFields, AltDataStatistics } from '@altgosling/schema/alt-gosling-schema';
 
 import { addTrackDataDescriptionsTrack } from '../alt-text/text-data';
-import { addTrackDescription, addGlobalDescription} from '../alt-text/text-global';
+import { addTrackDescription, addGlobalDescription } from '../alt-text/text-global';
 import type { Theme } from 'gosling.js';
+import type { ColorOption } from '../alt-text';
 
 export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dataFields?: AltTrackDataFields): AltDataStatistics {
-    const altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData};
+    const altDataStatistics: AltDataStatistics = { id: id, flatTileData: flatTileData };
 
     if (!dataFields) {
         return altDataStatistics;
@@ -15,7 +16,7 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
             const genomicField = dataFields.genomicField as string;
             try {
                 const genomicValues = (flatTileData.map(d => d[genomicField]) as unknown as number[]).filter(d => !isNaN(d));
-                altDataStatistics.genomicMin  = Math.min(...genomicValues);
+                altDataStatistics.genomicMin = Math.min(...genomicValues);
                 altDataStatistics.genomicMax = Math.max(...genomicValues);
             } catch (e) {
                 console.warn(e);
@@ -43,7 +44,7 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 console.warn(e);
             }
         }
-    
+
         if (dataFields.categoryField !== undefined) {
             const categoryField = dataFields.categoryField as string;
             const categoryValues = flatTileData.map(d => d[categoryField]);
@@ -52,32 +53,32 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
 
             const genomicField = dataFields.genomicField as string;
             const valueField = dataFields.valueField as string;
-            
+
             if (genomicField && valueField) {
                 try {
                     const categoryValues = flatTileData.map(d => d[categoryField]);
                     const categories = [... new Set(categoryValues)] as unknown as string[];
-    
+
                     const categoryMinMaxWG: { [key: string]: (number | number[])[] } = {};
-    
+
                     const highestCategory = [] as string[];
-    
+
                     for (const category of categories) {
                         const dataCat = flatTileData.filter(d => d[categoryField] === category);
                         const valueValuesCat = (dataCat.map(d => d[valueField]) as unknown as number[]).filter(d => !isNaN(d));
                         const valueMinCat = Math.min(...valueValuesCat);
                         const valueMaxCat = Math.max(...valueValuesCat);
-    
+
                         const valueMinCatGenomic = (dataCat.filter(d => d[valueField] == valueMinCat).map(d => d[genomicField]) as unknown as number[]);
                         const valueMaxCatGenomic = (dataCat.filter(d => d[valueField] == valueMaxCat).map(d => d[genomicField]) as unknown as number[]);
-    
+
                         categoryMinMaxWG[category] = [valueMinCat, valueMinCatGenomic, valueMaxCat, valueMaxCatGenomic];
-    
+
                         if (valueMaxCat === altDataStatistics.valueMax) {
                             highestCategory.push(category);
                         }
                     }
-                    
+
                     altDataStatistics.categoryMinMaxWG = categoryMinMaxWG;
                     if (highestCategory.length > 0) {
                         altDataStatistics.highestCategory = highestCategory;
@@ -87,7 +88,7 @@ export function altRetrieveDataStatistics(id: string, flatTileData: Datum[], dat
                 }
             }
         }
-        return(altDataStatistics);
+        return (altDataStatistics);
     }
 }
 
@@ -97,7 +98,7 @@ export function altUpdateSpecWithData(
     id: string,
     flatTileData: Datum[],
     theme?: Theme,
-    simplifyColorNames?: boolean,
+    colorOpt?: ColorOption
 ): AltGoslingSpec {
 
     const includePosition = altGoslingSpec.tracks.length > 1;
@@ -119,7 +120,7 @@ export function altUpdateSpecWithData(
                 track.data.details.dataStatistics = altDataStatistics;
 
                 // update description
-                addTrackDataDescriptionsTrack(track, theme, simplifyColorNames);
+                addTrackDataDescriptionsTrack(track, theme, colorOpt);
                 addTrackDescription(track, includePosition);
             }
         }
@@ -137,12 +138,12 @@ export function altUpdateSpecWithData(
                     overlaidDataTrack.data.details.dataStatistics = altDataStatistics;
 
                     // update description
-                    addTrackDataDescriptionsTrack(track, theme, simplifyColorNames);
+                    addTrackDataDescriptionsTrack(track, theme, colorOpt);
                     addTrackDescription(track, includePosition);
                 }
             }
         }
     }
     addGlobalDescription(altGoslingSpec, false);
-    return(altGoslingSpec);
+    return (altGoslingSpec);
 }

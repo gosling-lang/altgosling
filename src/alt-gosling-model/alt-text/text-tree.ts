@@ -2,10 +2,11 @@ import type { AltEncodingDesc, AltEncodingSeparated, AltGoslingSpec, AltTrackOve
 import { arrayToString, markToText, channelToText, capDesc } from '../util';
 
 import { getColorName } from './color';
+import type { ColorOption } from '.';
 
-export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec, simplifyColorNames?: boolean) {
+export function addTreeDescriptions(altGoslingSpec: AltGoslingSpec, colorOpt: ColorOption) {
     addTrackPositionDescriptions(altGoslingSpec);
-    addTrackAppearanceDescriptions(altGoslingSpec, simplifyColorNames);
+    addTrackAppearanceDescriptions(altGoslingSpec, colorOpt);
 }
 
 function addTrackPositionDescriptions(altGoslingSpec: AltGoslingSpec) {
@@ -28,7 +29,7 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
     let firstPlace = '';
     let secondPlace = '';
     let desc = '';
-    
+
     let nCircular = 0;
     if (altGoslingSpec.tracks[0].appearance.details.layout === 'circular') {
         nCircular += 1;
@@ -38,11 +39,11 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
     }
 
     if (nCircular == 2) {
-        if (JSON.stringify(altGoslingSpec.composition.counter.serialCircular).indexOf(JSON.stringify([0,1])) !== -1 ) {
+        if (JSON.stringify(altGoslingSpec.composition.counter.serialCircular).indexOf(JSON.stringify([0, 1])) !== -1) {
             firstPlace = 'left half of ring';
             secondPlace = 'right half of ring';
             desc = 'Two circular tracks form one ring together, each forming half of the ring.';
-        } else if (JSON.stringify(altGoslingSpec.composition.counter.parallelCircular).indexOf(JSON.stringify([0,1])) !== -1 ) {
+        } else if (JSON.stringify(altGoslingSpec.composition.counter.parallelCircular).indexOf(JSON.stringify([0, 1])) !== -1) {
             firstPlace = 'outer ring';
             secondPlace = 'inner ring';
             desc = 'Two circular tracks form two rings, one around the other.';
@@ -58,7 +59,7 @@ function addTrackPositionDescriptionsTwo(altGoslingSpec: AltGoslingSpec) {
             desc = 'Two circular tracks are shown below each other.';
         }
     }
-   else {
+    else {
         if (nCircular == 1) {
             if (altGoslingSpec.tracks[0].appearance.details.layout === 'circular') {
                 desc = 'A circular and a linear track';
@@ -104,13 +105,13 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
 
         const rowLengths = Object.keys(altGoslingSpec.composition.counter.matrix).map(t => Object.keys(altGoslingSpec.composition.counter.matrix[t as unknown as number]).length);
         const rowLengthsUnique = [...new Set(rowLengths)];
-   
+
         if (rowLengthsUnique.length == 1) {
             desc = desc.concat(' Each row has ' + rowLengthsUnique[0] + ' tracks next to each other.');
         } else if (rowLengthsUnique.length == 2) {
             const rowsWithFirstLength = [] as number[];
             const rowsWithSecondLength = [] as number[];
-            for(let i = 0; i < rowLengths.length; i++) {
+            for (let i = 0; i < rowLengths.length; i++) {
                 if (rowLengths[i] === rowLengthsUnique[0]) {
                     rowsWithFirstLength.push(i);
                 } else {
@@ -118,10 +119,10 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
                 }
             }
             if (0 in rowsWithFirstLength) {
-                desc = desc.concat(' Row(s) ' + arrayToString(rowsWithFirstLength.map(t => t+1)) + ' have ' + rowLengthsUnique[0] + ' column(s) each.');
+                desc = desc.concat(' Row(s) ' + arrayToString(rowsWithFirstLength.map(t => t + 1)) + ' have ' + rowLengthsUnique[0] + ' column(s) each.');
                 desc = desc.concat(' The other rows have ' + rowLengthsUnique[1] + ' column(s) each.');
             } else {
-                desc = desc.concat(' Row(s) ' + arrayToString(rowsWithSecondLength.map(t => t+1)) + ' have ' + rowLengthsUnique[1] + ' column(s) each.');
+                desc = desc.concat(' Row(s) ' + arrayToString(rowsWithSecondLength.map(t => t + 1)) + ' have ' + rowLengthsUnique[1] + ' column(s) each.');
                 desc = desc.concat(' The other rows have ' + rowLengthsUnique[0] + ' column(s) each.');
             }
         }
@@ -183,7 +184,7 @@ function addTrackPositionDescriptionsMulti(altGoslingSpec: AltGoslingSpec) {
 
 
 
-function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, simplifyColorNames?: boolean) {
+function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, colorOpt: ColorOption) {
     for (const i in altGoslingSpec.tracks) {
         const track = altGoslingSpec.tracks[i];
 
@@ -195,8 +196,8 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, simplify
             if (track.title) {
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
             }
-    
-            const encodingDescriptions = addEncodingDescriptions(track, simplifyColorNames);
+
+            const encodingDescriptions = addEncodingDescriptions(track, colorOpt);
 
             desc = desc.concat(` ${encodingDescriptions.desc}`);
 
@@ -208,7 +209,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, simplify
                     desc = desc.concat(` The x and y-axes have brushes, linking to the other charts.`);
                 }
             }
-        
+
             track.appearance.description = desc;
             track.appearance.details.encodingsDescList = encodingDescriptions.descList;
         } else if (track.alttype === 'ov-mark') {
@@ -220,7 +221,7 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, simplify
                 desc = desc.concat(` Chart is titled '${track.title}'.`);
             }
 
-            const encodingDescriptions = addEncodingDescriptions(track, simplifyColorNames);
+            const encodingDescriptions = addEncodingDescriptions(track, colorOpt);
 
             desc = desc.concat(' ' + encodingDescriptions.desc);
 
@@ -241,10 +242,10 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, simplify
                 let descTrack = '';
                 descTrack = descTrack.concat(`${capDesc(overlaidDataTrack.charttype)}.`);
 
-                const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack, simplifyColorNames);
+                const encodingDescriptions = addEncodingDescriptions(overlaidDataTrack, colorOpt);
 
                 descTrack = descTrack.concat(' ' + encodingDescriptions.desc);
-            
+
                 overlaidDataTrack.appearance.description = descTrack;
                 overlaidDataTrack.appearance.details.encodingsDescList = encodingDescriptions.descList;
             }
@@ -252,31 +253,31 @@ function addTrackAppearanceDescriptions(altGoslingSpec: AltGoslingSpec, simplify
     }
 }
 
-function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, simplifyColorNames?: boolean) {
+function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark | AltTrackOverlaidByDataInd, colorOpt: ColorOption) {
     let mark;
     let marks;
     let markText;
-    
+
     if (track.alttype === 'single' || (track.alttype === 'ov-mark' && track.appearance.details.mark) || track.alttype === 'ov-data-ind') {
         mark = track.appearance.details.mark as string;
         markText = markToText.get(mark) as string;
-        const {descGenomic, descQuantitative, descNominal, descValue, descList} = addEncodingDescriptionsAll(markText, track.appearance.details.encodings, simplifyColorNames);
+        const { descGenomic, descQuantitative, descNominal, descValue, descList } = addEncodingDescriptionsAll(markText, track.appearance.details.encodings, colorOpt);
         const desc = [descGenomic, descQuantitative, descNominal, descValue].join(' ');
-        return {desc: desc, descList: descList};
+        return { desc: desc, descList: descList };
     } else {
         marks = track.appearance.details.markByTrack as string[];
         const descriptionsList = [];
 
         markText = arrayToString(marks.filter(m => m !== undefined).map(m => markToText.get(m)).filter(m => m !== undefined));
-        descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodings, simplifyColorNames));
+        descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodings, colorOpt));
 
         for (let i = 0; i < marks.length; i++) {
             if (marks[i]) {
                 markText = markToText.get(marks[i]) as string;
-                descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodingsByTrack[i], simplifyColorNames));
+                descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodingsByTrack[i], colorOpt));
             }
         }
-        
+
         const descGenomicAll = descriptionsList.map(d => d.descGenomic).filter(d => d !== '').join(' ');
         const descQuantitativeAll = descriptionsList.map(d => d.descQuantitative).filter(d => d !== '').join(' ');
         const descNominalAll = descriptionsList.map(d => d.descNominal).filter(d => d !== '').join(' ');
@@ -298,11 +299,11 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
                 channelType: descListAllFlat.filter(item => item.channel === descListDuplicate).map(item => item.channelType).join(' ')
             } as AltEncodingDesc);
         }
-        return {desc: desc, descList: descListAllFlat};
+        return { desc: desc, descList: descListAllFlat };
     }
 }
 
-function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSeparated, simplifyColorNames?: boolean) {
+function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSeparated, colorOpt: ColorOption) {
     let descGenomic = '';
     let descQuantitative = '';
     let descNominal = '';
@@ -507,7 +508,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             // if the color is denoted as a hex code, get the name of the color value
             if (typeof e.details.value === 'string') {
                 if (e.details.value[0] === '#') {
-                    e.details.value = getColorName(e.details.value, simplifyColorNames);
+                    e.details.value = getColorName(e.details.value, colorOpt);
                 }
             }
             descValue = descValue.concat(`The color of the ${markText} is ${e.details.value}.`);
@@ -521,7 +522,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
 
     // const desc = ''.concat(descGenomic + ' ' + descQuantitative + ' ' + descNominal + ' ' + descValue);
 
-    return {descGenomic: descGenomic, descQuantitative: descQuantitative, descNominal: descNominal, descValue: descValue, descList: descList};
+    return { descGenomic: descGenomic, descQuantitative: descQuantitative, descNominal: descNominal, descValue: descValue, descList: descList };
 }
 
 
@@ -530,7 +531,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
 
 // function addEncodingDescriptions(track: AltTrackSingle) {
 //     const mark = track.appearance.details.mark as string;
-    
+
 //     let descGenomic = '';
 //     let descQuantitative = '';
 //     let descNominal = '';

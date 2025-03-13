@@ -1,22 +1,27 @@
 import type { GoslingSpec, Datum } from '@altgosling/schema/gosling.schema';
-import type {  AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
+import type { AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAltSpec } from './alt-structure/alt-from-spec';
 import { treeText, dataText } from './alt-text';
 import { altUpdateSpecWithData } from './alt-data/alt-from-data';
 import type { Theme } from 'gosling.js';
 
+
 // this function is only called once every time a spec is compiled
 export function getAlt(
     specProcessed: GoslingSpec,
     simplifyColorNames?: boolean,
+    customColorNames?: (hex: string) => string
 ): AltGoslingSpec {
     // get altSpec
     const altSpec = getAltSpec(specProcessed) as AltGoslingSpec;
 
+    // options for color names
+    const colorOpt = { simplifyColorNames, customColorNames };
+
     // add descriptions
-    treeText(altSpec, simplifyColorNames);
-    dataText(altSpec, simplifyColorNames);
+    treeText(altSpec, colorOpt);
+    dataText(altSpec, colorOpt);
 
     return altSpec;
 }
@@ -28,6 +33,8 @@ export function updateAlt(
     flatTileData: Datum[],
     theme?: Theme,
     simplifyColorNames?: boolean,
+    customColorNames?: (hex: string) => string
 ): AltGoslingSpec {
-    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData, theme, simplifyColorNames);
+    const colorOpt = { simplifyColorNames, customColorNames };
+    return altUpdateSpecWithData(altGoslingSpec, id, flatTileData, theme, colorOpt);
 }
