@@ -71,7 +71,7 @@ export function capDesc(desc: string): string {
 /**
  * Mapping from mark name to a natural language description of said mark
  */
-const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles'], ['text', 'text'], ['rule', 'lines'], ['brush', 'with linked view']]);
+const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'left triangles'], ['triangleRight', 'right triangles'], ['triangleBottom', 'triangles'], ['text', 'text'], ['rule', 'lines'], ['brush', 'with linked view']]);
 
 /**
  * Use markToText map. If mark is not in map, return the mark as is.
