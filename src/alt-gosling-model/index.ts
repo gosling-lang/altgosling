@@ -1,5 +1,5 @@
 import type { GoslingSpec, Datum } from '@altgosling/schema/gosling.schema';
-import type {  AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
+import type { AltGoslingSpec } from '@altgosling/schema/alt-gosling-schema';
 
 import { getAltSpec } from './alt-structure/alt-from-spec';
 import { treeText, dataText } from './alt-text';
@@ -11,8 +11,10 @@ export function getAlt(
     specProcessed: GoslingSpec,
     simplifyColorNames?: boolean,
 ): AltGoslingSpec {
+    const specProcessedCopy = JSON.parse(JSON.stringify(specProcessed));
+
     // get altSpec
-    const altSpec = getAltSpec(specProcessed) as AltGoslingSpec;
+    const altSpec = getAltSpec(specProcessedCopy) as AltGoslingSpec;
 
     // add descriptions
     treeText(altSpec, simplifyColorNames);
