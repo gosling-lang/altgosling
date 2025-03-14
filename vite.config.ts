@@ -30,6 +30,22 @@ export default defineConfig(({ mode }) => {
       }
     };
   }
+  if (mode === 'test') {
+    return {
+      resolve: {
+        alias: {
+          '@altgosling': path.resolve(__dirname, './src'),
+          '@altgosling/alt-gosling-schema': path.resolve(__dirname, './src/schema/modules/alt-gosling-schema.ts'),
+        },
+      },
+      test: {
+        include: ['tests/**'],
+        globals: true,
+        environment: 'jsdom',
+      },
+      plugins: []
+    };
+  }
   return {
     build: {
       lib: {
