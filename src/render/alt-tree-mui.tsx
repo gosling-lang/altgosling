@@ -274,7 +274,7 @@ function trackNodeMulti(t: AltTrack): AltNode {
     let structure;
 
     if (t.alttype === 'single' || t.alttype === 'ov-mark') {
-        structure = new AltNode(`Track ${(t.position.details.trackNumber + 1).toString()} (${t.position.description}) (${t.charttype})`, 'T-'+uid, true, true, 'altnodelist', [
+        structure = new AltNode(`Track ${(t.position.details.trackNumber + 1).toString()} (${t.position.description}) (${arrayToString(t.charttype)})`, 'T-'+uid, true, true, 'altnodelist', [
             new AltNode('Title', 'T-'+uid+'-det-title', false, true, 'value', t.title),
             new AltNode('Position', 'T-'+uid+'-det-pos', true, true, 'altnodelist', [
                 new AltNode('Description', 'T-'+uid+'-det-pos-desc', true, false, 'value', t.position.description),
@@ -357,7 +357,11 @@ function markNode(t: AltTrack | AltTrackOverlaidByDataInd, uid: string): AltNode
         mark = `The mark used is ${t.appearance.details.mark}.`;
     }
     if (t.alttype === 'ov-mark') {
-        mark = `The marks used are ${arrayToString([t.appearance.details.mark, ...t.appearance.details.markByTrack])}.`;
+        if (t.appearance.details.markByTrack) {
+            mark = `The marks used are ${arrayToString([t.appearance.details.mark, ...t.appearance.details.markByTrack])}.`;
+        } else {         
+            mark = `The mark used is ${t.appearance.details.mark}.`;
+        }
     } else {
         return emptyNode();
     }

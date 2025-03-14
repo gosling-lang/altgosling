@@ -38,11 +38,14 @@ export function attributeExistsReturn(object: any, attribute: any) {
 
 /**
  * Function for concatination an array into a natural language sentence
- * @param arr array with elements of string or number
+ * @param arr string or array with elements of string or number
  * @returns string with elements concatenated with commas and 'and'
  * E.g., if arr is ['first', 'second', 'third'], this will return 'first, second and third'
  */
-export function arrayToString(arr: (string | number | undefined)[]): string {
+export function arrayToString(arr: string | (string | number | undefined)[]): string {
+    if (typeof arr === 'string') {
+        return arr;
+    }
     arr = arr.filter(a => a !== undefined);
     if (arr.length === 0) {
         return '';
@@ -68,12 +71,26 @@ export function capDesc(desc: string): string {
 /**
  * Mapping from mark name to a natural language description of said mark
  */
-export const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'triangles'], ['triangleRight', 'triangles'], ['triangleBottom', 'triangles'], ['text', 'text'], ['rule', 'lines'], ['brush', 'with linked view']]);
+const markToText = new Map([['point', 'points'], ['line', 'lines'], ['bar', 'bars'], ['rect', 'rectangles'], ['area', 'area displayed'], ['withinLink', 'connections'], ['betweenLink', 'connections'], ['triangleLeft', 'left triangles'], ['triangleRight', 'right triangles'], ['triangleBottom', 'triangles'], ['text', 'text'], ['rule', 'lines'], ['brush', 'with linked view']]);
+
+/**
+ * Use markToText map. If mark is not in map, return the mark as is.
+ */
+export function callMarkToText(mark: string) {
+    return markToText.get(mark) ?? mark;
+}
 
 /**
  * Mapping of channel name to a natural language description of said channel
  */
-export const channelToText = new Map([['y', 'height'], ['color', 'color'], ['strokeWidth', 'stroke width'], ['opacity', 'opacity'], ['text', 'text'], ['size', 'size']]);
+const channelToText = new Map([['y', 'height'], ['color', 'color'], ['strokeWidth', 'stroke width'], ['opacity', 'opacity'], ['text', 'text'], ['size', 'size']]);
+
+/**
+ * Use channelToText map. If channel is not in map, return the channel as is.
+ */
+export function callChannelToText(channel: string) {
+    return channelToText.get(channel) ?? channel;
+}
 
 /**
  * Function to remove the suffix 'chr' from a string if present

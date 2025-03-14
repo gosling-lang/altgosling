@@ -90,8 +90,13 @@ function determineStructure(
             } else {
                 // otherwise treat every track as a single track
                 for (let i = 0; i < specPart.tracks.length; i++) {
-                    const track =  specPart.tracks[i] as SingleTrack;
-                    altSpec.tracks[counter.nTracks] = altSingleTrack(track, altParentValuesCopy, counter);
+                    const track =  specPart.tracks[i];
+
+                    if (IsOverlaidTrack(track)) {
+                        altSpec.tracks[counter.nTracks] = altOverlaidTrack(track as OverlaidTrack, altParentValuesCopy, counter);
+                    } else {
+                        altSpec.tracks[counter.nTracks] = altSingleTrack(track as SingleTrack, altParentValuesCopy, counter);
+                    }
                     if (counter.nTracks > 0) {
                         counter.allPositions = [...counter.allPositions, [counter.rowViews, counter.colViews]];
                     }
