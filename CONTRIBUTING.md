@@ -33,6 +33,15 @@ yarn pack
 You can then add this .tgz file with pnpm, or refer to it as follows:
 `"gosling.js": "file:<relative path to file>"`
 
+## Releasing a new version
+
+GitHub Action handles bumping the version of AltGosling. The following commands will automatically increase the version number and release the new version in the NPM server.
+
+```sh
+pnpm version --patch # or --minor or --major
+git push origin master --tags
+```
+
 ## Structure
 
 This project consists of three components
