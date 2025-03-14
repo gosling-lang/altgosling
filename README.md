@@ -19,7 +19,7 @@ npm install altgosling
 ## Quick Start with React
 The fastest way to get AltGosling running is shown below.
 
-```bash
+```ts
 import React from 'react';
 import gosling from 'gosling.js';
 import { AltGoslingComponent } from 'altgosling';
