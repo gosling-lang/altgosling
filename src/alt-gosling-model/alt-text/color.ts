@@ -49,6 +49,8 @@ const colors = [
     { name: 'dark orange', hex: '#D45E00', rgb: [212, 94, 0] },
     { name: 'sky blue', hex: '#57B4E9', rgb: [87, 180, 233] },
     { name: 'yellow', hex: '#EFE441', rgb: [239, 228, 65] },
+    { name: 'purple', hex: '#B59BF2', rgb: [181, 155, 242] },
+    { name: 'green', hex: '#85B348', rgb: [133, 179, 72] },
 ];
 
 

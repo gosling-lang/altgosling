@@ -471,7 +471,6 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
         }
         else {
             const nominalEncodingsINames = nominalEncodingsI.map(e => callChannelToText(e)) as string[];
-            console.log("nominalEncodingsINames", nominalEncodingsI, nominalEncodingsINames);
             descNominal = descNominal.concat(`The categories are shown with the ${arrayToString(nominalEncodingsINames)} of the ${markText}.`);
             for (const q of nominalEncodingsI) {
                 descList.push({
