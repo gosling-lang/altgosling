@@ -32,7 +32,7 @@ jobs:
                   pnpm build
             - uses: actions/upload-pages-artifact@v3
               with:
-                  path: dist
+                  path: demo 
 
     Deploy:
         environment:

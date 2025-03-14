@@ -28,6 +28,7 @@
     "dev": "vite",
     "build-only": "vite build",
     "build": "tsc && vite build",
+    "build-demo": "vite build --mode demo",
     "build-lib": "vite build --mode lib",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
