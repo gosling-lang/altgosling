@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
-      base: '/',
+      base: '/altgosling/',
       plugins: [react()],
       resolve: {
         alias: {
