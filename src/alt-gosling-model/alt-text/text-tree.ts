@@ -259,7 +259,7 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
     
     if (track.alttype === 'single' || (track.alttype === 'ov-mark' && track.appearance.details.mark) || track.alttype === 'ov-data-ind') {
         mark = track.appearance.details.mark as string;
-        markText = callMarkToText(mark) as string;
+        markText = callMarkToText(mark);
         const {descGenomic, descQuantitative, descNominal, descValue, descList} = addEncodingDescriptionsAll(markText, track.appearance.details.encodings, simplifyColorNames);
         const desc = [descGenomic, descQuantitative, descNominal, descValue].join(' ');
         return {desc: desc, descList: descList};
@@ -272,7 +272,7 @@ function addEncodingDescriptions(track: AltTrackSingle | AltTrackOverlaidByMark 
 
         for (let i = 0; i < marks.length; i++) {
             if (marks[i]) {
-                markText = callMarkToText(marks[i]) as string;
+                markText = callMarkToText(marks[i]);
                 descriptionsList.push(addEncodingDescriptionsAll(markText, track.appearance.details.encodingsByTrack[i], simplifyColorNames));
             }
         }
@@ -463,7 +463,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             } as AltEncodingDesc);
             for (const q of nominalEncodingsINames) {
                 descList.push({
-                    channel: callChannelToText(q) as string,
+                    channel: callChannelToText(q),
                     desc: `The ${callChannelToText(q)} of the ${markText} show the different categories.`,
                     channelType: 'nominal'
                 } as AltEncodingDesc);
@@ -475,7 +475,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
             descNominal = descNominal.concat(`The categories are shown with the ${arrayToString(nominalEncodingsINames)} of the ${markText}.`);
             for (const q of nominalEncodingsI) {
                 descList.push({
-                    channel: callChannelToText(q) as string,
+                    channel: callChannelToText(q),
                     desc: `The ${callChannelToText(q)} of the ${markText} show the different categories.`,
                     channelType: 'nominal'
                 } as AltEncodingDesc);
@@ -494,7 +494,7 @@ function addEncodingDescriptionsAll(markText: string, encodings: AltEncodingSepa
         else {
             descNominal = descNominal.concat(`The ${callChannelToText(nominalEncodingsI[0])} of the ${markText} indicates the different categories.`);
             descList.push({
-                channel: callChannelToText(nominalEncodingsI[0]) as string,
+                channel: callChannelToText(nominalEncodingsI[0]),
                 desc: `The ${callChannelToText(nominalEncodingsI[0])} of the ${markText} show the different categories.`,
                 channelType: 'nominal'
             } as AltEncodingDesc);
