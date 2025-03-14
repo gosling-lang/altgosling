@@ -5,7 +5,7 @@
   "license": "MIT",
   "homepage": "https://gosling-lang.github.io/altgosling/",
   "type": "module",
-  "packageManager": "pnpm@8.15.4",
+  "packageManager": "pnpm@8.7.6",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",
   "exports": {
