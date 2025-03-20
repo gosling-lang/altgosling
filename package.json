@@ -1,7 +1,7 @@
 {
   "name": "altgosling",
   "author": "Thomas C. Smits",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "homepage": "https://gosling-lang.github.io/altgosling/",
   "type": "module",
