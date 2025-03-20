@@ -10,7 +10,7 @@ import { IsOverlaidTracks, IsOverlaidTrack, IsChannelDeep, IsChannelValue } from
 import { SUPPORTED_CHANNELS } from '@altgosling/schema/supported_channels';
 
 import { attributeExists, attributeExistsReturn } from '../util';
-import { determineSpecialCases, determineOverlaidByDataCases } from './chart-types';
+import { determineSpecialCases, determineOverlaidByMarkCases, determineOverlaidByDataCases } from './chart-types';
 // @ts-expect-error no type definition
 import { _convertToFlatTracks, _spreadTracksByData } from 'gosling.js/utils';
 
@@ -531,7 +531,7 @@ function altOverlaidTrack(
     altTrack.data = data;
     
     // determine type if possible
-    altTrack.charttype = singleTracks.map(t => t.charttype);
+    altTrack.charttype = determineOverlaidByMarkCases(singleTracks.map(t => t.charttype));
 
     // empty description, to be filled in.
     altTrack.description = '';
