@@ -45,7 +45,7 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _quantitativeEncodings.includes('color')) {
         return `${layoutDesc}heat map`;
     }
-    if (_mark === 'rect' && _dataType !== 'beddb' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _nominalEncodings.includes('color')) {
+    if (_mark === 'rect' && ['csv', 'json'].includes(_dataType) && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _nominalEncodings.includes('color')) {
         return `${layoutDesc}ideogram`;
     }
     if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _dataType === 'beddb') {
