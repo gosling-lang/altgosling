@@ -8,6 +8,7 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     } else {
         _mark = altTrack.appearance.details.mark;
     }
+    let _dataType = altTrack.data.details.data.type;
     const _genomicEncodings = altTrack.appearance.details.encodings.encodingDeepGenomic.map(o => o.name);
     const _quantitativeEncodings = altTrack.appearance.details.encodings.encodingDeepQuantitative.map(o => o.name);
     const _nominalEncodings = altTrack.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
@@ -44,8 +45,17 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _quantitativeEncodings.includes('color')) {
         return `${layoutDesc}heat map`;
     }
-    if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _nominalEncodings.includes('color')) {
+    if (_mark === 'rect' && ['csv', 'json'].includes(_dataType) && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _nominalEncodings.includes('color')) {
         return `${layoutDesc}ideogram`;
+    }
+    if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _dataType === 'beddb') {
+        return `${layoutDesc}genomic range annotation track`;
+    }
+    if (_mark === 'triangleRight' && _genomicEncodings.includes('x') && !_genomicEncodings.includes('y') && _dataType === 'beddb') {
+        return `${layoutDesc}genomic position annotation track`;
+    }
+    if (_mark === 'triangleLeft' && _genomicEncodings.includes('x') && !_genomicEncodings.includes('y') && _dataType === 'beddb') {
+        return `${layoutDesc}genomic position annotation track`;
     }
     if (_mark === 'rule' && _allEncodings.includes('x') && _allEncodings.includes('y')) {
         return `${layoutDesc}chart with horizontal and vertical lines`;
@@ -61,6 +71,51 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     }
     
     return `unknown chart`;
+}
+
+export function determineOverlaidByMarkCases(specialCases: string[]): string[] {
+    specialCases = [...new Set(specialCases)];
+
+    // special case: genome annotation track with text
+    if (specialCases.includes('genomic range annotation track') && specialCases.includes('genomic position annotation track')) {
+        specialCases = specialCases.filter(caseType => caseType !== 'genomic position annotation track');
+    }
+
+    if (specialCases.includes('genomic range annotation track') || specialCases.includes('genomic position annotation track')) {
+        if (specialCases.includes('chart with text')) {
+            specialCases = specialCases.filter(caseType => caseType !== 'chart with text'
+            ).map(caseType => 
+                caseType === 'genomic range annotation track' ? 'genomic range annotation track with text' : caseType
+            ).map(caseType => 
+                caseType === 'genomic position annotation track' ? 'genomic position annotation track with text' : caseType
+            );
+        }
+        if (specialCases.includes('chart with vertical lines')) {
+            specialCases = specialCases.filter(caseType => caseType !== 'chart with vertical lines');
+        }
+    }
+
+    // special case: both left and right triangles
+    if (specialCases.includes('chart with left triangles') && specialCases.includes('chart with right triangles')) {
+        specialCases = specialCases.filter(caseType => caseType !== 'chart with left triangles');
+        specialCases = specialCases.filter(caseType => caseType !== 'chart with right triangles');
+        specialCases.push('chart with left and right triangles');
+    }
+
+    // concatenate all the 'chart with <mark>' cases
+    const chartsWithMark = [] as string[];
+    for (const chart of specialCases) {
+        if (chart.includes('chart with')) {
+            specialCases = specialCases.filter(caseType => caseType !== chart);
+            const mark = chart.split('chart with ')[1];
+            chartsWithMark.push(mark);
+        }
+    }
+    if (chartsWithMark.length > 0) {
+        specialCases.push(`chart with ${arrayToString(chartsWithMark)}`);
+    }
+
+    return specialCases;
 }
 
 export function determineOverlaidByDataCases(altTrack: AltTrackOverlaidByData): string {
