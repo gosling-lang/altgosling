@@ -49,13 +49,13 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
         return `${layoutDesc}ideogram`;
     }
     if (_mark === 'rect' && _genomicEncodings.includes('x') && _genomicEncodings.includes('xe') && _dataType === 'beddb') {
-        return `${layoutDesc}genome annotation track`;
+        return `${layoutDesc}genomic range annotation track`;
     }
     if (_mark === 'triangleRight' && _genomicEncodings.includes('x') && !_genomicEncodings.includes('y') && _dataType === 'beddb') {
-        return `${layoutDesc}genome annotation track`;
+        return `${layoutDesc}genomic position annotation track`;
     }
     if (_mark === 'triangleLeft' && _genomicEncodings.includes('x') && !_genomicEncodings.includes('y') && _dataType === 'beddb') {
-        return `${layoutDesc}genome annotation track`;
+        return `${layoutDesc}genomic position annotation track`;
     }
     if (_mark === 'rule' && _allEncodings.includes('x') && _allEncodings.includes('y')) {
         return `${layoutDesc}chart with horizontal and vertical lines`;
@@ -77,11 +77,17 @@ export function determineOverlaidByMarkCases(specialCases: string[]): string[] {
     specialCases = [...new Set(specialCases)];
 
     // special case: genome annotation track with text
-    if (specialCases.includes('genome annotation track')) {
+    if (specialCases.includes('genomic range annotation track') && specialCases.includes('genomic position annotation track')) {
+        specialCases = specialCases.filter(caseType => caseType !== 'genomic position annotation track');
+    }
+
+    if (specialCases.includes('genomic range annotation track') || specialCases.includes('genomic position annotation track')) {
         if (specialCases.includes('chart with text')) {
-            specialCases = specialCases.filter(caseType => caseType !== 'chart with text');
-            specialCases = specialCases.map(caseType => 
-                caseType === 'genome annotation track' ? 'genome annotation track with text' : caseType
+            specialCases = specialCases.filter(caseType => caseType !== 'chart with text'
+            ).map(caseType => 
+                caseType === 'genomic range annotation track' ? 'genomic range annotation track with text' : caseType
+            ).map(caseType => 
+                caseType === 'genomic position annotation track' ? 'genomic position annotation track with text' : caseType
             );
         }
         if (specialCases.includes('chart with vertical lines')) {
