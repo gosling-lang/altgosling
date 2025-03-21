@@ -103,16 +103,25 @@ export function determineOverlaidByMarkCases(specialCases: string[]): string[] {
     }
 
     // concatenate all the 'chart with <mark>' cases
-    const chartsWithMark = [] as string[];
+    // split out circular charts
+    const linearChartsWithMark = [] as string[];
+    const circularChartsWithMark = [] as string[];
     for (const chart of specialCases) {
         if (chart.includes('chart with')) {
             specialCases = specialCases.filter(caseType => caseType !== chart);
             const mark = chart.split('chart with ')[1];
-            chartsWithMark.push(mark);
+            if (chart.includes('circular')) {
+                circularChartsWithMark.push(mark);
+            } else {
+                linearChartsWithMark.push(mark);
+            }
         }
     }
-    if (chartsWithMark.length > 0) {
-        specialCases.push(`chart with ${arrayToString(chartsWithMark)}`);
+    if (linearChartsWithMark.length > 0) {
+        specialCases.push(`chart with ${arrayToString(linearChartsWithMark)}`);
+    }
+    if (circularChartsWithMark.length > 0) {
+        specialCases.push(`circular chart with ${arrayToString(circularChartsWithMark)}`);
     }
 
     return specialCases;
