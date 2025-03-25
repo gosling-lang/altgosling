@@ -8,7 +8,7 @@ export function determineSpecialCases(altTrack: AltTrackSingle | AltTrackOverlai
     } else {
         _mark = altTrack.appearance.details.mark;
     }
-    let _dataType = altTrack.data.details.data.type;
+    let _dataType = altTrack.data.details.data?.type;
     const _genomicEncodings = altTrack.appearance.details.encodings.encodingDeepGenomic.map(o => o.name);
     const _quantitativeEncodings = altTrack.appearance.details.encodings.encodingDeepQuantitative.map(o => o.name);
     const _nominalEncodings = altTrack.appearance.details.encodings.encodingDeepNominal.map(o => o.name);
