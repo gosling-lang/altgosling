@@ -6,7 +6,7 @@ There is a large gap in accessibility, specifically for people with blindness an
 
 ## Team
 
-AltGosling is developed in the [HiDIVE Lab](hidivelab.org) at the [Department of Biomedical Informatics](https://dbmi.hms.harvard.edu) at [Harvard Medical School](https://hms.harvard.edu).
+AltGosling is developed in the [HiDIVE Lab](https://hidivelab.org) at the [Department of Biomedical Informatics](https://dbmi.hms.harvard.edu) at [Harvard Medical School](https://hms.harvard.edu).
 
 - Thomas Smits (tsmits@hms.harvard.edu)
 - Sehi L'Yi (sehi_lyi@hms.harvard.edu)
