@@ -24,7 +24,7 @@ function HomepageHeader() {
           </Link>
           <Link
             className={clsx("button button--secondary button--lg", styles.button)}
-            to="/demo">
+            to="http://gosling-lang.github.io/altgosling/">
             Try a Demo
           </Link>
           <Link
