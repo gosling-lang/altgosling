@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
     };
   }
   return {
-    build: { outDir: 'demo' },
+    build: { outDir: 'build-demo' },
     base: '/altgosling/',
     plugins: mode === 'demo' ? [react()] : [],
     resolve: { alias },

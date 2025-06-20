@@ -29,10 +29,10 @@ jobs:
             - uses: pnpm/action-setup@v2
             - run: |
                   pnpm install
-                  pnpm build
+                  pnpm predeploy
             - uses: actions/upload-pages-artifact@v3
               with:
-                  path: demo 
+                  path: build 
 
     Deploy:
         environment:

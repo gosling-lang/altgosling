@@ -1,5 +1,7 @@
 /tmp
 /dist
+/build
+/build-demo
 
 # Dependency directory
 /node_modules
