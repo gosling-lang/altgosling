@@ -52,13 +52,17 @@ The co-author used the JAWS screen reader in Google Chrome. In subsequent weeks,
 
 We focused on the Gosling grammar-based toolkit to automatically create text descriptions of genomics data visualization using the Gosling specifications (L’Yi et al. 2022). Gosling can be used in a number of different ways: through the Gosling.js JavaScript library, the Gos Python package (Manz et al. 2023), and a preliminary R package (https://github.com/gosling-lang/grosling), as well as in the online editor (https://gosling.js.org). In each instance, the visualization (Fig. 1A) is based on a JSON specification defining how referenced data should be displayed (Fig. 1B). Gosling depends on HiGlass for its data retrieval (Kerpedjiev et al. 2018). For static visualizations, it retrieves the genomics data in HiGlass tiles once. For interactive visualizations, it retrieves the genomics data upon each update on the visualization (e.g. through zoom and pan) and sends the data over to the Gosling JavaScript API.
 
-![Schematic with three boxes. The middle box has arrows to the left and right box. The left box (A), titled ‘Gosling Visualization,’ shows a heatmap matrix. The middle box (B), titled ‘Gosling JSON Specification,’ shows text in JSON format. The right box (C), titled ‘AltGosling Text Description,’ shows text in a quotation mark. The text in the right box reads ‘Matrix. Chart is titled ‘Hi-C for HFFc6 Cells’. The Genome is shown on both the x- and y-axes. Both axes show intervals. The height of the expression values is shown with color.](../../static/img/btae670f1.jpeg)
-Figure 1.Relationship between AltGosling and Gosling. The logic-based algorithm of AltGosling extracts important features of Gosling visualization (L’Yi et al. 2022) (A) from its corresponding JSON specification (B) to automatically generate natural language description (C). Screen readers can use the resulting description (C) to explain visualization to blind and low vision (BLV) users.
+<figure>
+  <img src="img/btae670f1.jpeg" alt="Schematic with three boxes. The middle box has arrows to the left and right box. The left box (A), titled ‘Gosling Visualization,’ shows a heatmap matrix. The middle box (B), titled ‘Gosling JSON Specification,’ shows text in JSON format. The right box (C), titled ‘AltGosling Text Description,’ shows text in a quotation mark. The text in the right box reads ‘Matrix. Chart is titled ‘Hi-C for HFFc6 Cells’. The Genome is shown on both the x- and y-axes. Both axes show intervals. The height of the expression values is shown with color." />
+  <figcaption><strong>Figure 1.</strong> Relationship between AltGosling and Gosling. The logic-based algorithm of AltGosling extracts important features of Gosling visualization (L’Yi et al. 2022) (A) from its corresponding JSON specification (B) to automatically generate natural language description (C). Screen readers can use the resulting description (C) to explain visualization to blind and low vision (BLV) users.</figcaption>
+</figure>
 
 AltGosling depends on the Gosling specification and the Gosling JavaScript API (Fig. 2). Using information from these components, AltGosling creates its own specification that captures all important features and corresponding text descriptions (Fig. 2D). Compared to the Gosling specification, AltGosling specifications are less nested and contain the entire information for generating text descriptions. The AltGosling specification is used to deliver the plain text descriptions (Figs 1C and 2E–F) as well as the navigable tree-structured descriptions (Fig. 2G). The rendering logic of AltGosling defines what properties from the AltGosling specification should be shown. This separation of information retrieval (Fig. 2D) and rendering logic (Fig. 2E–G) allows for easy variation in delivery methods. For example, developers can directly use the AltGosling specification to create custom text descriptions that meet their use cases.
 
-![Schematic with two sections. On the top left is a file icon with ‘Gosling Spec’. This points to the right section, labeled ‘Gosling.js,’ and the bottom section, labeled ‘AltGosling’.](../../static/img/btae670f2.jpeg)
-Figure 2.A schematic representation of the AltGosling approach. AltGosling (D) extracts information about visual representations and underlying data of a genomics data visualization (C) from the Gosling JSON specification (A) and the Gosling renderer (B). Based on the extracted features, AltGosling offers alternative text (“alt text”), long descriptions, and tree-structured keyboard-navigable descriptions. The separation of feature extraction (D) and the rendering of textual descriptions (E–G) offers flexibility in delivery.
+<figure>
+  <img src="img/btae670f2.jpeg" alt="Schematic with two sections. On the top left is a file icon with ‘Gosling Spec’. This points to the right section, labeled ‘Gosling.js,’ and the bottom section, labeled ‘AltGosling’." />
+  <figcaption><strong>Figure 2.</strong> A schematic representation of the AltGosling approach. AltGosling (D) extracts information about visual representations and underlying data of a genomics data visualization (C) from the Gosling JSON specification (A) and the Gosling renderer (B). Based on the extracted features, AltGosling offers alternative text (“alt text”), long descriptions, and tree-structured keyboard-navigable descriptions. The separation of feature extraction (D) and the rendering of textual descriptions (E–G) offers flexibility in delivery.</figcaption>
+</figure>
 
 ### 2.4 Text descriptions
 
@@ -76,23 +80,72 @@ From a visual standpoint, there is no difference regarding the composition or st
 
 A key element of the Grammar of Graphics (Wilkinson 2012) is that charts are created not by defining their type, such as a bar chart, but rather by combining low level visual elements to create the chart type. For example, a bar chart can be drawn using rectangular marks on a binned x-axis and a y-axis with the average quantitative value per binned area. However, alternative text best-practice guidelines from W3C include the chart type, and many BLV users find the chart type at the start of alternative text helpful (Jung et al. 2022). Therefore, we created a set of rules for determining known chart types from combinations of marks and visual elements (Table 1). The known chart table is a nonexhaustive list that we created based on visualization experience, drawing on Nusrat et al.’s taxonomy for genomics and Gosling’s example gallery (Nusrat et al. 2019, L’Yi et al. 2022). Then, for each chart in an AltGosling specification, we detect a chart type by comparing elements to these rules. If no known chart type is detected, we note the chart type as “chart with mark,” such as “chart with points.”
 
-Table 1. Open in new tab Rules defined in AltGosling’s logic-based model for inferring chart types.a
-Chart	Rules
-“Scatter plot”	A track using a point mark, genomic x-axis, quantitative y-axis
-“Line chart”	A track using a line mark, genomic x-axis, quantitative y-axis, or 
-A track using a line mark, quantitative x-axis, genomic y-axis
-“Bar chart”	A track using a bar mark, genomic x-axis, quantitative y-axis
-“Heatmap”	A track using a rect mark, genomic x- and xe-axes, quantitative color
-“Chromosome Ideogram”	A track using a rect mark, genomic x- and xe-axes, nominal color
-“Matrix”	A track using a bar mark, genomic x- and xe-axes, genomic y- and ye-axes
-“Chart with both horizontal and vertical lines”	A track using a rule mark, any types of x- and y-axes
-“Chart with vertical lines”	A track using a rule mark, any type of x-axis without y-axis
-“Chart with horizontal lines”	A track with a rule mark, any type of y-axis without x-axis
-“Chart with [mark type]”	A track with a mark that does not have a detected chart type
-“Circular [chart type]”	A track with any chart type that uses a circular layout
-“Annotated [chart type]”	A track with multiple sub-tracks overlaid with at least one identified chart type
-a
-This table describes the chart types that can be identified in AltGosling by looking up the use of visual encodings and other related properties in a Gosling specification. The xe-axis indicates the end position of a visual mark, often combined with the x-axis to create intervals.
+<table>
+  <caption>
+    <strong>Table 1.</strong> Rules defined in AltGosling’s logic-based model for inferring chart types.<sup>a</sup>
+  </caption>
+  <thead>
+    <tr>
+      <th>Chart</th>
+      <th>Rules</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>“Scatter plot”</td>
+      <td>A track using a point mark, genomic x-axis, quantitative y-axis</td>
+    </tr>
+    <tr>
+      <td>“Line chart”</td>
+      <td>
+        A track using a line mark, genomic x-axis, quantitative y-axis, or<br />
+        A track using a line mark, quantitative x-axis, genomic y-axis
+      </td>
+    </tr>
+    <tr>
+      <td>“Bar chart”</td>
+      <td>A track using a bar mark, genomic x-axis, quantitative y-axis</td>
+    </tr>
+    <tr>
+      <td>“Heatmap”</td>
+      <td>A track using a rect mark, genomic x- and xe-axes, quantitative color</td>
+    </tr>
+    <tr>
+      <td>“Chromosome Ideogram”</td>
+      <td>A track using a rect mark, genomic x- and xe-axes, nominal color</td>
+    </tr>
+    <tr>
+      <td>“Matrix”</td>
+      <td>A track using a bar mark, genomic x- and xe-axes, genomic y- and ye-axes</td>
+    </tr>
+    <tr>
+      <td>“Chart with both horizontal and vertical lines”</td>
+      <td>A track using a rule mark, any types of x- and y-axes</td>
+    </tr>
+    <tr>
+      <td>“Chart with vertical lines”</td>
+      <td>A track using a rule mark, any type of x-axis without y-axis</td>
+    </tr>
+    <tr>
+      <td>“Chart with horizontal lines”</td>
+      <td>A track with a rule mark, any type of y-axis without x-axis</td>
+    </tr>
+    <tr>
+      <td>“Chart with [mark type]”</td>
+      <td>A track with a mark that does not have a detected chart type</td>
+    </tr>
+    <tr>
+      <td>“Circular [chart type]”</td>
+      <td>A track with any chart type that uses a circular layout</td>
+    </tr>
+    <tr>
+      <td>“Annotated [chart type]”</td>
+      <td>A track with multiple sub-tracks overlaid with at least one identified chart type</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><sup>a</sup> This table describes the chart types that can be identified in AltGosling by looking up the use of visual encodings and other related properties in a Gosling specification. The xe-axis indicates the end position of a visual mark, often combined with the x-axis to create intervals.</p>
 
 Aside from chart type, BLV users highlighted the importance of axes (Jung et al. 2022). As people accessing the visualization might not be familiar with the meaning of the names of visual channels in Gosling (e.g. x1e representing the second end position on the x-axis) and marks (rect representing a rectangular mark), we created a mapping to natural language descriptions. In conveying the axes, we prioritized the x- and y-axes. For overlaid tracks with the same data source, we track which visual channels are combined with which marks. We keep the visual elements separated for overlaid tracks with different data sources.
 
@@ -108,8 +161,10 @@ The prevalent way of delivering alternative text is plain text. However, alterna
 
 Novel in the area of alternative text, we propose a keyboard-navigable and screen reader accessible collapsible tree following HTML ARIA standard, similar to Olli, where the data is structured hierarchically (Fig. 3). For a visualization with multiple charts, the information is organized by chart.
 
-![Screenshot of AltGosling in browser. On top is a Gosling visualization with two scatter plots. Below are two partially expanded panels, showing information such as title, tracks, appearance, and data table.](../../static/img/btae670f3.jpeg)
-Figure 3.A public demo website of AltGosling. In addition to the (A) Gosling visualization, AltGosling presents two navigable hierarchical panels, (B) one containing information about the visualization (e.g. visual appearance and statistics), and (C) the other containing information about the most recently retrieved data (e.g. genomic range and corresponding data table). Users can select a different example using the drop-down menu on the left-top corner.
+<figure>
+  <img src="img/btae670f3.jpeg" alt="Screenshot of AltGosling in browser. On top is a Gosling visualization with two scatter plots. Below are two partially expanded panels, showing information such as title, tracks, appearance, and data table." />
+  <figcaption><strong>Figure 3.</strong> A public demo website of AltGosling. In addition to the (A) Gosling visualization, AltGosling presents two navigable hierarchical panels, (B) one containing information about the visualization (e.g. visual appearance and statistics), and (C) the other containing information about the most recently retrieved data (e.g. genomic range and corresponding data table). Users can select a different example using the drop-down menu on the left-top corner.</figcaption>
+</figure>
 
 The data is captured with each interaction and values are updated in the navigable tree. The state of collapsing is stored and remains. However, as navigation between different data sections of various charts becomes tedious, we also present a “data panel,” reducing the number of keyboard strokes to access the renewed data. This data panel includes the data statistics, and the full data table, as desired by many BLV users (Jung et al. 2022). With each data panel, we also determine the difference with the previously shown data panel and include a description of the difference.
 
@@ -123,8 +178,10 @@ This hierarchy with descriptions and detail nodes allows the user to ingest only
 
 In this section, we use ten genomics data visualization examples (Fig. 4) to showcase the functionality of AltGosling in generating textual descriptions. Corresponding Gosling specifications and AltGosling descriptions are included in the Supplementary Materials. A video of a user navigating through the example in Fig. 4A with a screen reader is also included in the Supplementary Materials.
 
-![Composition of ten screenshots of visualizations separated into two sections. The top section is marked ‘Single Track’. The bottom section is marked ‘Multiple Tracks’. Each has five visualizations labeled A-E and F-H.](../../static/img/btae670f4.jpeg)
-Figure 4.Examples of genomics data visualization supported with AltGosling. AltGosling can construct textual descriptions for a wide variety of genomics data visualizations, including single charts (A–E) and multiple chart compositions (F–J).
+<figure>
+  <img src="img/btae670f4.jpeg" alt="Composition of ten screenshots of visualizations separated into two sections. The top section is marked ‘Single Track’. The bottom section is marked ‘Multiple Tracks’. Each has five visualizations labeled A-E and F-H." />
+  <figcaption><strong>Figure 4.</strong> Examples of genomics data visualization supported with AltGosling. AltGosling can construct textual descriptions for a wide variety of genomics data visualizations, including single charts (A–E) and multiple chart compositions (F–J).</figcaption>
+</figure>
 
 #### 3.1.1 Datasets
 
