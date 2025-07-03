@@ -12,19 +12,19 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Grammar-Based',
-    image: require('@site/static/img/figure-1.png').default,
+    image: require('@site/static/img/btae670f1.jpeg').default,
     alt: 'Schematic with three boxes. The middle box has arrows to the left and right box. The left box (A), titled ‘Gosling Visualization,’ shows a heatmap matrix. The middle box (B), titled ‘Gosling JSON Specification,’ shows text in JSON format. The right box (C), titled ‘AltGosling Text Description,’ shows text in a quotation mark. The text in the right box reads ‘Matrix. Chart is titled ‘Hi-C for HFFc6 Cells’. The Genome is shown on both the x- and y-axes. Both axes show intervals. The height of the expression values is shown with colors.',
     description: 'Based on flexible grammar-based genomics toolkit Gosling',
   },
   {
     title: 'Flexible',
-    image: require('@site/static/img/figure-2.png').default,
+    image: require('@site/static/img/btae670f2.jpeg').default,
     alt: 'Schematic with two sections. On the top left is a file icon with ‘Gosling Spec’. This points to the right section, labeled ‘Gosling.js,’ and the bottom section, labeled ‘AltGosling’.',
     description: 'Various options for text descriptions',
   },
   {
     title: 'Navigable',
-    image: require('@site/static/img/figure-3.png').default,
+    image: require('@site/static/img/btae670f3.jpeg').default,
     alt: 'Screenshot of AltGosling in browser. On top is a Gosling visualization with two scatter plots. Below are two partially expanded panels, showing information such as title, tracks, appearance, and data table.',
     description: 'Deliver descriptions in easy navigable format',
   },
