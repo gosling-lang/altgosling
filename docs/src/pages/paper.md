@@ -1,9 +1,8 @@
 # AltGosling: automatic generation of text descriptions for accessible genomics data visualization
 
-Thomas C Smits ,  Sehi L’Yi ,  Andrew P Mar ,  Nils Gehlenborg
+Thomas C Smits, Sehi L’Yi, Andrew P Mar, Nils Gehlenborg
 
-Bioinformatics, Volume 40, Issue 12, December 2024, btae670, https://doi.org/10.1093/bioinformatics/btae670
-Published: 14 November 2024
+Find the original paper in _Bioinformatics_, Volume 40, Issue 12, December 2024, btae670, https://doi.org/10.1093/bioinformatics/btae670
 
 ## Abstract
 ### Motivation
@@ -249,7 +248,7 @@ T.C.S. and N.G. worked on conceptualization. T.C.S., S.L., and N.G. contributed 
 
 ## Supplementary data
 
-Supplementary data are available at Bioinformatics online.
+Supplementary data are available at _Bioinformatics_ online.
 
 ## Conflict of interest
 
