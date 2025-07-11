@@ -1,6 +1,6 @@
 # AltGosling
 
-AltGosling is a library based on [Gosling](https://github.com/gosling-lang/gosling.js) that automatically extracts features and converts these into natural language to describe Gosling visualizations.
+AltGosling is a library based on [Gosling](https://github.com/gosling-lang/gosling.js) that automatically extracts features and converts these into natural language to describe Gosling visualizations. You can read more on our [documentation website](https://gosling-lang.github.io/altgosling/docs/).
 
 
 ## Why AltGosling? 
