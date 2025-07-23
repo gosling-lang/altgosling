@@ -59,6 +59,7 @@ const config: Config = {
           position: 'left',
           label: 'Documentation',
         },
+        { to: '/paper', label: 'Paper', position: 'left' },
         { to: '/about', label: 'About', position: 'left' },
         {
           href: 'https://github.com/gosling-lang/altgosling',
